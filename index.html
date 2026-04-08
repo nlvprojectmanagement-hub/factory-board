@@ -59,7 +59,6 @@
   <script>
     const sheetId = "1ML2ozfDmFhVqVetf0zNlrJRfnvfQZ_xrUP-gLN80XQ8";
     const gid = "0";
-    const query = encodeURIComponent("select B,C,D,E,F,H,I,K offset 2");
 
     let lastRendered = "";
     let isLoading = false;
@@ -71,23 +70,26 @@
 
       let html = "<table><tr>";
 
-      cols.forEach(col => {
-        html += `<th>${col.label || ""}</th>`;
-      });
-
+      // skip first column
+      for (let c = 1; c < cols.length; c++) {
+        html += `<th>${cols[c].label || ""}</th>`;
+      }
       html += "</tr>";
 
-      rows.forEach(row => {
+      // skip first 2 rows
+      for (let r = 2; r < rows.length; r++) {
         html += "<tr>";
+        const row = rows[r].c || [];
 
-        (row.c || []).forEach(cell => {
+        for (let c = 1; c < cols.length; c++) {
+          const cell = row[c];
           const value = cell && cell.v != null ? String(cell.v) : "";
           const cls = value.trim().toUpperCase() === "DELAY" ? "delay" : "";
           html += `<td class="${cls}">${value}</td>`;
-        });
+        }
 
         html += "</tr>";
-      });
+      }
 
       html += "</table>";
 
@@ -126,7 +128,6 @@
       script.id = "sheet-script";
       script.src =
         `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}` +
-        `&tq=${query}` +
         `&tqx=responseHandler:handleSheetResponse;out:json&t=${Date.now()}`;
 
       script.onerror = function() {
