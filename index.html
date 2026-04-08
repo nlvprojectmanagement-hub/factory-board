@@ -70,26 +70,23 @@
 
       let html = "<table><tr>";
 
-      // skip first column
-      for (let c = 1; c < cols.length; c++) {
-        html += `<th>${cols[c].label || ""}</th>`;
-      }
+      cols.forEach(col => {
+        html += `<th>${col.label || ""}</th>`;
+      });
+
       html += "</tr>";
 
-      // skip first 2 rows
-      for (let r = 2; r < rows.length; r++) {
+      rows.forEach(row => {
         html += "<tr>";
-        const row = rows[r].c || [];
 
-        for (let c = 1; c < cols.length; c++) {
-          const cell = row[c];
+        (row.c || []).forEach(cell => {
           const value = cell && cell.v != null ? String(cell.v) : "";
           const cls = value.trim().toUpperCase() === "DELAY" ? "delay" : "";
           html += `<td class="${cls}">${value}</td>`;
-        }
+        });
 
         html += "</tr>";
-      }
+      });
 
       html += "</table>";
 
