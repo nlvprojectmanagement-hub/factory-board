@@ -63,6 +63,35 @@
     let timeoutId = null;
     let lastRendered = "";
 
+    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+    function formatCell(cell) {
+      if (!cell) return "";
+
+      if (cell.f) return String(cell.f);
+
+      if (cell.v == null) return "";
+
+      if (typeof cell.v === "string") return cell.v;
+
+      if (cell.v instanceof Date) {
+        const d = cell.v;
+        return `${d.getDate()}-${monthNames[d.getMonth()]}`;
+      }
+
+      const raw = String(cell.v);
+
+      const match = raw.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})/);
+      if (match) {
+        const year = Number(match[1]);
+        const month = Number(match[2]);
+        const day = Number(match[3]);
+        return `${day}-${monthNames[month]}`;
+      }
+
+      return raw;
+    }
+
     function renderTable(table) {
       const cols = table.cols || [];
       const rows = table.rows || [];
@@ -79,7 +108,7 @@
         html += "<tr>";
 
         (row.c || []).forEach(cell => {
-          const value = cell && cell.v != null ? String(cell.v) : "";
+          const value = formatCell(cell);
           const cls = value.trim().toUpperCase() === "DELAY" ? "delay" : "";
           html += `<td class="${cls}">${value}</td>`;
         });
