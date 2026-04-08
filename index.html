@@ -1,147 +1,107 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Factory Board</title>
-<style>
-  body {
-    margin: 0;
-    background: black;
-    color: white;
-    font-family: Arial, sans-serif;
-  }
+  <meta charset="UTF-8">
+  <title>Factory Board</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
 
-  #board {
-    width: 100%;
-    min-height: 100vh;
-  }
+    #board {
+      width: 100%;
+      min-height: 100vh;
+    }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-  }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
 
-  th, td {
-    border: 1px solid #888;
-    padding: 12px;
-    text-align: center;
-    color: #ff9d00;
-    font-weight: bold;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+    th, td {
+      border: 1px solid #888;
+      padding: 12px;
+      text-align: center;
+      color: #ff9d00;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-  .delay {
-    color: white;
-    background: red;
-    animation: blink 1s infinite;
-  }
+    .delay {
+      color: white;
+      background: red;
+      animation: blink 1s infinite;
+    }
 
-  @keyframes blink {
-    0% { background: red; color: white; }
-    50% { background: black; color: red; }
-    100% { background: red; color: white; }
-  }
-</style>
+    @keyframes blink {
+      0% { background: red; color: white; }
+      50% { background: black; color: red; }
+      100% { background: red; color: white; }
+    }
+  </style>
 </head>
 <body>
-<div id="board">Loading...</div>
+  <div id="board">Loading...</div>
 
-<script>
-const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
+  <script>
+    const sheetId = "1ML2ozfDmFhVqVetf0zNlrJRfnvfQZ_xrUP-gLN80XQ8";
+    const gid = "0";
+    let lastRendered = "";
 
-let isLoading = false;
-let lastRendered = "";
+    function renderTable(table) {
+      const cols = table.cols || [];
+      const rows = table.rows || [];
 
-function parseCSV(text) {
-  const rows = [];
-  let row = [];
-  let cell = "";
-  let inQuotes = false;
+      let html = "<table><tr>";
+      cols.forEach(col => {
+        html += `<th>${col.label || ""}</th>`;
+      });
+      html += "</tr>";
 
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    const next = text[i + 1];
+      rows.forEach(row => {
+        html += "<tr>";
+        (row.c || []).forEach(cell => {
+          const value = cell && cell.v != null ? String(cell.v) : "";
+          const cls = value.trim().toUpperCase() === "DELAY" ? "delay" : "";
+          html += `<td class="${cls}">${value}</td>`;
+        });
+        html += "</tr>";
+      });
 
-    if (ch === '"') {
-      if (inQuotes && next === '"') {
-        cell += '"';
-        i++;
-      } else {
-        inQuotes = !inQuotes;
+      html += "</table>";
+
+      if (html !== lastRendered) {
+        document.getElementById("board").innerHTML = html;
+        lastRendered = html;
       }
-    } else if (ch === ',' && !inQuotes) {
-      row.push(cell);
-      cell = "";
-    } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
-      if (ch === '\r' && next === '\n') i++;
-      row.push(cell);
-      rows.push(row);
-      row = [];
-      cell = "";
-    } else {
-      cell += ch;
-    }
-  }
-
-  if (cell.length || row.length) {
-    row.push(cell);
-    rows.push(row);
-  }
-
-  return rows;
-}
-
-function buildHTML(rows) {
-  let html = "<table>";
-
-  rows.forEach((row, i) => {
-    html += "<tr>";
-    row.forEach(cell => {
-      const value = (cell || "").trim();
-      const upper = value.toUpperCase();
-      const cls = upper === "DELAY" ? "delay" : "";
-      html += i === 0
-        ? `<th>${value}</th>`
-        : `<td class="${cls}">${value}</td>`;
-    });
-    html += "</tr>";
-  });
-
-  html += "</table>";
-  return html;
-}
-
-async function loadData() {
-  if (isLoading) return;
-  isLoading = true;
-
-  try {
-    const res = await fetch(csvUrl + "&t=" + Date.now(), { cache: "no-store" });
-    const text = await res.text();
-
-    if (!text || !text.trim()) {
-      return;
     }
 
-    const rows = parseCSV(text);
-    const html = buildHTML(rows);
-
-    if (html !== lastRendered) {
-      document.getElementById("board").innerHTML = html;
-      lastRendered = html;
+    function handleSheetResponse(response) {
+      if (response && response.table) {
+        renderTable(response.table);
+      }
     }
-  } catch (err) {
-    console.error(err);
-  } finally {
-    isLoading = false;
-  }
-}
 
-loadData();
-setInterval(loadData, 10000);
-</script>
+    function loadData() {
+      const oldScript = document.getElementById("sheet-script");
+      if (oldScript) oldScript.remove();
+
+      const script = document.createElement("script");
+      script.id = "sheet-script";
+      script.src =
+        `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}` +
+        `&tqx=responseHandler:handleSheetResponse;out:json&t=${Date.now()}`;
+      document.body.appendChild(script);
+    }
+
+    loadData();
+    setInterval(loadData, 10000);
+  </script>
 </body>
 </html>
