@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Factory Board</title>
+
   <style>
     body {
       margin: 0;
@@ -53,129 +54,143 @@
     }
   </style>
 </head>
+
 <body>
-  <div id="board">Loading...</div>
+<div id="board">Loading...</div>
 
-  <script>
-    const sheetId = "1ML2ozfDmFhVqVetf0zNlrJRfnvfQZ_xrUP-gLN80XQ8";
-    const gid = "0";
-    let isLoading = false;
-    let timeoutId = null;
-    let lastRendered = "";
+<script>
+const sheetId = "1ML2ozfDmFhVqVetf0zNlrJRfnvfQZ_xrUP-gLN80XQ8";
+const gid = "0";
 
-    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+let isLoading = false;
+let timeoutId = null;
+let lastRendered = "";
 
-    function formatCell(cell) {
-      if (!cell) return "";
+const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-      if (cell.f) return String(cell.f);
+function formatCell(cell) {
+  if (!cell) return "";
 
-      if (cell.v == null) return "";
+  if (cell.f) return String(cell.f);
 
-      if (typeof cell.v === "string") return cell.v;
+  if (cell.v == null) return "";
 
-      if (cell.v instanceof Date) {
-        const d = cell.v;
-        return `${d.getDate()}-${monthNames[d.getMonth()]}`;
-      }
+  if (typeof cell.v === "string") return cell.v;
 
-      const raw = String(cell.v);
+  if (cell.v instanceof Date) {
+    const d = cell.v;
+    return `${d.getDate()}-${monthNames[d.getMonth()]}`;
+  }
 
-      const match = raw.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})/);
-      if (match) {
-        const year = Number(match[1]);
-        const month = Number(match[2]);
-        const day = Number(match[3]);
-        return `${day}-${monthNames[month]}`;
-      }
+  const raw = String(cell.v);
+  const match = raw.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})/);
 
-      return raw;
-    }
+  if (match) {
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    return `${day}-${monthNames[month]}`;
+  }
 
-    function renderTable(table) {
-      const cols = table.cols || [];
-      const rows = table.rows || [];
+  return raw;
+}
 
-      let html = "<table><tr>";
+function renderTable(table) {
+  const cols = table.cols || [];
+  const rows = table.rows || [];
 
-      cols.forEach(col => {
-        html += `<th>${col.label || ""}</th>`;
-      });
+  let html = "<table><tr>";
 
-      html += "</tr>";
+  cols.forEach(col => {
+    html += `<th>${col.label || ""}</th>`;
+  });
 
-      rows.forEach(row => {
-        html += "<tr>";
+  html += "</tr>";
 
-        (row.c || []).forEach(cell => {
-          const value = formatCell(cell);
-          const cls = value.trim().toUpperCase() === "DELAY" ? "delay" : "";
-          html += `<td class="${cls}">${value}</td>`;
-        });
+  rows.forEach(row => {
+    html += "<tr>";
 
-        html += "</tr>";
-      });
+    (row.c || []).forEach(cell => {
+      const value = formatCell(cell);
 
-      html += "</table>";
+      const rawValue = cell && cell.v != null
+        ? String(cell.v).trim().toUpperCase()
+        : "";
 
-      if (html !== lastRendered) {
-        document.getElementById("board").innerHTML = html;
-        lastRendered = html;
-      }
-    }
+      const formattedValue = String(value).trim().toUpperCase();
 
-    window.handleSheetResponse = function(response) {
-      clearTimeout(timeoutId);
-      isLoading = false;
+      const cls =
+        rawValue === "DELAY" || formattedValue === "DELAY"
+          ? "delay"
+          : "";
 
-      if (response && response.status === "ok" && response.table) {
-        renderTable(response.table);
-        return;
-      }
+      html += `<td class="${cls}">${value}</td>`;
+    });
 
-      let msg = "Could not read sheet data.";
-      if (response && response.errors && response.errors.length) {
-        msg = response.errors.map(e => e.detailed_message || e.message).join(" | ");
-      } else if (response && response.status) {
-        msg = "Sheet status: " + response.status;
-      }
+    html += "</tr>";
+  });
 
-      document.getElementById("board").innerHTML =
-        `<div class="error">${msg}</div>`;
-    };
+  html += "</table>";
 
-    function loadData() {
-      if (isLoading) return;
-      isLoading = true;
+  if (html !== lastRendered) {
+    document.getElementById("board").innerHTML = html;
+    lastRendered = html;
+  }
+}
 
-      const oldScript = document.getElementById("sheet-script");
-      if (oldScript) oldScript.remove();
+window.handleSheetResponse = function(response) {
+  clearTimeout(timeoutId);
+  isLoading = false;
 
-      timeoutId = setTimeout(() => {
-        isLoading = false;
-        document.getElementById("board").innerHTML =
-          '<div class="error">Sheet load timed out.</div>';
-      }, 10000);
+  if (response && response.status === "ok" && response.table) {
+    renderTable(response.table);
+    return;
+  }
 
-      const script = document.createElement("script");
-      script.id = "sheet-script";
-      script.src =
-        `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}` +
-        `&headers=1` +
-        `&tqx=responseHandler:handleSheetResponse;out:json&t=${Date.now()}`;
+  let msg = "Could not read sheet data.";
+  if (response && response.errors && response.errors.length) {
+    msg = response.errors.map(e => e.detailed_message || e.message).join(" | ");
+  } else if (response && response.status) {
+    msg = "Sheet status: " + response.status;
+  }
 
-      script.onerror = function() {
-        clearTimeout(timeoutId);
-        isLoading = false;
-        document.getElementById("board").innerHTML =
-          '<div class="error">Error loading sheet.</div>';
-      };
+  document.getElementById("board").innerHTML =
+    `<div class="error">${msg}</div>`;
+};
 
-      document.body.appendChild(script);
-    }
+function loadData() {
+  if (isLoading) return;
+  isLoading = true;
 
-    loadData();
-    setInterval(loadData, 15000);
-  </script>
+  const oldScript = document.getElementById("sheet-script");
+  if (oldScript) oldScript.remove();
+
+  timeoutId = setTimeout(() => {
+    isLoading = false;
+    document.getElementById("board").innerHTML =
+      '<div class="error">Sheet load timed out.</div>';
+  }, 10000);
+
+  const script = document.createElement("script");
+  script.id = "sheet-script";
+
+  script.src =
+    `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}` +
+    `&headers=1` +
+    `&tqx=responseHandler:handleSheetResponse;out:json&t=${Date.now()}`;
+
+  script.onerror = function() {
+    clearTimeout(timeoutId);
+    isLoading = false;
+    document.getElementById("board").innerHTML =
+      '<div class="error">Error loading sheet.</div>';
+  };
+
+  document.body.appendChild(script);
+}
+
+loadData();
+setInterval(loadData, 15000);
+</script>
+
 </body>
 </html>
