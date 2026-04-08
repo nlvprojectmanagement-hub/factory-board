@@ -59,10 +59,9 @@
   <script>
     const sheetId = "1ML2ozfDmFhVqVetf0zNlrJRfnvfQZ_xrUP-gLN80XQ8";
     const gid = "0";
-
-    let lastRendered = "";
     let isLoading = false;
     let timeoutId = null;
+    let lastRendered = "";
 
     function renderTable(table) {
       const cols = table.cols || [];
@@ -100,12 +99,20 @@
       clearTimeout(timeoutId);
       isLoading = false;
 
-      if (response && response.table) {
+      if (response && response.status === "ok" && response.table) {
         renderTable(response.table);
-      } else {
-        document.getElementById("board").innerHTML =
-          '<div class="error">Could not read sheet data.</div>';
+        return;
       }
+
+      let msg = "Could not read sheet data.";
+      if (response && response.errors && response.errors.length) {
+        msg = response.errors.map(e => e.detailed_message || e.message).join(" | ");
+      } else if (response && response.status) {
+        msg = "Sheet status: " + response.status;
+      }
+
+      document.getElementById("board").innerHTML =
+        `<div class="error">${msg}</div>`;
     };
 
     function loadData() {
@@ -119,12 +126,13 @@
         isLoading = false;
         document.getElementById("board").innerHTML =
           '<div class="error">Sheet load timed out.</div>';
-      }, 8000);
+      }, 10000);
 
       const script = document.createElement("script");
       script.id = "sheet-script";
       script.src =
         `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}` +
+        `&headers=1` +
         `&tqx=responseHandler:handleSheetResponse;out:json&t=${Date.now()}`;
 
       script.onerror = function() {
