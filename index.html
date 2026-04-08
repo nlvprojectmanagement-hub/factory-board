@@ -1,107 +1,73 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Factory Board</title>
-  <style>
-    body {
-      margin: 0;
-      background: black;
-      color: white;
-      font-family: Arial, sans-serif;
+<script>
+  const sheetId = "1ML2ozfDmFhVqVetf0zNlrJRfnvfQZ_xrUP-gLN80XQ8";
+  const gid = "0";
+  let lastRendered = "";
+  let isLoading = false;
+
+  function renderTable(table) {
+    const cols = table.cols || [];
+    const rows = table.rows || [];
+
+    let html = "<table><tr>";
+
+    // 🔥 Skip first column (A)
+    for (let c = 1; c < cols.length; c++) {
+      html += `<th>${cols[c].label || ""}</th>`;
     }
+    html += "</tr>";
 
-    #board {
-      width: 100%;
-      min-height: 100vh;
-    }
+    // 🔥 Skip first 2 rows
+    for (let r = 2; r < rows.length; r++) {
+      html += "<tr>";
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-    }
+      const row = rows[r].c || [];
 
-    th, td {
-      border: 1px solid #888;
-      padding: 12px;
-      text-align: center;
-      color: #ff9d00;
-      font-weight: bold;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+      // 🔥 Skip first column again
+      for (let c = 1; c < row.length; c++) {
+        let value = row[c] && row[c].v ? String(row[c].v) : "";
+        let cls = value.trim().toUpperCase() === "DELAY" ? "delay" : "";
 
-    .delay {
-      color: white;
-      background: red;
-      animation: blink 1s infinite;
-    }
+        html += `<td class="${cls}">${value}</td>`;
+      }
 
-    @keyframes blink {
-      0% { background: red; color: white; }
-      50% { background: black; color: red; }
-      100% { background: red; color: white; }
-    }
-  </style>
-</head>
-<body>
-  <div id="board">Loading...</div>
-
-  <script>
-    const sheetId = "1ML2ozfDmFhVqVetf0zNlrJRfnvfQZ_xrUP-gLN80XQ8";
-    const gid = "0";
-    let lastRendered = "";
-
-    function renderTable(table) {
-      const cols = table.cols || [];
-      const rows = table.rows || [];
-
-      let html = "<table><tr>";
-      cols.forEach(col => {
-        html += `<th>${col.label || ""}</th>`;
-      });
       html += "</tr>";
-
-      rows.forEach(row => {
-        html += "<tr>";
-        (row.c || []).forEach(cell => {
-          const value = cell && cell.v != null ? String(cell.v) : "";
-          const cls = value.trim().toUpperCase() === "DELAY" ? "delay" : "";
-          html += `<td class="${cls}">${value}</td>`;
-        });
-        html += "</tr>";
-      });
-
-      html += "</table>";
-
-      if (html !== lastRendered) {
-        document.getElementById("board").innerHTML = html;
-        lastRendered = html;
-      }
     }
 
-    function handleSheetResponse(response) {
-      if (response && response.table) {
-        renderTable(response.table);
-      }
+    html += "</table>";
+
+    if (html !== lastRendered) {
+      document.getElementById("board").innerHTML = html;
+      lastRendered = html;
     }
+  }
 
-    function loadData() {
-      const oldScript = document.getElementById("sheet-script");
-      if (oldScript) oldScript.remove();
-
-      const script = document.createElement("script");
-      script.id = "sheet-script";
-      script.src =
-        `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}` +
-        `&tqx=responseHandler:handleSheetResponse;out:json&t=${Date.now()}`;
-      document.body.appendChild(script);
+  function handleSheetResponse(response) {
+    isLoading = false;
+    if (response && response.table) {
+      renderTable(response.table);
     }
+  }
 
-    loadData();
-    setInterval(loadData, 10000);
-  </script>
-</body>
-</html>
+  function loadData() {
+    if (isLoading) return;
+    isLoading = true;
+
+    const oldScript = document.getElementById("sheet-script");
+    if (oldScript) oldScript.remove();
+
+    const script = document.createElement("script");
+    script.id = "sheet-script";
+    script.src =
+      `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}` +
+      `&tqx=responseHandler:handleSheetResponse;out:json&t=${Date.now()}`;
+
+    script.onerror = function () {
+      isLoading = false;
+    };
+
+    document.body.appendChild(script);
+  }
+
+  loadData();
+  setInterval(loadData, 15000);
+</script>
