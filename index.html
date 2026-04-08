@@ -3,120 +3,145 @@
 <head>
 <meta charset="UTF-8">
 <title>Factory Board</title>
-
 <style>
-body {
-  margin: 0;
-  background: black;
-  color: white;
-  font-family: Arial, sans-serif;
-}
+  body {
+    margin: 0;
+    background: black;
+    color: white;
+    font-family: Arial, sans-serif;
+  }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+  #board {
+    width: 100%;
+    min-height: 100vh;
+  }
 
-td, th {
-  border: 1px solid #888;
-  padding: 12px;
-  text-align: center;
-  color: #ff9d00;
-  font-weight: bold;
-}
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
 
-.delay {
-  color: white;
-  background: red;
-  animation: blink 1s infinite;
-}
+  th, td {
+    border: 1px solid #888;
+    padding: 12px;
+    text-align: center;
+    color: #ff9d00;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-@keyframes blink {
-  0% { background: red; color: white; }
-  50% { background: black; color: red; }
-  100% { background: red; color: white; }
-}
+  .delay {
+    color: white;
+    background: red;
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    0% { background: red; color: white; }
+    50% { background: black; color: red; }
+    100% { background: red; color: white; }
+  }
 </style>
 </head>
-
 <body>
-
 <div id="board">Loading...</div>
 
 <script>
-const sheetId = "1ML2ozfDmFhVqVetf0zNlrJRfnvfQZ_xrUP-gLN80XQ8";
-const gid = "0";
+const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
 
 let isLoading = false;
-let lastDataHash = "";
+let lastRendered = "";
+
+function parseCSV(text) {
+  const rows = [];
+  let row = [];
+  let cell = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const next = text[i + 1];
+
+    if (ch === '"') {
+      if (inQuotes && next === '"') {
+        cell += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (ch === ',' && !inQuotes) {
+      row.push(cell);
+      cell = "";
+    } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
+      if (ch === '\r' && next === '\n') i++;
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = "";
+    } else {
+      cell += ch;
+    }
+  }
+
+  if (cell.length || row.length) {
+    row.push(cell);
+    rows.push(row);
+  }
+
+  return rows;
+}
+
+function buildHTML(rows) {
+  let html = "<table>";
+
+  rows.forEach((row, i) => {
+    html += "<tr>";
+    row.forEach(cell => {
+      const value = (cell || "").trim();
+      const upper = value.toUpperCase();
+      const cls = upper === "DELAY" ? "delay" : "";
+      html += i === 0
+        ? `<th>${value}</th>`
+        : `<td class="${cls}">${value}</td>`;
+    });
+    html += "</tr>";
+  });
+
+  html += "</table>";
+  return html;
+}
 
 async function loadData() {
   if (isLoading) return;
   isLoading = true;
 
   try {
-    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}&tqx=out:json&t=${Date.now()}`;
-    const res = await fetch(url, { cache: "no-store" });
+    const res = await fetch(csvUrl + "&t=" + Date.now(), { cache: "no-store" });
     const text = await res.text();
 
-    const jsonText = text.substring(47).slice(0, -2);
-    const data = JSON.parse(jsonText);
-
-    const rows = data.table.rows;
-    const cols = data.table.cols;
-
-    // Create hash to avoid unnecessary redraws
-    const currentHash = JSON.stringify(rows);
-    if (currentHash === lastDataHash) {
-      isLoading = false;
+    if (!text || !text.trim()) {
       return;
     }
-    lastDataHash = currentHash;
 
-    let html = "<table>";
+    const rows = parseCSV(text);
+    const html = buildHTML(rows);
 
-    // Header
-    html += "<tr>";
-    cols.forEach(col => {
-      html += `<th>${col.label || ""}</th>`;
-    });
-    html += "</tr>";
-
-    // Rows
-    rows.forEach(row => {
-      html += "<tr>";
-
-      row.c.forEach(cell => {
-        let value = cell && cell.v ? String(cell.v) : "";
-        let cls = "";
-
-        let v = value.trim().toUpperCase();
-
-        if (v === "DELAY") cls = "delay";
-
-        html += `<td class="${cls}">${value}</td>`;
-      });
-
-      html += "</tr>";
-    });
-
-    html += "</table>";
-
-    document.getElementById("board").innerHTML = html;
-
-  } catch (e) {
-    console.error("Error loading data:", e);
+    if (html !== lastRendered) {
+      document.getElementById("board").innerHTML = html;
+      lastRendered = html;
+    }
+  } catch (err) {
+    console.error(err);
+  } finally {
+    isLoading = false;
   }
-
-  isLoading = false;
 }
 
-// Initial load
 loadData();
-
-// Refresh every 5 seconds (stable)
-setInterval(loadData, 5000);
+setInterval(loadData, 10000);
 </script>
-
 </body>
 </html>
