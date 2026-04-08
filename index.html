@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Factory Board</title>
+
+<style>
+body {
+  margin:0;
+  background:black;
+  color:white;
+  font-family:Arial;
+}
+
+table {
+  width:100%;
+  border-collapse:collapse;
+}
+
+td, th {
+  border:1px solid #888;
+  padding:12px;
+  text-align:center;
+  color:#ff9d00;
+  font-weight:bold;
+}
+
+.delay {
+  color:white;
+  background:red;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% { background:red; }
+  50% { background:black; color:red; }
+  100% { background:red; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="board">Loading...</div>
+
+<script>
+const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?gid=0&single=true&output=csv";
+
+async function loadData() {
+  const res = await fetch(csvUrl + "&t=" + Date.now());
+  const text = await res.text();
+  const rows = text.split("\n").map(r => r.split(","));
+
+  let html = "<table>";
+
+  rows.forEach((row, i) => {
+    html += "<tr>";
+
+    row.forEach(cell => {
+      let value = cell.trim().toUpperCase();
+      let cls = "";
+
+      if (value === "DELAY") cls = "delay";
+
+      html += i === 0
+        ? `<th>${cell}</th>`
+        : `<td class="${cls}">${cell}</td>`;
+    });
+
+    html += "</tr>";
+  });
+
+  html += "</table>";
+
+  document.getElementById("board").innerHTML = html;
+}
+
+loadData();
+setInterval(loadData, 2000);
+</script>
+
+</body>
+</html>
