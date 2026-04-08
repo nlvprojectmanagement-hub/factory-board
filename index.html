@@ -1,73 +1,121 @@
-<script>
-  const sheetId = "1ML2ozfDmFhVqVetf0zNlrJRfnvfQZ_xrUP-gLN80XQ8";
-  const gid = "0";
-  let lastRendered = "";
-  let isLoading = false;
-
-  function renderTable(table) {
-    const cols = table.cols || [];
-    const rows = table.rows || [];
-
-    let html = "<table><tr>";
-
-    // 🔥 Skip first column (A)
-    for (let c = 1; c < cols.length; c++) {
-      html += `<th>${cols[c].label || ""}</th>`;
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Factory Board</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: white;
+      font-family: Arial, sans-serif;
     }
-    html += "</tr>";
 
-    // 🔥 Skip first 2 rows
-    for (let r = 2; r < rows.length; r++) {
-      html += "<tr>";
+    #board {
+      width: 100%;
+      min-height: 100vh;
+    }
 
-      const row = rows[r].c || [];
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
 
-      // 🔥 Skip first column again
-      for (let c = 1; c < row.length; c++) {
-        let value = row[c] && row[c].v ? String(row[c].v) : "";
-        let cls = value.trim().toUpperCase() === "DELAY" ? "delay" : "";
+    th, td {
+      border: 1px solid #888;
+      padding: 12px;
+      text-align: center;
+      color: #ff9d00;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-        html += `<td class="${cls}">${value}</td>`;
+    .delay {
+      color: white;
+      background: red;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0% { background: red; color: white; }
+      50% { background: black; color: red; }
+      100% { background: red; color: white; }
+    }
+  </style>
+</head>
+<body>
+  <div id="board">Loading...</div>
+
+  <script>
+    const sheetId = "1ML2ozfDmFhVqVetf0zNlrJRfnvfQZ_xrUP-gLN80XQ8";
+    const gid = "0";
+    let lastRendered = "";
+    let isLoading = false;
+
+    function renderTable(table) {
+      const cols = table.cols || [];
+      const rows = table.rows || [];
+
+      let html = "<table><tr>";
+
+      for (let c = 1; c < cols.length; c++) {
+        html += `<th>${cols[c].label || ""}</th>`;
+      }
+      html += "</tr>";
+
+      for (let r = 2; r < rows.length; r++) {
+        html += "<tr>";
+        const row = rows[r].c || [];
+
+        for (let c = 1; c < row.length; c++) {
+          let value = row[c] && row[c].v ? String(row[c].v) : "";
+          let cls = value.trim().toUpperCase() === "DELAY" ? "delay" : "";
+          html += `<td class="${cls}">${value}</td>`;
+        }
+
+        html += "</tr>";
       }
 
-      html += "</tr>";
+      html += "</table>";
+
+      if (html !== lastRendered) {
+        document.getElementById("board").innerHTML = html;
+        lastRendered = html;
+      }
     }
 
-    html += "</table>";
-
-    if (html !== lastRendered) {
-      document.getElementById("board").innerHTML = html;
-      lastRendered = html;
-    }
-  }
-
-  function handleSheetResponse(response) {
-    isLoading = false;
-    if (response && response.table) {
-      renderTable(response.table);
-    }
-  }
-
-  function loadData() {
-    if (isLoading) return;
-    isLoading = true;
-
-    const oldScript = document.getElementById("sheet-script");
-    if (oldScript) oldScript.remove();
-
-    const script = document.createElement("script");
-    script.id = "sheet-script";
-    script.src =
-      `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}` +
-      `&tqx=responseHandler:handleSheetResponse;out:json&t=${Date.now()}`;
-
-    script.onerror = function () {
+    function handleSheetResponse(response) {
       isLoading = false;
-    };
+      if (response && response.table) {
+        renderTable(response.table);
+      }
+    }
 
-    document.body.appendChild(script);
-  }
+    function loadData() {
+      if (isLoading) return;
+      isLoading = true;
 
-  loadData();
-  setInterval(loadData, 15000);
-</script>
+      const oldScript = document.getElementById("sheet-script");
+      if (oldScript) oldScript.remove();
+
+      const script = document.createElement("script");
+      script.id = "sheet-script";
+      script.src =
+        `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}` +
+        `&tqx=responseHandler:handleSheetResponse;out:json&t=${Date.now()}`;
+
+      script.onerror = function () {
+        isLoading = false;
+      };
+
+      document.body.appendChild(script);
+    }
+
+    loadData();
+    setInterval(loadData, 15000);
+  </script>
+</body>
+</html>
