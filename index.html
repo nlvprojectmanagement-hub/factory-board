@@ -6,78 +6,80 @@
 
 <style>
 body {
-  margin:0;
-  background:black;
-  color:white;
-  font-family:Arial;
+  margin: 0;
+  background: black;
+  color: white;
+  font-family: Arial, sans-serif;
 }
 
 table {
-  width:100%;
-  border-collapse:collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 td, th {
-  border:1px solid #888;
-  padding:12px;
-  text-align:center;
-  color:#ff9d00;
-  font-weight:bold;
+  border: 1px solid #888;
+  padding: 12px;
+  text-align: center;
+  color: #ff9d00;
+  font-weight: bold;
 }
 
 .delay {
-  color:white;
-  background:red;
+  color: white;
+  background: red;
   animation: blink 1s infinite;
 }
 
 @keyframes blink {
-  0% { background:red; }
-  50% { background:black; color:red; }
-  100% { background:red; }
+  0% { background: red; color: white; }
+  50% { background: black; color: red; }
+  100% { background: red; color: white; }
 }
 </style>
 </head>
 
 <body>
-
 <div id="board">Loading...</div>
 
 <script>
-const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?gid=0&single=true&output=csv";
+const sheetId = "1ML2ozfDmFhVqVetf0zNlrJRfnvfQZ_xrUP-gLN80XQ8";
+const gid = "0";
 
 async function loadData() {
-  const res = await fetch(csvUrl + "&t=" + Date.now());
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}&tqx=out:json&t=${Date.now()}`;
+  const res = await fetch(url);
   const text = await res.text();
-  const rows = text.split("\n").map(r => r.split(","));
+
+  const jsonText = text.substring(47).slice(0, -2);
+  const data = JSON.parse(jsonText);
+  const rows = data.table.rows;
+  const cols = data.table.cols;
 
   let html = "<table>";
 
-  rows.forEach((row, i) => {
+  html += "<tr>";
+  cols.forEach(col => {
+    html += `<th>${col.label || ""}</th>`;
+  });
+  html += "</tr>";
+
+  rows.forEach(row => {
     html += "<tr>";
-
-    row.forEach(cell => {
-      let value = cell.trim().toUpperCase();
-      let cls = "";
-
-      if (value === "DELAY") cls = "delay";
-
-      html += i === 0
-        ? `<th>${cell}</th>`
-        : `<td class="${cls}">${cell}</td>`;
+    row.c.forEach(cell => {
+      let value = cell && cell.v ? String(cell.v) : "";
+      let cls = value.trim().toUpperCase() === "DELAY" ? "delay" : "";
+      html += `<td class="${cls}">${value}</td>`;
     });
-
     html += "</tr>";
   });
 
   html += "</table>";
-
   document.getElementById("board").innerHTML = html;
 }
 
 loadData();
 setInterval(loadData, 2000);
 </script>
-
 </body>
 </html>
