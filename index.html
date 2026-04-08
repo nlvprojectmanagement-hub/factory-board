@@ -40,46 +40,83 @@ td, th {
 </head>
 
 <body>
+
 <div id="board">Loading...</div>
 
 <script>
 const sheetId = "1ML2ozfDmFhVqVetf0zNlrJRfnvfQZ_xrUP-gLN80XQ8";
 const gid = "0";
 
+let isLoading = false;
+let lastDataHash = "";
+
 async function loadData() {
-  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}&tqx=out:json&t=${Date.now()}`;
-  const res = await fetch(url);
-  const text = await res.text();
+  if (isLoading) return;
+  isLoading = true;
 
-  const jsonText = text.substring(47).slice(0, -2);
-  const data = JSON.parse(jsonText);
-  const rows = data.table.rows;
-  const cols = data.table.cols;
+  try {
+    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}&tqx=out:json&t=${Date.now()}`;
+    const res = await fetch(url, { cache: "no-store" });
+    const text = await res.text();
 
-  let html = "<table>";
+    const jsonText = text.substring(47).slice(0, -2);
+    const data = JSON.parse(jsonText);
 
-  html += "<tr>";
-  cols.forEach(col => {
-    html += `<th>${col.label || ""}</th>`;
-  });
-  html += "</tr>";
+    const rows = data.table.rows;
+    const cols = data.table.cols;
 
-  rows.forEach(row => {
+    // Create hash to avoid unnecessary redraws
+    const currentHash = JSON.stringify(rows);
+    if (currentHash === lastDataHash) {
+      isLoading = false;
+      return;
+    }
+    lastDataHash = currentHash;
+
+    let html = "<table>";
+
+    // Header
     html += "<tr>";
-    row.c.forEach(cell => {
-      let value = cell && cell.v ? String(cell.v) : "";
-      let cls = value.trim().toUpperCase() === "DELAY" ? "delay" : "";
-      html += `<td class="${cls}">${value}</td>`;
+    cols.forEach(col => {
+      html += `<th>${col.label || ""}</th>`;
     });
     html += "</tr>";
-  });
 
-  html += "</table>";
-  document.getElementById("board").innerHTML = html;
+    // Rows
+    rows.forEach(row => {
+      html += "<tr>";
+
+      row.c.forEach(cell => {
+        let value = cell && cell.v ? String(cell.v) : "";
+        let cls = "";
+
+        let v = value.trim().toUpperCase();
+
+        if (v === "DELAY") cls = "delay";
+
+        html += `<td class="${cls}">${value}</td>`;
+      });
+
+      html += "</tr>";
+    });
+
+    html += "</table>";
+
+    document.getElementById("board").innerHTML = html;
+
+  } catch (e) {
+    console.error("Error loading data:", e);
+  }
+
+  isLoading = false;
 }
 
+// Initial load
 loadData();
-setInterval(loadData, 2000);
+
+// Refresh every 5 seconds (stable)
+setInterval(loadData, 5000);
 </script>
+
 </body>
 </html>
