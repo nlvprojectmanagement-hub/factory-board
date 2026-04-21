@@ -3,194 +3,401 @@
 <head>
   <meta charset="UTF-8">
   <title>Factory Board</title>
-
   <style>
-    body {
-      margin: 0;
-      background: black;
-      color: white;
-      font-family: Arial, sans-serif;
+    * {
+      box-sizing: border-box;
     }
 
-    #board {
+    html, body {
+      margin: 0;
       width: 100%;
-      min-height: 100vh;
+      height: 100%;
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    body {
+      padding: 10px 12px;
+    }
+
+    .screen {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-rows: 76% 24%;
+      gap: 14px;
+    }
+
+    .top {
+      display: grid;
+      grid-template-columns: 66% 20% 14%;
+      gap: 22px;
+      min-height: 0;
+    }
+
+    .panel {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
     }
 
     table {
       width: 100%;
+      height: 100%;
       border-collapse: collapse;
       table-layout: fixed;
+      background: #000;
     }
 
     th, td {
-      border: 1px solid #888;
-      padding: 12px;
+      border: 1px solid #666;
       text-align: center;
+      vertical-align: middle;
+      padding: 8px 8px;
       color: #ff9d00;
-      font-weight: bold;
+      font-weight: 700;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
+    th {
+      font-size: 24px;
+      height: 54px;
+    }
+
+    td {
+      font-size: 22px;
+      height: 52px;
+    }
+
+    .main-table col:nth-child(1) { width: 18%; }
+    .main-table col:nth-child(2) { width: 17%; }
+    .main-table col:nth-child(3) { width: 22%; }
+    .main-table col:nth-child(4) { width: 22%; }
+    .main-table col:nth-child(5) { width: 21%; }
+
+    .ship-table col:nth-child(1) { width: 68%; }
+    .ship-table col:nth-child(2) { width: 32%; }
+
+    .inspect-table col:nth-child(1) { width: 100%; }
+
+    .bulletin-wrap {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .bulletin-title {
+      border: 1px solid #666;
+      border-bottom: none;
+      color: #ff9d00;
+      font-weight: 700;
+      font-size: 28px;
+      padding: 8px 12px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+    }
+
+    .bulletin-box {
+      flex: 1;
+      border: 1px solid #666;
+      display: grid;
+      grid-template-rows: repeat(4, 1fr);
+      min-height: 0;
+    }
+
+    .bulletin-line {
+      border-top: 1px solid #666;
+      color: #fff;
+      font-size: 24px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bulletin-line:first-child {
+      border-top: none;
+    }
+
     .delay {
-      color: white;
-      background: red;
+      color: #fff !important;
+      background: #e10600 !important;
       animation: blink 1s infinite;
     }
 
     @keyframes blink {
-      0% { background: red; color: white; }
-      50% { background: black; color: red; }
-      100% { background: red; color: white; }
+      0% { background: #e10600; color: #fff; }
+      50% { background: #000; color: #e10600; }
+      100% { background: #e10600; color: #fff; }
+    }
+
+    .muted {
+      color: #c8c8c8 !important;
     }
 
     .error {
-      padding: 20px;
       color: red;
-      font-size: 24px;
-      font-weight: bold;
+      font-size: 28px;
+      font-weight: 700;
+      padding: 20px;
     }
   </style>
 </head>
-
 <body>
-<div id="board">Loading...</div>
+  <div class="screen">
+    <div class="top">
+      <div class="panel">
+        <table class="main-table" id="mainTable">
+          <colgroup>
+            <col><col><col><col><col>
+          </colgroup>
+          <thead>
+            <tr id="mainHead"></tr>
+          </thead>
+          <tbody id="mainBody"></tbody>
+        </table>
+      </div>
 
-<script>
-const sheetId = "1ML2ozfDmFhVqVetf0zNlrJRfnvfQZ_xrUP-gLN80XQ8";
-const gid = "0";
+      <div class="panel">
+        <table class="ship-table" id="shipTable">
+          <colgroup>
+            <col><col>
+          </colgroup>
+          <thead>
+            <tr id="shipHead"></tr>
+          </thead>
+          <tbody id="shipBody"></tbody>
+        </table>
+      </div>
 
-let isLoading = false;
-let timeoutId = null;
-let lastRendered = "";
+      <div class="panel">
+        <table class="inspect-table" id="inspectTable">
+          <colgroup>
+            <col>
+          </colgroup>
+          <thead>
+            <tr id="inspectHead"></tr>
+          </thead>
+          <tbody id="inspectBody"></tbody>
+        </table>
+      </div>
+    </div>
 
-const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    <div class="bulletin-wrap">
+      <div class="bulletin-title" id="bulletinTitle">BULLETIN</div>
+      <div class="bulletin-box" id="bulletinBox"></div>
+    </div>
+  </div>
 
-function formatCell(cell) {
-  if (!cell) return "";
+  <script>
+    const sheetId = "1ML2ozfDmFhVqVetf0zNlrJRfnvfQZ_xrUP-gLN80XQ8";
+    const gid = "0";
 
-  if (cell.f) return String(cell.f);
+    let isLoading = false;
+    let timeoutId = null;
+    let lastRendered = "";
 
-  if (cell.v == null) return "";
+    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-  if (typeof cell.v === "string") return cell.v;
+    function formatCell(cell) {
+      if (!cell) return "";
 
-  if (cell.v instanceof Date) {
-    const d = cell.v;
-    return `${d.getDate()}-${monthNames[d.getMonth()]}`;
-  }
+      if (cell.f) return String(cell.f).trim();
+      if (cell.v == null) return "";
 
-  const raw = String(cell.v);
-  const match = raw.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})/);
+      if (typeof cell.v === "string") return cell.v.trim();
 
-  if (match) {
-    const month = Number(match[2]);
-    const day = Number(match[3]);
-    return `${day}-${monthNames[month]}`;
-  }
+      if (cell.v instanceof Date) {
+        return `${cell.v.getDate()}-${monthNames[cell.v.getMonth()]}`;
+      }
 
-  return raw;
-}
+      const raw = String(cell.v).trim();
+      const match = raw.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})/);
+      if (match) {
+        const month = Number(match[2]);
+        const day = Number(match[3]);
+        return `${day}-${monthNames[month]}`;
+      }
 
-function renderTable(table) {
-  const cols = table.cols || [];
-  const rows = table.rows || [];
+      return raw;
+    }
 
-  let html = "<table><tr>";
+    function cellClass(value) {
+      const v = String(value || "").trim().toUpperCase();
+      if (v === "DELAY") return "delay";
+      if (v === "N/A" || v === "-") return "muted";
+      return "";
+    }
 
-  cols.forEach(col => {
-    html += `<th>${col.label || ""}</th>`;
-  });
+    function makeCell(tag, value) {
+      const el = document.createElement(tag);
+      el.textContent = value || "";
+      const cls = cellClass(value);
+      if (cls) el.classList.add(cls);
+      return el;
+    }
 
-  html += "</tr>";
+    function rowValues(row) {
+      return (row.c || []).map(formatCell);
+    }
 
-  rows.forEach(row => {
-    html += "<tr>";
+    function safe(values, index) {
+      return values[index] || "";
+    }
 
-    (row.c || []).forEach(cell => {
-      const value = formatCell(cell);
+    function rowHasAny(values, indexes) {
+      return indexes.some(i => String(safe(values, i)).trim() !== "");
+    }
 
-      const rawValue = cell && cell.v != null
-        ? String(cell.v).trim().toUpperCase()
-        : "";
+    function renderBoard(table) {
+      const rows = table.rows || [];
+      if (!rows.length) {
+        document.body.innerHTML = '<div class="error">No sheet data found.</div>';
+        return;
+      }
 
-      const formattedValue = String(value).trim().toUpperCase();
+      const allRows = rows.map(rowValues);
 
-      const cls =
-        rawValue === "DELAY" || formattedValue === "DELAY"
-          ? "delay"
-          : "";
+      const mainIndexes = [0,1,2,3,4];
+      const shipIndexes = [6,7];
+      const inspectIndex = 9;
 
-      html += `<td class="${cls}">${value}</td>`;
-    });
+      const mainHeadVals = allRows[0] || [];
+      const mainHead = document.getElementById("mainHead");
+      const shipHead = document.getElementById("shipHead");
+      const inspectHead = document.getElementById("inspectHead");
 
-    html += "</tr>";
-  });
+      mainHead.innerHTML = "";
+      mainIndexes.forEach(i => mainHead.appendChild(makeCell("th", safe(mainHeadVals, i))));
 
-  html += "</table>";
+      shipHead.innerHTML = "";
+      shipIndexes.forEach(i => shipHead.appendChild(makeCell("th", safe(mainHeadVals, i))));
 
-  if (html !== lastRendered) {
-    document.getElementById("board").innerHTML = html;
-    lastRendered = html;
-  }
-}
+      inspectHead.innerHTML = "";
+      inspectHead.appendChild(makeCell("th", safe(mainHeadVals, inspectIndex)));
 
-window.handleSheetResponse = function(response) {
-  clearTimeout(timeoutId);
-  isLoading = false;
+      const mainBody = document.getElementById("mainBody");
+      const shipBody = document.getElementById("shipBody");
+      const inspectBody = document.getElementById("inspectBody");
 
-  if (response && response.status === "ok" && response.table) {
-    renderTable(response.table);
-    return;
-  }
+      mainBody.innerHTML = "";
+      shipBody.innerHTML = "";
+      inspectBody.innerHTML = "";
 
-  let msg = "Could not read sheet data.";
-  if (response && response.errors && response.errors.length) {
-    msg = response.errors.map(e => e.detailed_message || e.message).join(" | ");
-  } else if (response && response.status) {
-    msg = "Sheet status: " + response.status;
-  }
+      const dataRows = allRows.slice(1);
+      const bulletinStart = dataRows.findIndex(r => String(safe(r, 0)).trim().toUpperCase() === "BULLETIN");
 
-  document.getElementById("board").innerHTML =
-    `<div class="error">${msg}</div>`;
-};
+      const upperRows = bulletinStart >= 0 ? dataRows.slice(0, bulletinStart) : dataRows;
+      const bulletinRows = bulletinStart >= 0 ? dataRows.slice(bulletinStart, bulletinStart + 4) : [];
 
-function loadData() {
-  if (isLoading) return;
-  isLoading = true;
+      const visibleMainRows = upperRows.filter(r => rowHasAny(r, mainIndexes));
+      const visibleShipRows = upperRows.filter(r => rowHasAny(r, shipIndexes));
+      const visibleInspectRows = upperRows.filter(r => String(safe(r, inspectIndex)).trim() !== "");
 
-  const oldScript = document.getElementById("sheet-script");
-  if (oldScript) oldScript.remove();
+      const rowCount = Math.max(
+        visibleMainRows.length,
+        Math.max(visibleShipRows.length, visibleInspectRows.length),
+        11
+      );
 
-  timeoutId = setTimeout(() => {
-    isLoading = false;
-    document.getElementById("board").innerHTML =
-      '<div class="error">Sheet load timed out.</div>';
-  }, 10000);
+      for (let i = 0; i < rowCount; i++) {
+        const mainVals = visibleMainRows[i] || [];
+        const shipVals = visibleShipRows[i] || [];
+        const inspectVals = visibleInspectRows[i] || [];
 
-  const script = document.createElement("script");
-  script.id = "sheet-script";
+        const mainTr = document.createElement("tr");
+        mainIndexes.forEach(idx => mainTr.appendChild(makeCell("td", safe(mainVals, idx))));
+        mainBody.appendChild(mainTr);
 
-  script.src =
-    `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}` +
-    `&headers=1` +
-    `&tqx=responseHandler:handleSheetResponse;out:json&t=${Date.now()}`;
+        const shipTr = document.createElement("tr");
+        shipIndexes.forEach(idx => shipTr.appendChild(makeCell("td", safe(shipVals, idx))));
+        shipBody.appendChild(shipTr);
 
-  script.onerror = function() {
-    clearTimeout(timeoutId);
-    isLoading = false;
-    document.getElementById("board").innerHTML =
-      '<div class="error">Error loading sheet.</div>';
-  };
+        const inspectTr = document.createElement("tr");
+        inspectTr.appendChild(makeCell("td", safe(inspectVals, inspectIndex)));
+        inspectBody.appendChild(inspectTr);
+      }
 
-  document.body.appendChild(script);
-}
+      const bulletinTitle = document.getElementById("bulletinTitle");
+      const bulletinBox = document.getElementById("bulletinBox");
 
-loadData();
-setInterval(loadData, 15000);
-</script>
+      bulletinTitle.textContent = bulletinRows.length ? (safe(bulletinRows[0], 0) || "BULLETIN") : "BULLETIN";
+      bulletinBox.innerHTML = "";
 
+      for (let i = 0; i < 4; i++) {
+        const row = bulletinRows[i] || [];
+        const parts = row.slice(1).filter(v => String(v).trim() !== "");
+        const line = document.createElement("div");
+        line.className = "bulletin-line";
+        line.textContent = parts.join("   ");
+        bulletinBox.appendChild(line);
+      }
+
+      const current = document.body.innerHTML;
+      if (current !== lastRendered) {
+        lastRendered = current;
+      }
+    }
+
+    window.handleSheetResponse = function(response) {
+      clearTimeout(timeoutId);
+      isLoading = false;
+
+      if (response && response.status === "ok" && response.table) {
+        const snapshot = JSON.stringify(response.table.rows || []);
+        if (snapshot !== lastRendered) {
+          renderBoard(response.table);
+          lastRendered = snapshot;
+        }
+        return;
+      }
+
+      let msg = "Could not read sheet data.";
+      if (response && response.errors && response.errors.length) {
+        msg = response.errors.map(e => e.detailed_message || e.message).join(" | ");
+      } else if (response && response.status) {
+        msg = "Sheet status: " + response.status;
+      }
+
+      document.body.innerHTML = `<div class="error">${msg}</div>`;
+    };
+
+    function loadData() {
+      if (isLoading) return;
+      isLoading = true;
+
+      const oldScript = document.getElementById("sheet-script");
+      if (oldScript) oldScript.remove();
+
+      timeoutId = setTimeout(() => {
+        isLoading = false;
+        document.body.innerHTML = '<div class="error">Sheet load timed out.</div>';
+      }, 10000);
+
+      const script = document.createElement("script");
+      script.id = "sheet-script";
+      script.src =
+        `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}` +
+        `&headers=1&tqx=responseHandler:handleSheetResponse;out:json&t=${Date.now()}`;
+
+      script.onerror = function() {
+        clearTimeout(timeoutId);
+        isLoading = false;
+        document.body.innerHTML = '<div class="error">Error loading sheet.</div>';
+      };
+
+      document.body.appendChild(script);
+    }
+
+    loadData();
+    setInterval(loadData, 15000);
+  </script>
 </body>
 </html>
