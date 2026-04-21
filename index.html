@@ -1,413 +1,272 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Factory Board</title>
-  <style>
-    * { box-sizing: border-box; }
+<meta charset="UTF-8">
+<title>Factory Board</title>
 
-    :root {
-      --bg: #000000;
-      --grid: rgba(255,255,255,0.22);
-      --text: #f7a400;
-      --muted: #cfcfcf;
-      --header-grad: linear-gradient(180deg, #2a1b00 0%, #120c00 100%);
-      --panel-grad: linear-gradient(180deg, #0a0a0a 0%, #000000 100%);
-      --bullet-grad: linear-gradient(180deg, #201500 0%, #0a0700 100%);
-      --delay-red: #d80000;
-    }
+<style>
+*{box-sizing:border-box;}
 
-    html, body {
-      margin: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--bg);
-      color: white;
-      font-family: Arial, sans-serif;
-      overflow: hidden;
-    }
+:root{
+  --bg:#000;
+  --grid:rgba(255,255,255,0.25);
+  --text:#ff9d00;
+  --muted:#cfcfcf;
 
-    body {
-      padding: 8px;
-      background:
-        radial-gradient(circle at top left, rgba(255,166,0,0.07), transparent 30%),
-        radial-gradient(circle at top right, rgba(255,166,0,0.04), transparent 22%),
-        #000;
-    }
+  /* stronger gradients */
+  --header-grad:linear-gradient(180deg,#6b3e00 0%,#120700 100%);
+  --panel-grad:linear-gradient(180deg,#151515 0%,#000 100%);
+  --bullet-grad:linear-gradient(180deg,#5a3200 0%,#0a0300 100%);
+}
 
-    .screen {
-      width: 100%;
-      height: 100%;
-      display: grid;
-      grid-template-rows: 86% 14%;
-      gap: 12px;
-    }
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  background:var(--bg);
+  color:#fff;
+  font-family:Arial,sans-serif;
+  overflow:hidden;
+}
 
-    .top {
-      display: grid;
-      grid-template-columns: 71% 21.5% 7.5%;
-      gap: 16px;
-      min-height: 0;
-    }
+body{
+  padding:8px;
+  background:
+    radial-gradient(circle at top left, rgba(255,166,0,0.1), transparent 30%),
+    radial-gradient(circle at top right, rgba(255,166,0,0.06), transparent 25%),
+    #000;
+}
 
-    .panel {
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-      background: var(--panel-grad);
-      box-shadow: inset 0 0 0 1px rgba(255,166,0,0.08);
-    }
+.screen{
+  width:100%;
+  height:100%;
+  display:grid;
+  grid-template-rows:86% 14%;
+  gap:12px;
+}
 
-    table {
-      width: 100%;
-      height: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-      background: transparent;
-    }
+.top{
+  display:grid;
+  grid-template-columns:71% 21.5% 7.5%;
+  gap:16px;
+}
 
-    th, td {
-      border: 1px solid var(--grid);
-      text-align: center;
-      vertical-align: middle;
-      padding: 6px 6px;
-      color: var(--text);
-      font-weight: 700;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+.panel{
+  background:var(--panel-grad);
+}
 
-    th {
-      font-size: 18px;
-      height: 36px;
-      background: var(--header-grad);
-      letter-spacing: 0.3px;
-      text-shadow: 0 0 8px rgba(255,166,0,0.18);
-    }
+table{
+  width:100%;
+  height:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+}
 
-    td {
-      font-size: 18px;
-      height: 39px;
-      background: rgba(0,0,0,0.72);
-    }
+th,td{
+  border:1px solid var(--grid);
+  text-align:center;
+  padding:6px;
+  color:var(--text);
+  font-weight:700;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
 
-    .main-table col:nth-child(1) { width: 18%; }
-    .main-table col:nth-child(2) { width: 17%; }
-    .main-table col:nth-child(3) { width: 22%; }
-    .main-table col:nth-child(4) { width: 22%; }
-    .main-table col:nth-child(5) { width: 21%; }
+th{
+  font-size:18px;
+  background:var(--header-grad);
+}
 
-    .ship-table col:nth-child(1) { width: 68%; }
-    .ship-table col:nth-child(2) { width: 32%; }
+td{
+  font-size:18px;
+  background:rgba(0,0,0,0.75);
+}
 
-    .inspect-table col:nth-child(1) { width: 100%; }
+/* DELAY flashing */
+.delay{
+  color:#fff !important;
+  background:#ff0000 !important;
+  animation:blink 0.7s infinite;
+  text-shadow:0 0 12px #fff;
+}
 
-    .bulletin-wrap {
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-      background: linear-gradient(180deg, rgba(255,166,0,0.05), rgba(0,0,0,0.0));
-    }
+@keyframes blink{
+  0%{background:#ff0000;color:#fff;}
+  50%{background:#000;color:#ff0000;}
+  100%{background:#ff0000;color:#fff;}
+}
 
-    .bulletin-title {
-      border: 1px solid var(--grid);
-      border-bottom: none;
-      color: var(--text);
-      font-weight: 700;
-      font-size: 22px;
-      padding: 4px 12px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      background: var(--bullet-grad);
-      letter-spacing: 0.5px;
-      text-shadow: 0 0 8px rgba(255,166,0,0.18);
-    }
+.muted{color:var(--muted)!important;}
 
-    .bulletin-box {
-      flex: 1;
-      border: 1px solid var(--grid);
-      display: grid;
-      grid-template-rows: repeat(3, 1fr);
-      min-height: 0;
-      background: rgba(0,0,0,0.76);
-    }
+.bulletin-wrap{
+  display:flex;
+  flex-direction:column;
+}
 
-    .bulletin-line {
-      border-top: 1px solid var(--grid);
-      color: #fff;
-      font-size: 20px;
-      padding: 6px 12px;
-      display: flex;
-      align-items: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+.bulletin-title{
+  border:1px solid var(--grid);
+  border-bottom:none;
+  background:var(--bullet-grad);
+  color:var(--text);
+  font-size:22px;
+  padding:6px 12px;
+}
 
-    .bulletin-line:first-child {
-      border-top: none;
-    }
+.bulletin-box{
+  border:1px solid var(--grid);
+  display:grid;
+  grid-template-rows:repeat(3,1fr);
+}
 
-    .delay {
-      color: #fff !important;
-      background: var(--delay-red) !important;
-      animation: blink 1s infinite;
-    }
+.bulletin-line{
+  border-top:1px solid var(--grid);
+  padding:6px 12px;
+  font-size:20px;
+}
 
-    @keyframes blink {
-      0% { background: var(--delay-red); color: #fff; }
-      50% { background: #150000; color: #ff4d4d; }
-      100% { background: var(--delay-red); color: #fff; }
-    }
-
-    .muted {
-      color: var(--muted) !important;
-    }
-
-    .error {
-      color: red;
-      font-size: 26px;
-      font-weight: 700;
-      padding: 20px;
-    }
-  </style>
+.error{
+  color:red;
+  font-size:24px;
+  padding:20px;
+}
+</style>
 </head>
+
 <body>
-  <div class="screen">
-    <div class="top">
-      <div class="panel">
-        <table class="main-table">
-          <colgroup><col><col><col><col><col></colgroup>
-          <thead><tr id="mainHead"></tr></thead>
-          <tbody id="mainBody"></tbody>
-        </table>
-      </div>
+<div class="screen">
 
-      <div class="panel">
-        <table class="ship-table">
-          <colgroup><col><col></colgroup>
-          <thead><tr id="shipHead"></tr></thead>
-          <tbody id="shipBody"></tbody>
-        </table>
-      </div>
+<div class="top">
 
-      <div class="panel">
-        <table class="inspect-table">
-          <colgroup><col></colgroup>
-          <thead><tr id="inspectHead"></tr></thead>
-          <tbody id="inspectBody"></tbody>
-        </table>
-      </div>
-    </div>
+<div class="panel">
+<table>
+<thead><tr id="mainHead"></tr></thead>
+<tbody id="mainBody"></tbody>
+</table>
+</div>
 
-    <div class="bulletin-wrap">
-      <div class="bulletin-title" id="bulletinTitle">BULLETIN</div>
-      <div class="bulletin-box" id="bulletinBox"></div>
-    </div>
-  </div>
+<div class="panel">
+<table>
+<thead><tr id="shipHead"></tr></thead>
+<tbody id="shipBody"></tbody>
+</table>
+</div>
 
-  <script>
-    const sheetId = "1ML2ozfDmFhVqVetf0zNlrJRfnvfQZ_xrUP-gLN80XQ8";
-    const gid = "0";
+<div class="panel">
+<table>
+<thead><tr id="inspectHead"></tr></thead>
+<tbody id="inspectBody"></tbody>
+</table>
+</div>
 
-    let isLoading = false;
-    let timeoutId = null;
-    let lastSnapshot = "";
+</div>
 
-    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+<div class="bulletin-wrap">
+<div class="bulletin-title">BULLETIN</div>
+<div class="bulletin-box" id="bulletinBox"></div>
+</div>
 
-    function formatDateString(raw) {
-      const match = raw.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})/);
-      if (!match) return raw;
-      const month = Number(match[2]);
-      const day = Number(match[3]);
-      return `${day}-${monthNames[month]}`;
-    }
+</div>
 
-    function formatCell(cell) {
-      if (!cell) return "";
+<script>
+const sheetId="1ML2ozfDmFhVqVetf0zNlrJRfnvfQZ_xrUP-gLN80XQ8";
+const monthNames=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-      // Prefer formatted value unless it is still a raw Date(...) string
-      if (cell.f) {
-        const f = String(cell.f).trim();
-        if (!/^Date\(/i.test(f)) return f;
-      }
+function format(cell){
+  if(!cell||cell.v==null)return "";
 
-      if (cell.v == null) return "";
+  if(typeof cell.v==="string") return cell.v.trim();
 
-      if (cell.v instanceof Date) {
-        return `${cell.v.getDate()}-${monthNames[cell.v.getMonth()]}`;
-      }
+  if(cell.v instanceof Date){
+    return cell.v.getDate()+"-"+monthNames[cell.v.getMonth()];
+  }
 
-      const raw = String(cell.v).trim();
+  const raw=String(cell.v);
+  const m=raw.match(/^Date\((\d+),(\d+),(\d+)/);
+  if(m){
+    return m[3]+"-"+monthNames[+m[2]];
+  }
 
-      if (/^Date\(/i.test(raw)) {
-        return formatDateString(raw);
-      }
+  return raw;
+}
 
-      if (typeof cell.v === "string") {
-        return cell.v.trim();
-      }
+function isDelay(cell,val){
+  const raw=cell&&cell.v?String(cell.v).toUpperCase():"";
+  const shown=String(val).toUpperCase();
+  return raw.includes("DELAY")||shown.includes("DELAY");
+}
 
-      return raw;
-    }
+function build(td,cell){
+  const val=format(cell);
+  const el=document.createElement(td);
+  el.textContent=val;
 
-    function rawCell(cell) {
-      if (!cell || cell.v == null) return "";
-      return String(cell.v).trim();
-    }
+  if(isDelay(cell,val)) el.classList.add("delay");
+  if(val==="N/A"||val==="-") el.classList.add("muted");
 
-    function getClass(cell, shownValue) {
-      const raw = rawCell(cell).toUpperCase();
-      const shown = String(shownValue || "").trim().toUpperCase();
+  return el;
+}
 
-      if (raw === "DELAY" || shown === "DELAY") return "delay";
-      if (shown === "N/A" || shown === "-") return "muted";
-      return "";
-    }
+function render(t){
+  const rows=t.rows||[];
+  if(!rows.length)return;
 
-    function buildCell(tag, cell) {
-      const shownValue = formatCell(cell);
-      const cls = getClass(cell, shownValue);
-      const el = document.createElement(tag);
-      el.textContent = shownValue;
-      if (cls) el.classList.add(cls);
-      return el;
-    }
+  const head=rows[0].c||[];
+  const data=rows.slice(1);
 
-    function val(row, idx) {
-      return (row && row[idx]) ? row[idx] : null;
-    }
+  const mainHead=document.getElementById("mainHead");
+  const shipHead=document.getElementById("shipHead");
+  const inspectHead=document.getElementById("inspectHead");
 
-    function renderBoard(table) {
-      const rows = table.rows || [];
-      if (!rows.length) {
-        document.body.innerHTML = '<div class="error">No sheet data found.</div>';
-        return;
-      }
+  mainHead.innerHTML="";
+  shipHead.innerHTML="";
+  inspectHead.innerHTML="";
 
-      const snapshot = JSON.stringify(rows);
-      if (snapshot === lastSnapshot) return;
-      lastSnapshot = snapshot;
+  [0,1,2,3,4].forEach(i=>mainHead.appendChild(build("th",head[i])));
+  [6,7].forEach(i=>shipHead.appendChild(build("th",head[i])));
+  inspectHead.appendChild(build("th",head[9]));
 
-      // A:E main, G:H shipments/date, J inspection
-      const headerRow = rows[0].c || [];
-      const dataRows = rows.slice(1);
+  const mainBody=document.getElementById("mainBody");
+  const shipBody=document.getElementById("shipBody");
+  const inspectBody=document.getElementById("inspectBody");
 
-      const bulletinIndex = dataRows.findIndex(r => {
-        const c = r.c || [];
-        const aVal = formatCell(c[0]).trim().toUpperCase();
-        return aVal === "BULLETIN";
-      });
+  mainBody.innerHTML="";
+  shipBody.innerHTML="";
+  inspectBody.innerHTML="";
 
-      const upperRows = bulletinIndex >= 0 ? dataRows.slice(0, bulletinIndex) : dataRows;
-      const bulletinRows = bulletinIndex >= 0 ? dataRows.slice(bulletinIndex + 1, bulletinIndex + 4) : [];
+  const count=Math.max(data.length,10);
 
-      const mainHead = document.getElementById("mainHead");
-      const shipHead = document.getElementById("shipHead");
-      const inspectHead = document.getElementById("inspectHead");
-      const mainBody = document.getElementById("mainBody");
-      const shipBody = document.getElementById("shipBody");
-      const inspectBody = document.getElementById("inspectBody");
+  for(let i=0;i<count;i++){
+    const r=data[i]?data[i].c||[]:[];
 
-      mainHead.innerHTML = "";
-      shipHead.innerHTML = "";
-      inspectHead.innerHTML = "";
-      mainBody.innerHTML = "";
-      shipBody.innerHTML = "";
-      inspectBody.innerHTML = "";
+    const tr1=document.createElement("tr");
+    [0,1,2,3,4].forEach(j=>tr1.appendChild(build("td",r[j])));
+    mainBody.appendChild(tr1);
 
-      [0,1,2,3,4].forEach(i => mainHead.appendChild(buildCell("th", val(headerRow, i))));
-      [6,7].forEach(i => shipHead.appendChild(buildCell("th", val(headerRow, i))));
-      inspectHead.appendChild(buildCell("th", val(headerRow, 9)));
+    const tr2=document.createElement("tr");
+    [6,7].forEach(j=>tr2.appendChild(build("td",r[j])));
+    shipBody.appendChild(tr2);
 
-      const rowCount = Math.max(upperRows.length, 11);
+    const tr3=document.createElement("tr");
+    tr3.appendChild(build("td",r[9]));
+    inspectBody.appendChild(tr3);
+  }
+}
 
-      for (let r = 0; r < rowCount; r++) {
-        const row = upperRows[r] ? (upperRows[r].c || []) : [];
+window.handleSheetResponse=function(res){
+  if(res&&res.status==="ok") render(res.table);
+  else document.body.innerHTML='<div class="error">Sheet error</div>';
+};
 
-        const trMain = document.createElement("tr");
-        [0,1,2,3,4].forEach(i => trMain.appendChild(buildCell("td", val(row, i))));
-        mainBody.appendChild(trMain);
+function load(){
+  const s=document.createElement("script");
+  s.src=`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=responseHandler:handleSheetResponse`;
+  document.body.appendChild(s);
+}
 
-        const trShip = document.createElement("tr");
-        [6,7].forEach(i => trShip.appendChild(buildCell("td", val(row, i))));
-        shipBody.appendChild(trShip);
+load();
+setInterval(load,15000);
+</script>
 
-        const trInspect = document.createElement("tr");
-        trInspect.appendChild(buildCell("td", val(row, 9)));
-        inspectBody.appendChild(trInspect);
-      }
-
-      document.getElementById("bulletinTitle").textContent = "BULLETIN";
-      const bulletinBox = document.getElementById("bulletinBox");
-      bulletinBox.innerHTML = "";
-
-      for (let i = 0; i < 3; i++) {
-        const row = bulletinRows[i] ? (bulletinRows[i].c || []) : [];
-        const parts = [];
-        row.forEach(cell => {
-          const text = formatCell(cell);
-          if (String(text).trim() !== "") parts.push(text);
-        });
-
-        const line = document.createElement("div");
-        line.className = "bulletin-line";
-        line.textContent = parts.join("   ");
-        bulletinBox.appendChild(line);
-      }
-    }
-
-    window.handleSheetResponse = function(response) {
-      clearTimeout(timeoutId);
-      isLoading = false;
-
-      if (response && response.status === "ok" && response.table) {
-        renderBoard(response.table);
-        return;
-      }
-
-      let msg = "Could not read sheet data.";
-      if (response && response.errors && response.errors.length) {
-        msg = response.errors.map(e => e.detailed_message || e.message).join(" | ");
-      } else if (response && response.status) {
-        msg = "Sheet status: " + response.status;
-      }
-
-      document.body.innerHTML = `<div class="error">${msg}</div>`;
-    };
-
-    function loadData() {
-      if (isLoading) return;
-      isLoading = true;
-
-      const oldScript = document.getElementById("sheet-script");
-      if (oldScript) oldScript.remove();
-
-      timeoutId = setTimeout(() => {
-        isLoading = false;
-        document.body.innerHTML = '<div class="error">Sheet load timed out.</div>';
-      }, 10000);
-
-      const script = document.createElement("script");
-      script.id = "sheet-script";
-      script.src =
-        `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}` +
-        `&headers=0&tqx=responseHandler:handleSheetResponse;out:json&t=${Date.now()}`;
-
-      script.onerror = function() {
-        clearTimeout(timeoutId);
-        isLoading = false;
-        document.body.innerHTML = '<div class="error">Error loading sheet.</div>';
-      };
-
-      document.body.appendChild(script);
-    }
-
-    loadData();
-    setInterval(loadData, 15000);
-  </script>
 </body>
 </html>
