@@ -6,18 +6,33 @@
   <style>
     * { box-sizing: border-box; }
 
+    :root {
+      --bg: #000000;
+      --grid: rgba(255,255,255,0.22);
+      --text: #f7a400;
+      --muted: #cfcfcf;
+      --header-grad: linear-gradient(180deg, #2a1b00 0%, #120c00 100%);
+      --panel-grad: linear-gradient(180deg, #0a0a0a 0%, #000000 100%);
+      --bullet-grad: linear-gradient(180deg, #201500 0%, #0a0700 100%);
+      --delay-red: #d80000;
+    }
+
     html, body {
       margin: 0;
       width: 100%;
       height: 100%;
-      background: #000;
-      color: #fff;
+      background: var(--bg);
+      color: white;
       font-family: Arial, sans-serif;
       overflow: hidden;
     }
 
     body {
-      padding: 6px;
+      padding: 8px;
+      background:
+        radial-gradient(circle at top left, rgba(255,166,0,0.07), transparent 30%),
+        radial-gradient(circle at top right, rgba(255,166,0,0.04), transparent 22%),
+        #000;
     }
 
     .screen {
@@ -39,6 +54,8 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
+      background: var(--panel-grad);
+      box-shadow: inset 0 0 0 1px rgba(255,166,0,0.08);
     }
 
     table {
@@ -46,15 +63,15 @@
       height: 100%;
       border-collapse: collapse;
       table-layout: fixed;
-      background: #000;
+      background: transparent;
     }
 
     th, td {
-      border: 1px solid #5a5a5a;
+      border: 1px solid var(--grid);
       text-align: center;
       vertical-align: middle;
       padding: 6px 6px;
-      color: #ff9d00;
+      color: var(--text);
       font-weight: 700;
       white-space: nowrap;
       overflow: hidden;
@@ -63,12 +80,16 @@
 
     th {
       font-size: 18px;
-      height: 34px;
+      height: 36px;
+      background: var(--header-grad);
+      letter-spacing: 0.3px;
+      text-shadow: 0 0 8px rgba(255,166,0,0.18);
     }
 
     td {
       font-size: 18px;
-      height: 38px;
+      height: 39px;
+      background: rgba(0,0,0,0.72);
     }
 
     .main-table col:nth-child(1) { width: 18%; }
@@ -86,33 +107,38 @@
       display: flex;
       flex-direction: column;
       min-height: 0;
+      background: linear-gradient(180deg, rgba(255,166,0,0.05), rgba(0,0,0,0.0));
     }
 
     .bulletin-title {
-      border: 1px solid #5a5a5a;
+      border: 1px solid var(--grid);
       border-bottom: none;
-      color: #ff9d00;
+      color: var(--text);
       font-weight: 700;
       font-size: 22px;
-      padding: 4px 10px;
+      padding: 4px 12px;
       height: 40px;
       display: flex;
       align-items: center;
+      background: var(--bullet-grad);
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 8px rgba(255,166,0,0.18);
     }
 
     .bulletin-box {
       flex: 1;
-      border: 1px solid #5a5a5a;
+      border: 1px solid var(--grid);
       display: grid;
       grid-template-rows: repeat(3, 1fr);
       min-height: 0;
+      background: rgba(0,0,0,0.76);
     }
 
     .bulletin-line {
-      border-top: 1px solid #5a5a5a;
+      border-top: 1px solid var(--grid);
       color: #fff;
       font-size: 20px;
-      padding: 6px 10px;
+      padding: 6px 12px;
       display: flex;
       align-items: center;
       white-space: nowrap;
@@ -126,18 +152,18 @@
 
     .delay {
       color: #fff !important;
-      background: #e10600 !important;
+      background: var(--delay-red) !important;
       animation: blink 1s infinite;
     }
 
     @keyframes blink {
-      0% { background: #e10600; color: #fff; }
-      50% { background: #000; color: #e10600; }
-      100% { background: #e10600; color: #fff; }
+      0% { background: var(--delay-red); color: #fff; }
+      50% { background: #150000; color: #ff4d4d; }
+      100% { background: var(--delay-red); color: #fff; }
     }
 
     .muted {
-      color: #cfcfcf !important;
+      color: var(--muted) !important;
     }
 
     .error {
@@ -192,34 +218,44 @@
 
     const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
+    function formatDateString(raw) {
+      const match = raw.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})/);
+      if (!match) return raw;
+      const month = Number(match[2]);
+      const day = Number(match[3]);
+      return `${day}-${monthNames[month]}`;
+    }
+
     function formatCell(cell) {
       if (!cell) return "";
 
-      if (typeof cell.v === "string") return cell.v.trim();
-
-      if (cell.f && /^(\d{1,2})-([A-Za-z]{3})$/.test(String(cell.f).trim())) {
-        return String(cell.f).trim();
+      // Prefer formatted value unless it is still a raw Date(...) string
+      if (cell.f) {
+        const f = String(cell.f).trim();
+        if (!/^Date\(/i.test(f)) return f;
       }
+
+      if (cell.v == null) return "";
 
       if (cell.v instanceof Date) {
         return `${cell.v.getDate()}-${monthNames[cell.v.getMonth()]}`;
       }
 
-      const raw = cell.v != null ? String(cell.v).trim() : "";
-      const match = raw.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})/);
-      if (match) {
-        const month = Number(match[2]);
-        const day = Number(match[3]);
-        return `${day}-${monthNames[month]}`;
+      const raw = String(cell.v).trim();
+
+      if (/^Date\(/i.test(raw)) {
+        return formatDateString(raw);
       }
 
-      if (cell.f) return String(cell.f).trim();
+      if (typeof cell.v === "string") {
+        return cell.v.trim();
+      }
+
       return raw;
     }
 
     function rawCell(cell) {
-      if (!cell) return "";
-      if (cell.v == null) return "";
+      if (!cell || cell.v == null) return "";
       return String(cell.v).trim();
     }
 
@@ -256,11 +292,7 @@
       if (snapshot === lastSnapshot) return;
       lastSnapshot = snapshot;
 
-      // Exact sheet columns after you deleted the extra top rows/left column:
-      // A:E = main board
-      // G:H = incoming/date
-      // J   = inspection
-
+      // A:E main, G:H shipments/date, J inspection
       const headerRow = rows[0].c || [];
       const dataRows = rows.slice(1);
 
@@ -291,7 +323,6 @@
       [6,7].forEach(i => shipHead.appendChild(buildCell("th", val(headerRow, i))));
       inspectHead.appendChild(buildCell("th", val(headerRow, 9)));
 
-      // Preserve exact row alignment across panels
       const rowCount = Math.max(upperRows.length, 11);
 
       for (let r = 0; r < rowCount; r++) {
