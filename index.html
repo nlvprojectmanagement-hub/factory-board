@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <title>Factory Board</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html, body {
       margin: 0;
@@ -19,21 +17,21 @@
     }
 
     body {
-      padding: 10px 12px;
+      padding: 6px;
     }
 
     .screen {
       width: 100%;
       height: 100%;
       display: grid;
-      grid-template-rows: 76% 24%;
-      gap: 14px;
+      grid-template-rows: 86% 14%;
+      gap: 12px;
     }
 
     .top {
       display: grid;
-      grid-template-columns: 66% 20% 14%;
-      gap: 22px;
+      grid-template-columns: 71% 21.5% 7.5%;
+      gap: 16px;
       min-height: 0;
     }
 
@@ -52,10 +50,10 @@
     }
 
     th, td {
-      border: 1px solid #666;
+      border: 1px solid #5a5a5a;
       text-align: center;
       vertical-align: middle;
-      padding: 8px 8px;
+      padding: 6px 6px;
       color: #ff9d00;
       font-weight: 700;
       white-space: nowrap;
@@ -64,13 +62,13 @@
     }
 
     th {
-      font-size: 24px;
-      height: 54px;
+      font-size: 18px;
+      height: 34px;
     }
 
     td {
-      font-size: 22px;
-      height: 52px;
+      font-size: 18px;
+      height: 38px;
     }
 
     .main-table col:nth-child(1) { width: 18%; }
@@ -91,30 +89,30 @@
     }
 
     .bulletin-title {
-      border: 1px solid #666;
+      border: 1px solid #5a5a5a;
       border-bottom: none;
       color: #ff9d00;
       font-weight: 700;
-      font-size: 28px;
-      padding: 8px 12px;
-      height: 48px;
+      font-size: 22px;
+      padding: 4px 10px;
+      height: 40px;
       display: flex;
       align-items: center;
     }
 
     .bulletin-box {
       flex: 1;
-      border: 1px solid #666;
+      border: 1px solid #5a5a5a;
       display: grid;
-      grid-template-rows: repeat(4, 1fr);
+      grid-template-rows: repeat(3, 1fr);
       min-height: 0;
     }
 
     .bulletin-line {
-      border-top: 1px solid #666;
+      border-top: 1px solid #5a5a5a;
       color: #fff;
-      font-size: 24px;
-      padding: 8px 12px;
+      font-size: 20px;
+      padding: 6px 10px;
       display: flex;
       align-items: center;
       white-space: nowrap;
@@ -139,12 +137,12 @@
     }
 
     .muted {
-      color: #c8c8c8 !important;
+      color: #cfcfcf !important;
     }
 
     .error {
       color: red;
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 700;
       padding: 20px;
     }
@@ -154,37 +152,25 @@
   <div class="screen">
     <div class="top">
       <div class="panel">
-        <table class="main-table" id="mainTable">
-          <colgroup>
-            <col><col><col><col><col>
-          </colgroup>
-          <thead>
-            <tr id="mainHead"></tr>
-          </thead>
+        <table class="main-table">
+          <colgroup><col><col><col><col><col></colgroup>
+          <thead><tr id="mainHead"></tr></thead>
           <tbody id="mainBody"></tbody>
         </table>
       </div>
 
       <div class="panel">
-        <table class="ship-table" id="shipTable">
-          <colgroup>
-            <col><col>
-          </colgroup>
-          <thead>
-            <tr id="shipHead"></tr>
-          </thead>
+        <table class="ship-table">
+          <colgroup><col><col></colgroup>
+          <thead><tr id="shipHead"></tr></thead>
           <tbody id="shipBody"></tbody>
         </table>
       </div>
 
       <div class="panel">
-        <table class="inspect-table" id="inspectTable">
-          <colgroup>
-            <col>
-          </colgroup>
-          <thead>
-            <tr id="inspectHead"></tr>
-          </thead>
+        <table class="inspect-table">
+          <colgroup><col></colgroup>
+          <thead><tr id="inspectHead"></tr></thead>
           <tbody id="inspectBody"></tbody>
         </table>
       </div>
@@ -202,23 +188,24 @@
 
     let isLoading = false;
     let timeoutId = null;
-    let lastRendered = "";
+    let lastSnapshot = "";
 
     const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
     function formatCell(cell) {
       if (!cell) return "";
 
-      if (cell.f) return String(cell.f).trim();
-      if (cell.v == null) return "";
-
       if (typeof cell.v === "string") return cell.v.trim();
+
+      if (cell.f && /^(\d{1,2})-([A-Za-z]{3})$/.test(String(cell.f).trim())) {
+        return String(cell.f).trim();
+      }
 
       if (cell.v instanceof Date) {
         return `${cell.v.getDate()}-${monthNames[cell.v.getMonth()]}`;
       }
 
-      const raw = String(cell.v).trim();
+      const raw = cell.v != null ? String(cell.v).trim() : "";
       const match = raw.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})/);
       if (match) {
         const month = Number(match[2]);
@@ -226,34 +213,36 @@
         return `${day}-${monthNames[month]}`;
       }
 
+      if (cell.f) return String(cell.f).trim();
       return raw;
     }
 
-    function cellClass(value) {
-      const v = String(value || "").trim().toUpperCase();
-      if (v === "DELAY") return "delay";
-      if (v === "N/A" || v === "-") return "muted";
+    function rawCell(cell) {
+      if (!cell) return "";
+      if (cell.v == null) return "";
+      return String(cell.v).trim();
+    }
+
+    function getClass(cell, shownValue) {
+      const raw = rawCell(cell).toUpperCase();
+      const shown = String(shownValue || "").trim().toUpperCase();
+
+      if (raw === "DELAY" || shown === "DELAY") return "delay";
+      if (shown === "N/A" || shown === "-") return "muted";
       return "";
     }
 
-    function makeCell(tag, value) {
+    function buildCell(tag, cell) {
+      const shownValue = formatCell(cell);
+      const cls = getClass(cell, shownValue);
       const el = document.createElement(tag);
-      el.textContent = value || "";
-      const cls = cellClass(value);
+      el.textContent = shownValue;
       if (cls) el.classList.add(cls);
       return el;
     }
 
-    function rowValues(row) {
-      return (row.c || []).map(formatCell);
-    }
-
-    function safe(values, index) {
-      return values[index] || "";
-    }
-
-    function rowHasAny(values, indexes) {
-      return indexes.some(i => String(safe(values, i)).trim() !== "");
+    function val(row, idx) {
+      return (row && row[idx]) ? row[idx] : null;
     }
 
     function renderBoard(table) {
@@ -263,86 +252,80 @@
         return;
       }
 
-      const allRows = rows.map(rowValues);
+      const snapshot = JSON.stringify(rows);
+      if (snapshot === lastSnapshot) return;
+      lastSnapshot = snapshot;
 
-      const mainIndexes = [0,1,2,3,4];
-      const shipIndexes = [6,7];
-      const inspectIndex = 9;
+      // Exact sheet columns after you deleted the extra top rows/left column:
+      // A:E = main board
+      // G:H = incoming/date
+      // J   = inspection
 
-      const mainHeadVals = allRows[0] || [];
+      const headerRow = rows[0].c || [];
+      const dataRows = rows.slice(1);
+
+      const bulletinIndex = dataRows.findIndex(r => {
+        const c = r.c || [];
+        const aVal = formatCell(c[0]).trim().toUpperCase();
+        return aVal === "BULLETIN";
+      });
+
+      const upperRows = bulletinIndex >= 0 ? dataRows.slice(0, bulletinIndex) : dataRows;
+      const bulletinRows = bulletinIndex >= 0 ? dataRows.slice(bulletinIndex + 1, bulletinIndex + 4) : [];
+
       const mainHead = document.getElementById("mainHead");
       const shipHead = document.getElementById("shipHead");
       const inspectHead = document.getElementById("inspectHead");
-
-      mainHead.innerHTML = "";
-      mainIndexes.forEach(i => mainHead.appendChild(makeCell("th", safe(mainHeadVals, i))));
-
-      shipHead.innerHTML = "";
-      shipIndexes.forEach(i => shipHead.appendChild(makeCell("th", safe(mainHeadVals, i))));
-
-      inspectHead.innerHTML = "";
-      inspectHead.appendChild(makeCell("th", safe(mainHeadVals, inspectIndex)));
-
       const mainBody = document.getElementById("mainBody");
       const shipBody = document.getElementById("shipBody");
       const inspectBody = document.getElementById("inspectBody");
 
+      mainHead.innerHTML = "";
+      shipHead.innerHTML = "";
+      inspectHead.innerHTML = "";
       mainBody.innerHTML = "";
       shipBody.innerHTML = "";
       inspectBody.innerHTML = "";
 
-      const dataRows = allRows.slice(1);
-      const bulletinStart = dataRows.findIndex(r => String(safe(r, 0)).trim().toUpperCase() === "BULLETIN");
+      [0,1,2,3,4].forEach(i => mainHead.appendChild(buildCell("th", val(headerRow, i))));
+      [6,7].forEach(i => shipHead.appendChild(buildCell("th", val(headerRow, i))));
+      inspectHead.appendChild(buildCell("th", val(headerRow, 9)));
 
-      const upperRows = bulletinStart >= 0 ? dataRows.slice(0, bulletinStart) : dataRows;
-      const bulletinRows = bulletinStart >= 0 ? dataRows.slice(bulletinStart, bulletinStart + 4) : [];
+      // Preserve exact row alignment across panels
+      const rowCount = Math.max(upperRows.length, 11);
 
-      const visibleMainRows = upperRows.filter(r => rowHasAny(r, mainIndexes));
-      const visibleShipRows = upperRows.filter(r => rowHasAny(r, shipIndexes));
-      const visibleInspectRows = upperRows.filter(r => String(safe(r, inspectIndex)).trim() !== "");
+      for (let r = 0; r < rowCount; r++) {
+        const row = upperRows[r] ? (upperRows[r].c || []) : [];
 
-      const rowCount = Math.max(
-        visibleMainRows.length,
-        Math.max(visibleShipRows.length, visibleInspectRows.length),
-        11
-      );
+        const trMain = document.createElement("tr");
+        [0,1,2,3,4].forEach(i => trMain.appendChild(buildCell("td", val(row, i))));
+        mainBody.appendChild(trMain);
 
-      for (let i = 0; i < rowCount; i++) {
-        const mainVals = visibleMainRows[i] || [];
-        const shipVals = visibleShipRows[i] || [];
-        const inspectVals = visibleInspectRows[i] || [];
+        const trShip = document.createElement("tr");
+        [6,7].forEach(i => trShip.appendChild(buildCell("td", val(row, i))));
+        shipBody.appendChild(trShip);
 
-        const mainTr = document.createElement("tr");
-        mainIndexes.forEach(idx => mainTr.appendChild(makeCell("td", safe(mainVals, idx))));
-        mainBody.appendChild(mainTr);
-
-        const shipTr = document.createElement("tr");
-        shipIndexes.forEach(idx => shipTr.appendChild(makeCell("td", safe(shipVals, idx))));
-        shipBody.appendChild(shipTr);
-
-        const inspectTr = document.createElement("tr");
-        inspectTr.appendChild(makeCell("td", safe(inspectVals, inspectIndex)));
-        inspectBody.appendChild(inspectTr);
+        const trInspect = document.createElement("tr");
+        trInspect.appendChild(buildCell("td", val(row, 9)));
+        inspectBody.appendChild(trInspect);
       }
 
-      const bulletinTitle = document.getElementById("bulletinTitle");
+      document.getElementById("bulletinTitle").textContent = "BULLETIN";
       const bulletinBox = document.getElementById("bulletinBox");
-
-      bulletinTitle.textContent = bulletinRows.length ? (safe(bulletinRows[0], 0) || "BULLETIN") : "BULLETIN";
       bulletinBox.innerHTML = "";
 
-      for (let i = 0; i < 4; i++) {
-        const row = bulletinRows[i] || [];
-        const parts = row.slice(1).filter(v => String(v).trim() !== "");
+      for (let i = 0; i < 3; i++) {
+        const row = bulletinRows[i] ? (bulletinRows[i].c || []) : [];
+        const parts = [];
+        row.forEach(cell => {
+          const text = formatCell(cell);
+          if (String(text).trim() !== "") parts.push(text);
+        });
+
         const line = document.createElement("div");
         line.className = "bulletin-line";
         line.textContent = parts.join("   ");
         bulletinBox.appendChild(line);
-      }
-
-      const current = document.body.innerHTML;
-      if (current !== lastRendered) {
-        lastRendered = current;
       }
     }
 
@@ -351,11 +334,7 @@
       isLoading = false;
 
       if (response && response.status === "ok" && response.table) {
-        const snapshot = JSON.stringify(response.table.rows || []);
-        if (snapshot !== lastRendered) {
-          renderBoard(response.table);
-          lastRendered = snapshot;
-        }
+        renderBoard(response.table);
         return;
       }
 
@@ -385,7 +364,7 @@
       script.id = "sheet-script";
       script.src =
         `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}` +
-        `&headers=1&tqx=responseHandler:handleSheetResponse;out:json&t=${Date.now()}`;
+        `&headers=0&tqx=responseHandler:handleSheetResponse;out:json&t=${Date.now()}`;
 
       script.onerror = function() {
         clearTimeout(timeoutId);
