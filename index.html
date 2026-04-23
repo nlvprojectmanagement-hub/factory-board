@@ -28,7 +28,7 @@ html, body {
 }
 
 body {
-  padding: 8px;
+  padding: 6px;
   background:
     radial-gradient(circle at top left, rgba(255,166,0,0.10), transparent 30%),
     radial-gradient(circle at top right, rgba(255,166,0,0.06), transparent 25%),
@@ -39,18 +39,20 @@ body {
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-rows: 90% 10%;
+  grid-template-rows: 91% 9%;
   gap: 6px;
 }
 
 .top {
   display: grid;
-  grid-template-columns: 71% 21.5% 7.5%;
-  gap: 16px;
+  grid-template-columns: 69% 22% 9%;
+  gap: 10px;
+  min-height: 0;
 }
 
 .panel {
   background: var(--panel-grad);
+  min-height: 0;
 }
 
 table {
@@ -58,7 +60,6 @@ table {
   height: 100%;
   border-collapse: collapse;
   table-layout: fixed;
-  border-spacing: 0;
 }
 
 th, td {
@@ -66,44 +67,68 @@ th, td {
   text-align: center;
   color: var(--text);
   font-weight: 700;
+  vertical-align: middle;
 }
 
 th {
-  font-size: 16px;
+  font-size: 14px;
+  line-height: 1.05;
   background: var(--header-grad);
-  height: 28px;
-  padding: 2px 4px;
-  white-space: nowrap;
+  min-height: 32px;
+  height: 32px;
+  padding: 2px 3px;
+  white-space: normal;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: clip;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 td {
-  font-size: 20px;
+  font-size: 18px;
   background: rgba(0,0,0,0.75);
-  height: 30px;
+  height: 28px;
   padding: 0;
 }
 
 .cell-inner {
   width: 100%;
   height: 100%;
-  min-height: 30px;
+  min-height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 6px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  padding: 2px 4px;
   color: inherit;
   background: transparent;
-  font-size: 20px;
+  font-size: 18px;
+  line-height: 1.05;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: clip;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  text-align: center;
 }
+
+/* main board column widths */
+.main-table col:nth-child(1) { width: 18%; }
+.main-table col:nth-child(2) { width: 16%; }
+.main-table col:nth-child(3) { width: 22%; }
+.main-table col:nth-child(4) { width: 20%; }
+.main-table col:nth-child(5) { width: 24%; }
+
+/* incoming/date */
+.ship-table col:nth-child(1) { width: 66%; }
+.ship-table col:nth-child(2) { width: 34%; }
+
+/* inspection */
+.inspect-table col:nth-child(1) { width: 100%; }
 
 .bulletin-wrap {
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .bulletin-title {
@@ -111,9 +136,9 @@ td {
   border-bottom: none;
   background: var(--bullet-grad);
   color: var(--text);
-  font-size: 18px;
-  padding: 4px 10px;
-  height: 28px;
+  font-size: 17px;
+  padding: 3px 10px;
+  height: 26px;
   display: flex;
   align-items: center;
   font-weight: 700;
@@ -128,14 +153,16 @@ td {
 
 .bulletin-line {
   border-top: 1px solid var(--grid);
-  padding: 4px 10px;
-  font-size: 16px;
+  padding: 3px 8px;
+  font-size: 14px;
   color: #fff;
   display: flex;
   align-items: center;
-  white-space: nowrap;
+  white-space: normal;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: clip;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .bulletin-line:first-child {
@@ -148,7 +175,7 @@ td {
 }
 
 .delay-fill {
-  width: calc(100% - 6px);
+  width: calc(100% - 4px);
   height: calc(100% - 4px);
   display: flex;
   align-items: center;
@@ -158,6 +185,8 @@ td {
   font-weight: 800;
   animation: flashDelay 0.8s linear infinite;
   text-shadow: 0 0 10px #fff;
+  line-height: 1;
+  text-align: center;
 }
 
 .ontime-cell {
@@ -195,21 +224,24 @@ td {
 <div class="top">
 
 <div class="panel">
-<table>
+<table class="main-table">
+<colgroup><col><col><col><col><col></colgroup>
 <thead><tr id="mainHead"></tr></thead>
 <tbody id="mainBody"></tbody>
 </table>
 </div>
 
 <div class="panel">
-<table>
+<table class="ship-table">
+<colgroup><col><col></colgroup>
 <thead><tr id="shipHead"></tr></thead>
 <tbody id="shipBody"></tbody>
 </table>
 </div>
 
 <div class="panel">
-<table>
+<table class="inspect-table">
+<colgroup><col></colgroup>
 <thead><tr id="inspectHead"></tr></thead>
 <tbody id="inspectBody"></tbody>
 </table>
