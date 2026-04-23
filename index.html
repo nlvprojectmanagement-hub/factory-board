@@ -39,8 +39,8 @@ body {
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-rows: 86% 14%;
-  gap: 12px;
+  grid-template-rows: 90% 10%;
+  gap: 6px;
 }
 
 .top {
@@ -58,41 +58,47 @@ table {
   height: 100%;
   border-collapse: collapse;
   table-layout: fixed;
+  border-spacing: 0;
 }
 
 th, td {
   border: 1px solid var(--grid);
   text-align: center;
-  padding: 0;
   color: var(--text);
   font-weight: 700;
 }
 
 th {
-  font-size: 18px;
+  font-size: 16px;
   background: var(--header-grad);
-  height: 36px;
+  height: 28px;
+  padding: 2px 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 td {
-  font-size: 18px;
+  font-size: 20px;
   background: rgba(0,0,0,0.75);
-  height: 39px;
+  height: 30px;
+  padding: 0;
 }
 
 .cell-inner {
   width: 100%;
   height: 100%;
-  min-height: 39px;
+  min-height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
+  padding: 2px 6px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   color: inherit;
   background: transparent;
+  font-size: 20px;
 }
 
 .bulletin-wrap {
@@ -105,9 +111,9 @@ td {
   border-bottom: none;
   background: var(--bullet-grad);
   color: var(--text);
-  font-size: 22px;
-  padding: 6px 12px;
-  height: 40px;
+  font-size: 18px;
+  padding: 4px 10px;
+  height: 28px;
   display: flex;
   align-items: center;
   font-weight: 700;
@@ -117,13 +123,23 @@ td {
   border: 1px solid var(--grid);
   display: grid;
   grid-template-rows: repeat(3, 1fr);
+  flex: 1;
 }
 
 .bulletin-line {
   border-top: 1px solid var(--grid);
-  padding: 6px 12px;
-  font-size: 20px;
+  padding: 4px 10px;
+  font-size: 16px;
   color: #fff;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bulletin-line:first-child {
+  border-top: none;
 }
 
 /* statuses */
@@ -132,8 +148,8 @@ td {
 }
 
 .delay-fill {
-  width: calc(100% - 8px);
-  height: calc(100% - 8px);
+  width: calc(100% - 6px);
+  height: calc(100% - 4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -141,7 +157,7 @@ td {
   color: #fff;
   font-weight: 800;
   animation: flashDelay 0.8s linear infinite;
-  text-shadow: 0 0 12px #fff;
+  text-shadow: 0 0 10px #fff;
 }
 
 .ontime-cell {
@@ -348,7 +364,7 @@ function render(rows) {
   [6,7].forEach(i => shipHead.appendChild(makeCell("th", safe(header, i))));
   inspectHead.appendChild(makeCell("th", safe(header, 9)));
 
-  const rowCount = Math.max(upperRows.length, 11);
+  const rowCount = Math.max(upperRows.length, 18);
 
   for (let r = 0; r < rowCount; r++) {
     const row = upperRows[r] || [];
