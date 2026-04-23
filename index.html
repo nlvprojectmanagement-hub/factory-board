@@ -128,17 +128,25 @@
     border-top: none;
   }
 
-  .delay{
-    color:#fff !important;
-    background:#ff0000 !important;
-    animation:flashDelay 0.8s steps(1,end) infinite !important;
-    text-shadow:0 0 12px #fff !important;
+  .delay-cell {
+    background: #220000 !important;
   }
 
-  @keyframes flashDelay{
-    0%{background:#ff0000;color:#fff;}
-    50%{background:#000000;color:#ff0000;}
-    100%{background:#ff0000;color:#fff;}
+  .delay-text {
+    display: inline-block;
+    min-width: 100%;
+    color: #fff !important;
+    background: #ff0000;
+    padding: 4px 6px;
+    border-radius: 2px;
+    animation: flashDelay 0.8s steps(1,end) infinite;
+    text-shadow: 0 0 12px #fff;
+  }
+
+  @keyframes flashDelay {
+    0%   { background:#ff0000; color:#fff; }
+    50%  { background:#000000; color:#ff0000; }
+    100% { background:#ff0000; color:#fff; }
   }
 
   .muted {
@@ -189,6 +197,7 @@ const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48
 
 let isLoading = false;
 let lastRendered = "";
+const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 function parseCSV(text) {
   const rows = [];
@@ -233,23 +242,42 @@ function safe(row, idx) {
   return (row && row[idx] !== undefined) ? String(row[idx]).trim() : "";
 }
 
-function cls(value) {
-  const v = String(value || "").replace(/\s+/g, " ").trim().toUpperCase();
-  if (v.indexOf("DELAY") !== -1) return "delay";
-  if (v === "N/A" || v === "-") return "muted";
-  return "";
+function formatValue(value) {
+  const v = String(value || "").trim();
+  const m = v.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})/i);
+  if (m) {
+    const month = Number(m[2]);
+    const day = Number(m[3]);
+    return `${day}-${monthNames[month] || ""}`;
+  }
+  return v;
+}
+
+function isDelay(value) {
+  return /DELAY/i.test(String(value || "").trim());
+}
+
+function isMuted(value) {
+  const v = String(value || "").trim().toUpperCase();
+  return v === "N/A" || v === "-";
 }
 
 function makeCell(tag, value) {
-  const text = String(value || "").trim();
+  const raw = String(value || "").trim();
+  const text = formatValue(raw);
   const el = document.createElement(tag);
-  el.textContent = text;
 
-  const c = cls(text);
-  if (c) {
-    el.className = c;
+  if (isDelay(raw)) {
+    el.classList.add("delay-cell");
+    const span = document.createElement("span");
+    span.className = "delay-text";
+    span.textContent = text || raw;
+    el.appendChild(span);
+    return el;
   }
 
+  el.textContent = text;
+  if (isMuted(text)) el.classList.add("muted");
   return el;
 }
 
@@ -310,7 +338,9 @@ function render(rows) {
   bulletinBox.innerHTML = "";
   for (let i = 0; i < 3; i++) {
     const row = bulletinRows[i] || [];
-    const parts = row.filter(v => String(v).trim() !== "");
+    const parts = row
+      .map(v => formatValue(v))
+      .filter(v => String(v).trim() !== "");
     const line = document.createElement("div");
     line.className = "bulletin-line";
     line.textContent = parts.join("   ");
