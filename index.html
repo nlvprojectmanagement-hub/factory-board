@@ -8,12 +8,10 @@
 * { box-sizing: border-box; }
 
 :root{
-  --bg:#000000;
-  --grid:rgba(255,255,255,0.22);
-  --grid-strong:rgba(255,255,255,0.34);
+  --bg:#000;
+  --grid:rgba(255,255,255,0.24);
   --text:#f0a100;
   --muted:#cfcfcf;
-
   --header-grad:linear-gradient(180deg,#7a4700 0%,#2b1700 45%,#110700 100%);
   --panel-grad:linear-gradient(180deg,#101010 0%,#000000 100%);
   --bullet-grad:linear-gradient(180deg,#6a3a00 0%,#180a00 100%);
@@ -85,7 +83,7 @@ th {
   overflow: hidden;
   text-overflow: clip;
   background: var(--header-grad);
-  border-color: var(--grid-strong);
+  border-color: rgba(255,255,255,0.34);
   text-shadow: 0 0 6px rgba(255,166,0,0.16);
 }
 
@@ -115,15 +113,15 @@ td {
 }
 
 /* Main panel widths */
-.main-table col:nth-child(1) { width: 19%; } /* SALES ORDER */
-.main-table col:nth-child(2) { width: 16%; } /* STAGE */
-.main-table col:nth-child(3) { width: 22%; } /* FORECAST ASSEMBLY */
-.main-table col:nth-child(4) { width: 21%; } /* FORECAST TESTING */
-.main-table col:nth-child(5) { width: 22%; } /* CRATE DEADLINE */
+.main-table col:nth-child(1) { width: 19%; }
+.main-table col:nth-child(2) { width: 16%; }
+.main-table col:nth-child(3) { width: 22%; }
+.main-table col:nth-child(4) { width: 21%; }
+.main-table col:nth-child(5) { width: 22%; }
 
 /* Ship panel */
-.ship-table col:nth-child(1) { width: 64%; } /* INCOMING SHIPMENTS */
-.ship-table col:nth-child(2) { width: 36%; } /* DATE */
+.ship-table col:nth-child(1) { width: 64%; }
+.ship-table col:nth-child(2) { width: 36%; }
 
 /* Inspect panel */
 .inspect-table col:nth-child(1) { width: 100%; }
@@ -138,7 +136,7 @@ td {
 .bulletin-title {
   height: 24px;
   padding: 1px 10px;
-  border: 1px solid var(--grid-strong);
+  border: 1px solid rgba(255,255,255,0.34);
   border-bottom: none;
   background: var(--bullet-grad);
   color: var(--text);
