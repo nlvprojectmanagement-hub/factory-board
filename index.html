@@ -15,37 +15,46 @@ html, body {
   overflow: hidden;
   background: #000;
   font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
 }
 
-/* SCALE FOR TV */
+body {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+/* Base canvas for TV scaling */
 #scaleWrapper {
-  width: 1920px;
-  height: 1080px;
+  width: 1280px;
+  height: 720px;
   transform-origin: top left;
+  background:
+    radial-gradient(circle at top left, rgba(255,166,0,0.08), transparent 28%),
+    radial-gradient(circle at top right, rgba(255,166,0,0.04), transparent 22%),
+    #000;
+  padding: 4px;
 }
 
-/* LAYOUT */
 .screen {
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-rows: 90% 10%;
-  gap: 6px;
+  grid-template-rows: 91% 9%;
+  gap: 4px;
 }
 
 .top {
   display: grid;
   grid-template-columns: 64% 20% 16%;
-  gap: 8px;
+  gap: 6px;
+  min-height: 0;
 }
 
 .panel {
   background: #000;
+  min-height: 0;
 }
 
-/* TABLE */
 table {
   width: 100%;
   height: 100%;
@@ -54,51 +63,53 @@ table {
 }
 
 th, td {
-  border: 1px solid rgba(255,255,255,0.25);
+  border: 1px solid rgba(255,255,255,0.22);
   text-align: center;
   color: #f0a100;
   font-weight: 700;
 }
 
-/* HEADERS */
 th {
-  height: 28px;
-  font-size: 14px;
+  height: 24px;
+  font-size: 12px;
   background: linear-gradient(#7a4700,#140800);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  padding: 1px 3px;
 }
 
-/* ROWS */
 td {
-  height: 28px;
-  font-size: 18px;
+  height: 22px;
+  font-size: 15px;
+  padding: 0;
 }
 
-/* CELL CONTENT */
 .cell {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding: 2px;
+  min-height: 22px;
+  padding: 1px 3px;
   white-space: nowrap;
   overflow: hidden;
+  text-overflow: clip;
+  line-height: 1;
 }
 
-/* INSPECTION FIX */
-.inspect-table td .cell {
-  font-size: 15px;
+.left-cell {
   justify-content: flex-start;
-  padding-left: 6px;
+  padding-left: 5px;
 }
 
-/* STATUS */
+/* Status */
 .delay-cell {
-  background: #200000;
+  background: #240000;
 }
-
 .delay-fill {
-  width: 100%;
-  height: 100%;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -107,11 +118,10 @@ td {
   font-weight: 900;
   animation: flashStrong 0.6s infinite;
 }
-
 @keyframes flashStrong {
-  0% { background:red; }
-  50% { background:#300000; }
-  100% { background:red; }
+  0% { background: red; }
+  50% { background: #320000; }
+  100% { background: red; }
 }
 
 .ontime-cell {
@@ -124,35 +134,59 @@ td {
   color: #000;
 }
 
-/* BULLETIN */
+.muted {
+  color: #d0d0d0 !important;
+}
+
+/* Bulletin */
 .bulletin-wrap {
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .bulletin-title {
-  height: 28px;
+  height: 22px;
   background: linear-gradient(#7a4700,#140800);
   color: #f0a100;
-  padding-left: 10px;
+  padding-left: 8px;
   display: flex;
   align-items: center;
   font-weight: 700;
+  font-size: 14px;
+  border: 1px solid rgba(255,255,255,0.22);
+  border-bottom: none;
 }
 
 .bulletin-box {
   flex: 1;
-  border: 1px solid rgba(255,255,255,0.25);
+  border: 1px solid rgba(255,255,255,0.22);
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  background: #000;
 }
 
 .bulletin-line {
-  border-top: 1px solid rgba(255,255,255,0.2);
+  border-top: 1px solid rgba(255,255,255,0.18);
   color: #fff;
-  font-size: 16px;
-  padding-left: 10px;
+  font-size: 12px;
+  padding: 1px 8px;
   display: flex;
   align-items: center;
-  height: 25%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  line-height: 1;
+}
+
+.bulletin-line:first-child {
+  border-top: none;
+}
+
+.error {
+  color: red;
+  font-size: 20px;
+  padding: 10px;
 }
 </style>
 </head>
@@ -160,145 +194,228 @@ td {
 <body>
 
 <div id="scaleWrapper">
-<div class="screen">
+  <div class="screen">
 
-<div class="top">
+    <div class="top">
+      <div class="panel">
+        <table id="table1">
+          <thead><tr id="head1"></tr></thead>
+          <tbody id="body1"></tbody>
+        </table>
+      </div>
 
-<div class="panel">
-<table class="main-table">
-<thead><tr id="mainHead"></tr></thead>
-<tbody id="mainBody"></tbody>
-</table>
-</div>
+      <div class="panel">
+        <table id="table2">
+          <thead><tr id="head2"></tr></thead>
+          <tbody id="body2"></tbody>
+        </table>
+      </div>
 
-<div class="panel">
-<table>
-<thead><tr id="shipHead"></tr></thead>
-<tbody id="shipBody"></tbody>
-</table>
-</div>
+      <div class="panel">
+        <table id="table3">
+          <thead><tr id="head3"></tr></thead>
+          <tbody id="body3"></tbody>
+        </table>
+      </div>
+    </div>
 
-<div class="panel">
-<table class="inspect-table">
-<thead><tr id="inspectHead"></tr></thead>
-<tbody id="inspectBody"></tbody>
-</table>
-</div>
+    <div class="bulletin-wrap">
+      <div class="bulletin-title">BULLETIN</div>
+      <div class="bulletin-box" id="bulletinBox"></div>
+    </div>
 
-</div>
-
-<div class="bulletin-wrap">
-<div class="bulletin-title">BULLETIN</div>
-<div class="bulletin-box" id="bulletinBox"></div>
-</div>
-
-</div>
+  </div>
 </div>
 
 <script>
 const URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
-
+const BASE_W = 1280;
+const BASE_H = 720;
+const REFRESH_MS = 8000;
 const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 function scale() {
-  const scaleX = window.innerWidth / 1920;
-  const scaleY = window.innerHeight / 1080;
-  const s = Math.min(scaleX, scaleY);
-  document.getElementById("scaleWrapper").style.transform = `scale(${s})`;
+  const sx = window.innerWidth / BASE_W;
+  const sy = window.innerHeight / BASE_H;
+  document.getElementById("scaleWrapper").style.transform = `scale(${Math.min(sx, sy)})`;
 }
 window.addEventListener("resize", scale);
 scale();
 
-/* CSV PARSE */
-function parseCSV(text){
-  return text.split("\n").map(r => r.split(","));
+function parseCSV(text) {
+  const rows = [];
+  let row = [];
+  let cell = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const next = text[i + 1];
+
+    if (ch === '"') {
+      if (inQuotes && next === '"') {
+        cell += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (ch === ',' && !inQuotes) {
+      row.push(cell);
+      cell = "";
+    } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
+      if (ch === '\r' && next === '\n') i++;
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = "";
+    } else {
+      cell += ch;
+    }
+  }
+
+  if (cell.length || row.length) {
+    row.push(cell);
+    rows.push(row);
+  }
+
+  return rows.filter(r => r.some(c => String(c).trim() !== ""));
 }
 
-function clean(v){
-  if(!v) return "";
-  const m = v.match(/Date\((\d+),(\d+),(\d+)/);
-  if(m) return `${m[3]}-${months[+m[2]]}`;
-  return v.trim();
+function clean(v) {
+  if (v == null) return "";
+  const t = String(v).trim();
+  const m = t.match(/^Date\((\d+),(\d+),(\d+)/);
+  if (m) return `${m[3]}-${months[+m[2]]}`;
+  return t;
 }
 
-function status(v){
-  const s = v.toUpperCase().replace(/[\s\-]/g,"");
-  if(s.includes("DELAY")) return "delay";
-  if(s.includes("ONTIME")) return "ontime";
+function status(v) {
+  const s = String(v || "").toUpperCase().replace(/[\s\-]/g, "");
+  if (s.includes("DELAY")) return "delay";
+  if (s.includes("ONTIME")) return "ontime";
+  if (s.includes("RISK")) return "risk";
   return "";
 }
 
-function cell(tag, val){
-  const el = document.createElement(tag);
-  const d = document.createElement("div");
-  d.className = "cell";
+function isMuted(v) {
+  const s = String(v || "").trim().toUpperCase();
+  return s === "N/A" || s === "-";
+}
 
+function makeCell(tag, val, leftAlign = false) {
+  const el = document.createElement(tag);
   const txt = clean(val);
   const st = status(txt);
 
-  if(st === "delay"){
+  if (st === "delay") {
     el.classList.add("delay-cell");
     const fill = document.createElement("div");
     fill.className = "delay-fill";
-    fill.textContent = "DELAY";
+    fill.textContent = txt;
     el.appendChild(fill);
     return el;
   }
 
-  if(st === "ontime"){
-    el.classList.add("ontime-cell");
-  }
+  if (st === "ontime") el.classList.add("ontime-cell");
+  if (st === "risk") el.classList.add("risk-cell");
 
+  const d = document.createElement("div");
+  d.className = "cell" + (leftAlign ? " left-cell" : "");
+  if (!st && isMuted(txt)) d.classList.add("muted");
   d.textContent = txt;
   el.appendChild(d);
   return el;
 }
 
-function render(data){
-  const mainHead = document.getElementById("mainHead");
-  const mainBody = document.getElementById("mainBody");
-  const shipHead = document.getElementById("shipHead");
-  const shipBody = document.getElementById("shipBody");
-  const inspectHead = document.getElementById("inspectHead");
-  const inspectBody = document.getElementById("inspectBody");
+function detectSections(headerRow) {
+  const sections = [];
+  let start = null;
 
-  mainHead.innerHTML = "";
-  mainBody.innerHTML = "";
-  shipHead.innerHTML = "";
-  shipBody.innerHTML = "";
-  inspectHead.innerHTML = "";
-  inspectBody.innerHTML = "";
+  for (let i = 0; i <= headerRow.length; i++) {
+    const value = i < headerRow.length ? clean(headerRow[i]) : "";
+    const isFilled = value !== "";
 
-  data[0].slice(0,5).forEach(h => mainHead.appendChild(cell("th",h)));
-  [6,7].forEach(i => shipHead.appendChild(cell("th",data[0][i])));
-  inspectHead.appendChild(cell("th",data[0][9]));
+    if (isFilled && start === null) start = i;
+    if ((!isFilled || i === headerRow.length) && start !== null) {
+      sections.push({ start, end: i - 1 });
+      start = null;
+    }
+  }
 
-  data.slice(1).forEach(r => {
-
-    let tr1 = document.createElement("tr");
-    for(let i=0;i<5;i++) tr1.appendChild(cell("td", r[i]));
-    mainBody.appendChild(tr1);
-
-    let tr2 = document.createElement("tr");
-    [6,7].forEach(i => tr2.appendChild(cell("td", r[i])));
-    shipBody.appendChild(tr2);
-
-    let tr3 = document.createElement("tr");
-    tr3.appendChild(cell("td", r[9]));
-    inspectBody.appendChild(tr3);
-
-  });
+  return sections;
 }
 
-async function load(){
-  const res = await fetch(URL + "&t=" + Date.now());
-  const text = await res.text();
-  const data = parseCSV(text);
-  render(data);
+function renderSection(headId, bodyId, headerRow, rows, section, leftAlign = false) {
+  const head = document.getElementById(headId);
+  const body = document.getElementById(bodyId);
+  head.innerHTML = "";
+  body.innerHTML = "";
+
+  for (let c = section.start; c <= section.end; c++) {
+    head.appendChild(makeCell("th", headerRow[c], leftAlign));
+  }
+
+  const rowCount = Math.max(rows.length, 18);
+
+  for (let r = 0; r < rowCount; r++) {
+    const row = rows[r] || [];
+    const tr = document.createElement("tr");
+    for (let c = section.start; c <= section.end; c++) {
+      tr.appendChild(makeCell("td", row[c], leftAlign));
+    }
+    body.appendChild(tr);
+  }
+}
+
+function renderBulletin(rows) {
+  const box = document.getElementById("bulletinBox");
+  box.innerHTML = "";
+
+  for (let i = 0; i < 4; i++) {
+    const row = rows[i] || [];
+    const parts = row.map(clean).filter(v => v !== "");
+    const line = document.createElement("div");
+    line.className = "bulletin-line";
+    line.textContent = parts.join("   ");
+    box.appendChild(line);
+  }
+}
+
+function render(data) {
+  if (!data || data.length < 2) {
+    document.body.innerHTML = '<div class="error">NO DATA</div>';
+    return;
+  }
+
+  const header = data[0];
+  const allRows = data.slice(1);
+
+  const bulletinIndex = allRows.findIndex(r => clean(r[0]).toUpperCase() === "BULLETIN");
+  const upperRows = bulletinIndex >= 0 ? allRows.slice(0, bulletinIndex) : allRows;
+  const bulletinRows = bulletinIndex >= 0 ? allRows.slice(bulletinIndex + 1, bulletinIndex + 5) : [];
+
+  const sections = detectSections(header);
+
+  renderSection("head1", "body1", header, upperRows, sections[0] || { start: 0, end: 4 }, false);
+  renderSection("head2", "body2", header, upperRows, sections[1] || { start: 6, end: 7 }, false);
+  renderSection("head3", "body3", header, upperRows, sections[2] || { start: 9, end: 9 }, true);
+
+  renderBulletin(bulletinRows);
+}
+
+async function load() {
+  try {
+    const res = await fetch(URL + "&t=" + Date.now(), { cache: "no-store" });
+    const text = await res.text();
+    const data = parseCSV(text);
+    render(data);
+  } catch (e) {
+    document.body.innerHTML = '<div class="error">LOAD ERROR</div>';
+  }
 }
 
 load();
-setInterval(load, 8000);
+setInterval(load, REFRESH_MS);
 </script>
 
 </body>
