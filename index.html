@@ -7,55 +7,27 @@
 <style>
 * { box-sizing: border-box; }
 
-:root{
-  --bg:#000;
-  --grid:rgba(255,255,255,0.24);
-  --text:#f0a100;
-  --muted:#cfcfcf;
-  --header-grad:linear-gradient(180deg,#7a4700 0%,#2b1700 45%,#110700 100%);
-  --panel-grad:linear-gradient(180deg,#101010 0%,#000000 100%);
-  --bullet-grad:linear-gradient(180deg,#6a3a00 0%,#180a00 100%);
-}
-
-html, body {
+body {
   margin: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--bg);
+  background: #000;
   color: #fff;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Arial, sans-serif;
   overflow: hidden;
 }
 
-body {
-  padding: 5px;
-  background:
-    radial-gradient(circle at top left, rgba(255,166,0,0.09), transparent 28%),
-    radial-gradient(circle at top right, rgba(255,166,0,0.04), transparent 22%),
-    #000;
-}
-
 .screen {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   display: grid;
-  grid-template-rows: 89% 11%;
+  grid-template-rows: 90% 10%;
   gap: 6px;
+  padding: 6px;
 }
 
 .top {
   display: grid;
   grid-template-columns: 65% 23% 12%;
   gap: 8px;
-  min-height: 0;
-}
-
-.panel {
-  min-height: 0;
-  background: var(--panel-grad);
-  box-shadow:
-    inset 0 0 0 1px rgba(255,166,0,0.05),
-    inset 0 0 25px rgba(255,255,255,0.015);
 }
 
 table {
@@ -66,431 +38,205 @@ table {
 }
 
 th, td {
-  border: 1px solid var(--grid);
+  border: 1px solid rgba(255,255,255,0.25);
   text-align: center;
-  vertical-align: middle;
-  color: var(--text);
-  font-weight: 700;
+  color: #f0a100;
+  font-weight: bold;
 }
 
 th {
-  height: 24px;
-  padding: 1px 3px;
+  background: linear-gradient(#7a4700,#120700);
   font-size: 12px;
-  line-height: 1;
-  letter-spacing: 0.2px;
+  height: 24px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-  background: var(--header-grad);
-  border-color: rgba(255,255,255,0.34);
-  text-shadow: 0 0 6px rgba(255,166,0,0.16);
 }
 
 td {
   height: 24px;
-  padding: 0;
-  font-size: 17px;
-  background: rgba(0,0,0,0.82);
+  font-size: 16px;
 }
 
-.cell-inner {
+.cell {
   width: 100%;
   height: 100%;
-  min-height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1px 3px;
-  color: inherit;
-  background: transparent;
-  font-size: 17px;
-  line-height: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-  text-align: center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
-/* Main panel widths */
-.main-table col:nth-child(1) { width: 19%; }
-.main-table col:nth-child(2) { width: 16%; }
-.main-table col:nth-child(3) { width: 22%; }
-.main-table col:nth-child(4) { width: 21%; }
-.main-table col:nth-child(5) { width: 22%; }
+/* STATUS */
+.delay {
+  background: red;
+  color: #fff;
+  animation: flash 0.8s infinite;
+}
 
-/* Ship panel */
-.ship-table col:nth-child(1) { width: 64%; }
-.ship-table col:nth-child(2) { width: 36%; }
+@keyframes flash {
+  0% {opacity:1;}
+  50% {opacity:0.3;}
+  100% {opacity:1;}
+}
 
-/* Inspect panel */
-.inspect-table col:nth-child(1) { width: 100%; }
+.ontime {
+  background: #00a83a;
+  color: #fff;
+}
 
-/* Bulletin */
-.bulletin-wrap {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
+/* BULLETIN */
+.bulletin {
+  border:1px solid rgba(255,255,255,0.3);
+  display:flex;
+  flex-direction:column;
 }
 
 .bulletin-title {
-  height: 24px;
-  padding: 1px 10px;
-  border: 1px solid rgba(255,255,255,0.34);
-  border-bottom: none;
-  background: var(--bullet-grad);
-  color: var(--text);
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  font-weight: 700;
-  text-shadow: 0 0 6px rgba(255,166,0,0.16);
-}
-
-.bulletin-box {
-  flex: 1;
-  min-height: 0;
-  border: 1px solid var(--grid);
-  display: grid;
-  grid-template-rows: repeat(4, 1fr);
-  background: rgba(0,0,0,0.82);
+  background: linear-gradient(#7a4700,#120700);
+  padding:4px 10px;
+  font-weight:bold;
 }
 
 .bulletin-line {
-  border-top: 1px solid var(--grid);
-  padding: 1px 8px;
-  font-size: 13px;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  line-height: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-}
-
-.bulletin-line:first-child {
-  border-top: none;
-}
-
-/* Statuses */
-.delay-cell {
-  background: #250000 !important;
-}
-
-.delay-fill {
-  width: calc(100% - 2px);
-  height: calc(100% - 2px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #ff0000;
-  color: #fff;
-  font-weight: 800;
-  text-shadow: 0 0 8px rgba(255,255,255,0.8);
-  animation: flashDelay 0.75s linear infinite;
-}
-
-.ontime-cell {
-  background: #00a83a !important;
-  color: #fff !important;
-}
-
-.risk-cell {
-  background: #ffbf00 !important;
-  color: #000 !important;
-}
-
-@keyframes flashDelay {
-  0%   { background:#ff0000; color:#ffffff; opacity:1; }
-  50%  { background:#2e0000; color:#ff6b6b; opacity:0.35; }
-  100% { background:#ff0000; color:#ffffff; opacity:1; }
-}
-
-.muted {
-  color: var(--muted) !important;
+  flex:1;
+  border-top:1px solid rgba(255,255,255,0.2);
+  padding:4px 10px;
+  display:flex;
+  align-items:center;
+  font-size:14px;
 }
 
 .error {
-  color: red;
-  font-size: 22px;
-  padding: 20px;
-  font-weight: 700;
+  color:red;
+  padding:20px;
 }
 </style>
 </head>
 
 <body>
+
 <div class="screen">
 
   <div class="top">
+    <table>
+      <thead><tr id="head"></tr></thead>
+      <tbody id="body"></tbody>
+    </table>
 
-    <div class="panel">
-      <table class="main-table">
-        <colgroup><col><col><col><col><col></colgroup>
-        <thead><tr id="mainHead"></tr></thead>
-        <tbody id="mainBody"></tbody>
-      </table>
-    </div>
+    <table>
+      <thead><tr id="head2"></tr></thead>
+      <tbody id="body2"></tbody>
+    </table>
 
-    <div class="panel">
-      <table class="ship-table">
-        <colgroup><col><col></colgroup>
-        <thead><tr id="shipHead"></tr></thead>
-        <tbody id="shipBody"></tbody>
-      </table>
-    </div>
-
-    <div class="panel">
-      <table class="inspect-table">
-        <colgroup><col></colgroup>
-        <thead><tr id="inspectHead"></tr></thead>
-        <tbody id="inspectBody"></tbody>
-      </table>
-    </div>
-
+    <table>
+      <thead><tr id="head3"></tr></thead>
+      <tbody id="body3"></tbody>
+    </table>
   </div>
 
-  <div class="bulletin-wrap">
+  <div class="bulletin">
     <div class="bulletin-title">BULLETIN</div>
-    <div class="bulletin-box" id="bulletinBox"></div>
+    <div id="bulletin"></div>
   </div>
 
 </div>
 
 <script>
-const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
+const URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
 
-const REFRESH_MS = 8000;
-const STABLE_POLLS_REQUIRED = 2;
-
-let isLoading = false;
-let lastAppliedSnapshot = "";
-let pendingSnapshot = "";
-let pendingRows = null;
-let pendingCount = 0;
-
-const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-
-function parseCSV(text) {
-  const rows = [];
-  let row = [];
-  let cell = "";
-  let inQuotes = false;
-
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    const next = text[i + 1];
-
-    if (ch === '"') {
-      if (inQuotes && next === '"') {
-        cell += '"';
-        i++;
-      } else {
-        inQuotes = !inQuotes;
-      }
-    } else if (ch === ',' && !inQuotes) {
-      row.push(cell);
-      cell = "";
-    } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
-      if (ch === '\r' && next === '\n') i++;
-      row.push(cell);
-      rows.push(row);
-      row = [];
-      cell = "";
-    } else {
-      cell += ch;
-    }
-  }
-
-  if (cell.length || row.length) {
-    row.push(cell);
-    rows.push(row);
-  }
-
-  return rows;
+function parseCSV(text){
+  return text.trim().split("\n").map(r => r.split(","));
 }
 
-function safe(row, idx) {
-  return (row && row[idx] !== undefined) ? String(row[idx]).trim() : "";
+function format(val){
+  const m = val.match(/Date\((\d+),(\d+),(\d+)/);
+  if(!m) return val;
+  const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return m[3]+"-"+months[m[2]];
 }
 
-function formatValue(value) {
-  const v = String(value || "").trim();
-  const m = v.match(/^Date\((\d+),(\d+),(\d+)/i);
-  if (!m) return v;
-  return `${m[3]}-${monthNames[+m[2]]}`;
-}
-
-function getStatus(value) {
-  const raw = String(value || "");
-  const normalized = raw.toUpperCase().replace(/[\s\-]+/g, "");
-
-  if (normalized.includes("DELAY")) return "delay";
-  if (normalized.includes("ONTIME")) return "ontime";
-  if (normalized.includes("RISK")) return "risk";
-
+function status(val){
+  const v = val.toUpperCase();
+  if(v.includes("DELAY")) return "delay";
+  if(v.includes("ON TIME")||v.includes("ONTIME")) return "ontime";
   return "";
 }
 
-function isMuted(value) {
-  const v = String(value || "").trim().toUpperCase();
-  return v === "N/A" || v === "-";
-}
+function makeCell(tag,val){
+  const el=document.createElement(tag);
+  const div=document.createElement("div");
+  div.className="cell";
 
-function crop(text, maxChars) {
-  const t = String(text || "").trim();
-  if (t.length <= maxChars) return t;
-  return t.slice(0, maxChars);
-}
+  const s=status(val);
+  if(s) div.classList.add(s);
 
-function makeCell(tag, value, maxChars = 28) {
-  const raw = String(value || "").trim();
-  const text = crop(formatValue(raw), maxChars);
-  const status = getStatus(raw);
-
-  const el = document.createElement(tag);
-  const inner = document.createElement("div");
-  inner.className = "cell-inner";
-
-  if (status === "delay") {
-    el.classList.add("delay-cell");
-    inner.classList.add("delay-fill");
-  }
-  if (status === "ontime") {
-    el.classList.add("ontime-cell");
-  }
-  if (status === "risk") {
-    el.classList.add("risk-cell");
-  }
-  if (!status && isMuted(text)) {
-    inner.classList.add("muted");
-  }
-
-  inner.textContent = text;
-  el.appendChild(inner);
+  div.textContent=format(val);
+  el.appendChild(div);
   return el;
 }
 
-function render(rows) {
-  if (!rows.length) {
-    document.body.innerHTML = '<div class="error">No sheet data found.</div>';
-    return;
+async function load(){
+  try{
+    const res=await fetch(URL+"?t="+Date.now());
+    const txt=await res.text();
+    const rows=parseCSV(txt);
+
+    const head=document.getElementById("head");
+    const body=document.getElementById("body");
+    const head2=document.getElementById("head2");
+    const body2=document.getElementById("body2");
+    const head3=document.getElementById("head3");
+    const body3=document.getElementById("body3");
+    const bulletin=document.getElementById("bulletin");
+
+    head.innerHTML="";
+    body.innerHTML="";
+    head2.innerHTML="";
+    body2.innerHTML="";
+    head3.innerHTML="";
+    body3.innerHTML="";
+    bulletin.innerHTML="";
+
+    const h=rows[0];
+
+    [0,1,2,3,4].forEach(i=>head.appendChild(makeCell("th",h[i])));
+    [6,7].forEach(i=>head2.appendChild(makeCell("th",h[i])));
+    head3.appendChild(makeCell("th",h[9]));
+
+    const data=rows.slice(1);
+
+    let bulletinIndex=data.findIndex(r=>r[0]=="BULLETIN");
+    let mainRows=bulletinIndex>=0?data.slice(0,bulletinIndex):data;
+    let bulletRows=bulletinIndex>=0?data.slice(bulletinIndex+1,bulletinIndex+5):[];
+
+    for(let i=0;i<20;i++){
+      let r=mainRows[i]||[];
+
+      let tr=document.createElement("tr");
+      [0,1,2,3,4].forEach(c=>tr.appendChild(makeCell("td",r[c]||"")));
+      body.appendChild(tr);
+
+      let tr2=document.createElement("tr");
+      [6,7].forEach(c=>tr2.appendChild(makeCell("td",r[c]||"")));
+      body2.appendChild(tr2);
+
+      let tr3=document.createElement("tr");
+      tr3.appendChild(makeCell("td",r[9]||""));
+      body3.appendChild(tr3);
+    }
+
+    bulletRows.forEach(r=>{
+      let d=document.createElement("div");
+      d.className="bulletin-line";
+      d.textContent=r.join(" ");
+      bulletin.appendChild(d);
+    });
+
+  }catch(e){
+    document.body.innerHTML='<div class="error">LOAD ERROR</div>';
   }
-
-  const header = rows[0] || [];
-  const dataRows = rows.slice(1);
-
-  const bulletinIndex = dataRows.findIndex(r => safe(r, 0).toUpperCase() === "BULLETIN");
-  const upperRows = bulletinIndex >= 0 ? dataRows.slice(0, bulletinIndex) : dataRows;
-  const bulletinRows = bulletinIndex >= 0 ? dataRows.slice(bulletinIndex + 1, bulletinIndex + 5) : [];
-
-  const mainHead = document.getElementById("mainHead");
-  const shipHead = document.getElementById("shipHead");
-  const inspectHead = document.getElementById("inspectHead");
-  const mainBody = document.getElementById("mainBody");
-  const shipBody = document.getElementById("shipBody");
-  const inspectBody = document.getElementById("inspectBody");
-
-  mainHead.innerHTML = "";
-  shipHead.innerHTML = "";
-  inspectHead.innerHTML = "";
-  mainBody.innerHTML = "";
-  shipBody.innerHTML = "";
-  inspectBody.innerHTML = "";
-
-  [0,1,2,3,4].forEach(i => mainHead.appendChild(makeCell("th", safe(header, i), 24)));
-  [6,7].forEach(i => shipHead.appendChild(makeCell("th", safe(header, i), 18)));
-  inspectHead.appendChild(makeCell("th", safe(header, 9), 14)));
-
-  const rowCount = Math.max(upperRows.length, 20);
-
-  for (let r = 0; r < rowCount; r++) {
-    const row = upperRows[r] || [];
-
-    const trMain = document.createElement("tr");
-    [0,1,2,3,4].forEach(i => trMain.appendChild(makeCell("td", safe(row, i), 28)));
-    mainBody.appendChild(trMain);
-
-    const trShip = document.createElement("tr");
-    [6,7].forEach(i => trShip.appendChild(makeCell("td", safe(row, i), 20)));
-    shipBody.appendChild(trShip);
-
-    const trInspect = document.createElement("tr");
-    trInspect.appendChild(makeCell("td", safe(row, 9), 14));
-    inspectBody.appendChild(trInspect);
-  }
-
-  const bulletinBox = document.getElementById("bulletinBox");
-  bulletinBox.innerHTML = "";
-
-  for (let i = 0; i < 4; i++) {
-    const row = bulletinRows[i] || [];
-    const parts = row
-      .map(v => crop(formatValue(v), 80))
-      .filter(v => String(v).trim() !== "");
-
-    const line = document.createElement("div");
-    line.className = "bulletin-line";
-    line.textContent = parts.join("   ");
-    bulletinBox.appendChild(line);
-  }
-}
-
-function maybeApply(rows, snapshot) {
-  if (!lastAppliedSnapshot) {
-    render(rows);
-    lastAppliedSnapshot = snapshot;
-    pendingSnapshot = "";
-    pendingRows = null;
-    pendingCount = 0;
-    return;
-  }
-
-  if (snapshot === lastAppliedSnapshot) {
-    pendingSnapshot = "";
-    pendingRows = null;
-    pendingCount = 0;
-    return;
-  }
-
-  if (snapshot !== pendingSnapshot) {
-    pendingSnapshot = snapshot;
-    pendingRows = rows;
-    pendingCount = 1;
-    return;
-  }
-
-  pendingCount += 1;
-
-  if (pendingCount >= STABLE_POLLS_REQUIRED) {
-    render(pendingRows);
-    lastAppliedSnapshot = pendingSnapshot;
-    pendingSnapshot = "";
-    pendingRows = null;
-    pendingCount = 0;
-  }
-}
-
-async function load() {
-  if (isLoading) return;
-  isLoading = true;
-
-  try {
-    const res = await fetch(csvUrl + "&t=" + Date.now(), { cache: "no-store" });
-    const text = await res.text();
-    const rows = parseCSV(text);
-    const snapshot = JSON.stringify(rows);
-    maybeApply(rows, snapshot);
-  } catch (e) {
-    document.body.innerHTML = '<div class="error">Error loading</div>';
-  }
-
-  isLoading = false;
 }
 
 load();
-setInterval(load, REFRESH_MS);
+setInterval(load,10000);
 </script>
 
 </body>
