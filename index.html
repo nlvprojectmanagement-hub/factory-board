@@ -1,500 +1,520 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Factory Board</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Factory Board</title>
 
-<style>
-* { box-sizing: border-box; }
+  <style>
+    /* =========================================================
+       1) GLOBAL STYLES
+       Replace here if you want overall colors, fonts, spacing
+       ========================================================= */
+    * { box-sizing: border-box; }
 
-:root {
-  --bg: #000;
-  --grid: rgba(255,255,255,0.20);
-  --grid-strong: rgba(255,255,255,0.30);
-  --text: #f0a100;
-  --muted: #cfcfcf;
-  --header-grad: linear-gradient(180deg, #7a4700 0%, #2b1700 50%, #120700 100%);
-  --panel-grad: linear-gradient(180deg, #101010 0%, #000000 100%);
-  --bullet-grad: linear-gradient(180deg, #6a3a00 0%, #180a00 100%);
-}
+    :root {
+      --bg: #000000;
+      --grid: rgba(255,255,255,0.20);
+      --grid-strong: rgba(255,255,255,0.30);
+      --text: #f0a100;
+      --muted: #cfcfcf;
+      --header-grad: linear-gradient(180deg, #7a4700 0%, #2b1700 50%, #120700 100%);
+      --panel-grad: linear-gradient(180deg, #101010 0%, #000000 100%);
+      --delay-bg: #ff0000;
+      --delay-dim: #320000;
+      --ontime-bg: #00a83a;
+      --risk-bg: #ffbf00;
+    }
 
-html, body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #000;
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      font-family: Arial, Helvetica, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
 
-body {
-  background:
-    radial-gradient(circle at top left, rgba(255,166,0,0.08), transparent 28%),
-    radial-gradient(circle at top right, rgba(255,166,0,0.04), transparent 22%),
-    #000;
-}
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(255,166,0,0.08), transparent 28%),
+        radial-gradient(circle at top right, rgba(255,166,0,0.04), transparent 22%),
+        #000;
+    }
 
-#viewport {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-  background: #000;
-}
+    /* =========================================================
+       2) MAIN PAGE LAYOUT
+       Replace grid-template-columns if you want different widths
+       ========================================================= */
+    #viewport {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      background: #000;
+    }
 
-#scaleWrapper {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 1366px;
-  height: 768px;
-  transform-origin: top left;
-  padding: 4px;
-}
+    #scaleWrapper {
+      width: 100vw;
+      height: 100vh;
+      padding: 6px;
+    }
 
-.screen {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-rows: 90% 10%;
-  gap: 4px;
-}
+    .screen {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-rows: 100%;
+    }
 
-.top {
-  display: grid;
-  grid-template-columns: 62% 16% 12% 10%;
-  gap: 6px;
-  min-height: 0;
-}
+    .top {
+      display: grid;
+      /* 4 panels, left to right, matching detected sheet sections */
+      grid-template-columns: 4fr 1.8fr 1.6fr 1.8fr;
+      gap: 6px;
+      min-height: 0;
+      width: 100%;
+      height: 100%;
+    }
 
-.panel {
-  min-height: 0;
-  background: var(--panel-grad);
-  box-shadow:
-    inset 0 0 0 1px rgba(255,166,0,0.04),
-    inset 0 0 20px rgba(255,255,255,0.01);
-}
+    .panel {
+      min-height: 0;
+      background: var(--panel-grad);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,166,0,0.04),
+        inset 0 0 20px rgba(255,255,255,0.01);
+      display: flex;
+      flex-direction: column;
+    }
 
-table {
-  width: 100%;
-  height: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
+    /* =========================================================
+       3) TABLE STYLES
+       Replace here if you want tighter rows, bigger text, etc.
+       ========================================================= */
+    table {
+      width: 100%;
+      height: 100%;
+      border-collapse: collapse;
+      table-layout: auto;
+    }
 
-th, td {
-  border: 1px solid var(--grid);
-  text-align: center;
-  vertical-align: middle;
-  color: var(--text);
-  font-weight: 700;
-}
+    th, td {
+      border: 1px solid var(--grid);
+      text-align: center;
+      vertical-align: middle;
+      color: var(--text);
+      font-weight: 700;
+    }
 
-th {
-  height: 24px;
-  padding: 1px 3px;
-  font-size: 11px;
-  line-height: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-  background: var(--header-grad);
-  border-color: var(--grid-strong);
-}
+    th {
+      height: 24px;
+      padding: 1px 4px;
+      font-size: 12px;
+      line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
+      background: var(--header-grad);
+      border-color: var(--grid-strong);
+    }
 
-td {
-  height: 21px;
-  padding: 0;
-  font-size: 14px;
-  background: rgba(0,0,0,0.82);
-}
+    td {
+      height: 21px;
+      padding: 0;
+      font-size: 14px;
+      background: rgba(0,0,0,0.82);
+    }
 
-.cell {
-  width: 100%;
-  height: 100%;
-  min-height: 21px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1px 3px;
-  line-height: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-  color: inherit;
-  background: transparent;
-}
+    .cell {
+      width: 100%;
+      height: 100%;
+      min-height: 21px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1px 4px;
+      line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
+      color: inherit;
+      background: transparent;
+      font-size: clamp(10px, 1vw, 16px);
+    }
 
-.cell.left {
-  justify-content: flex-start;
-  padding-left: 5px;
-}
+    .cell.left {
+      justify-content: flex-start;
+      padding-left: 6px;
+    }
 
-.delay-cell {
-  background: #240000 !important;
-}
+    /* =========================================================
+       4) STATUS COLORS
+       Replace here if you want different DELAY / ON TIME styles
+       ========================================================= */
+    .delay-cell {
+      background: #240000 !important;
+    }
 
-.delay-fill {
-  width: calc(100% - 2px);
-  height: calc(100% - 2px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #ff0000;
-  color: #fff;
-  font-weight: 900;
-  animation: flashDelay 0.65s linear infinite;
-}
+    .delay-fill {
+      width: calc(100% - 2px);
+      height: calc(100% - 2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--delay-bg);
+      color: #fff;
+      font-weight: 900;
+      animation: flashDelay 0.65s linear infinite;
+      text-shadow: 0 0 8px rgba(255,255,255,0.7);
+    }
 
-@keyframes flashDelay {
-  0%   { background: #ff0000; }
-  50%  { background: #320000; }
-  100% { background: #ff0000; }
-}
+    @keyframes flashDelay {
+      0%   { background: var(--delay-bg); }
+      50%  { background: var(--delay-dim); }
+      100% { background: var(--delay-bg); }
+    }
 
-.ontime-cell {
-  background: #00a83a !important;
-  color: #fff !important;
-}
+    .ontime-cell {
+      background: var(--ontime-bg) !important;
+      color: #fff !important;
+    }
 
-.risk-cell {
-  background: #ffbf00 !important;
-  color: #000 !important;
-}
+    .risk-cell {
+      background: var(--risk-bg) !important;
+      color: #000 !important;
+    }
 
-.muted {
-  color: var(--muted) !important;
-}
+    .muted {
+      color: var(--muted) !important;
+    }
 
-.bulletin-wrap {
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
+    /* =========================================================
+       5) BULLETIN PANEL STYLES
+       This is now just a normal side panel section
+       ========================================================= */
+    .bulletin-panel {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
 
-.bulletin-title {
-  height: 22px;
-  display: flex;
-  align-items: center;
-  padding: 1px 8px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
-  background: var(--bullet-grad);
-  border: 1px solid var(--grid-strong);
-  border-bottom: none;
-}
+    .bulletin-header {
+      height: 24px;
+      padding: 1px 8px;
+      display: flex;
+      align-items: center;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--header-grad);
+      border: 1px solid var(--grid-strong);
+      border-bottom: none;
+      white-space: nowrap;
+      overflow: hidden;
+    }
 
-.bulletin-box {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-rows: repeat(4, 1fr);
-  border: 1px solid var(--grid);
-  background: rgba(0,0,0,0.82);
-}
+    .bulletin-box {
+      flex: 1;
+      min-height: 0;
+      border: 1px solid var(--grid);
+      background: rgba(0,0,0,0.82);
+      display: grid;
+      grid-template-rows: repeat(18, 1fr);
+    }
 
-.bulletin-line {
-  display: flex;
-  align-items: center;
-  padding: 1px 8px;
-  font-size: 12px;
-  color: #fff;
-  line-height: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-  border-top: 1px solid rgba(255,255,255,0.18);
-}
+    .bulletin-line {
+      display: flex;
+      align-items: center;
+      padding: 1px 8px;
+      font-size: 12px;
+      color: #fff;
+      line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
+      border-top: 1px solid rgba(255,255,255,0.18);
+    }
 
-.bulletin-line:first-child {
-  border-top: none;
-}
+    .bulletin-line:first-child {
+      border-top: none;
+    }
 
-.error {
-  color: red;
-  font-size: 18px;
-  padding: 10px;
-  white-space: pre-wrap;
-}
-</style>
+    .error {
+      color: red;
+      font-size: 18px;
+      padding: 10px;
+      white-space: pre-wrap;
+    }
+  </style>
 </head>
 <body>
-
-<div id="viewport">
-  <div id="scaleWrapper">
-    <div class="screen">
-
-      <div class="top">
-        <div class="panel">
-          <table>
-            <thead><tr id="head1"></tr></thead>
-            <tbody id="body1"></tbody>
-          </table>
-        </div>
-
-        <div class="panel">
-          <table>
-            <thead><tr id="head2"></tr></thead>
-            <tbody id="body2"></tbody>
-          </table>
-        </div>
-
-        <div class="panel">
-          <table>
-            <thead><tr id="head3"></tr></thead>
-            <tbody id="body3"></tbody>
-          </table>
-        </div>
-
-        <div class="panel">
-          <table>
-            <thead><tr id="head4"></tr></thead>
-            <tbody id="body4"></tbody>
-          </table>
+  <div id="viewport">
+    <div id="scaleWrapper">
+      <div class="screen">
+        <div class="top" id="topGrid">
+          <!-- Panels injected by JS -->
         </div>
       </div>
-
-      <div class="bulletin-wrap">
-        <div class="bulletin-title" id="bulletinTitle">BULLETIN</div>
-        <div class="bulletin-box" id="bulletinBox"></div>
-      </div>
-
     </div>
   </div>
-</div>
 
-<script>
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
-const BASE_W = 1366;
-const BASE_H = 768;
-const REFRESH_MS = 8000;
-const MIN_VISIBLE_ROWS = 18;
-const BULLETIN_LINES = 4;
-const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  <script>
+    /* =========================================================
+       6) CONFIG
+       Replace here if sheet URL or refresh timing changes
+       ========================================================= */
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
+    const REFRESH_MS = 8000;
+    const MIN_VISIBLE_ROWS = 18;
+    const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-function fitToScreen() {
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const scaleX = vw / BASE_W;
-  const scaleY = vh / BASE_H;
-  const scale = Math.min(scaleX, scaleY);
-  const scaledW = BASE_W * scale;
-  const scaledH = BASE_H * scale;
-  const left = (vw - scaledW) / 2;
-  const top = (vh - scaledH) / 2;
-  const wrapper = document.getElementById("scaleWrapper");
-  wrapper.style.transform = `translate(${left}px, ${top}px) scale(${scale})`;
-}
-window.addEventListener("resize", fitToScreen);
-fitToScreen();
+    /* =========================================================
+       7) CSV PARSER
+       Replace here only if CSV parsing ever needs adjustment
+       ========================================================= */
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let inQuotes = false;
 
-function parseCSV(text) {
-  const rows = [];
-  let row = [];
-  let cell = "";
-  let inQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        const next = text[i + 1];
 
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    const next = text[i + 1];
-
-    if (ch === '"') {
-      if (inQuotes && next === '"') {
-        cell += '"';
-        i++;
-      } else {
-        inQuotes = !inQuotes;
+        if (ch === '"') {
+          if (inQuotes && next === '"') {
+            cell += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (ch === ',' && !inQuotes) {
+          row.push(cell);
+          cell = "";
+        } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
+          if (ch === '\r' && next === '\n') i++;
+          row.push(cell);
+          rows.push(row);
+          row = [];
+          cell = "";
+        } else {
+          cell += ch;
+        }
       }
-    } else if (ch === ',' && !inQuotes) {
-      row.push(cell);
-      cell = "";
-    } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
-      if (ch === '\r' && next === '\n') i++;
-      row.push(cell);
-      rows.push(row);
-      row = [];
-      cell = "";
-    } else {
-      cell += ch;
-    }
-  }
 
-  if (cell.length || row.length) {
-    row.push(cell);
-    rows.push(row);
-  }
+      if (cell.length || row.length) {
+        row.push(cell);
+        rows.push(row);
+      }
 
-  return rows.filter(r => r.some(c => String(c).trim() !== ""));
-}
-
-function safe(row, idx) {
-  return row && row[idx] !== undefined ? String(row[idx]).trim() : "";
-}
-
-function clean(value) {
-  if (value == null) return "";
-  const v = String(value).trim();
-  const m = v.match(/^Date\((\d+),(\d+),(\d+)/);
-  if (m) return `${m[3]}-${MONTHS[+m[2]]}`;
-  return v;
-}
-
-function getStatus(value) {
-  const normalized = String(value || "").toUpperCase().replace(/[\s\-]+/g, "");
-  if (normalized.includes("DELAY")) return "delay";
-  if (normalized.includes("ONTIME")) return "ontime";
-  if (normalized.includes("RISK")) return "risk";
-  return "";
-}
-
-function isMuted(value) {
-  const t = String(value || "").trim().toUpperCase();
-  return t === "N/A" || t === "-";
-}
-
-function detectSections(headerRow) {
-  const sections = [];
-  let start = null;
-
-  for (let i = 0; i <= headerRow.length; i++) {
-    const value = i < headerRow.length ? clean(headerRow[i]) : "";
-    const filled = value !== "";
-
-    if (filled && start === null) start = i;
-    if ((!filled || i === headerRow.length) && start !== null) {
-      sections.push({ start, end: i - 1, title: clean(headerRow[start]) });
-      start = null;
-    }
-  }
-
-  return sections;
-}
-
-function makeCell(tag, value, leftAlign = false) {
-  const raw = String(value || "").trim();
-  const txt = clean(raw);
-  const status = getStatus(raw);
-
-  const el = document.createElement(tag);
-
-  if (status === "delay") {
-    el.classList.add("delay-cell");
-    const fill = document.createElement("div");
-    fill.className = "delay-fill";
-    fill.textContent = txt;
-    el.appendChild(fill);
-    return el;
-  }
-
-  if (status === "ontime") el.classList.add("ontime-cell");
-  if (status === "risk") el.classList.add("risk-cell");
-
-  const d = document.createElement("div");
-  d.className = "cell" + (leftAlign ? " left" : "");
-  if (!status && isMuted(txt)) d.classList.add("muted");
-  d.textContent = txt;
-  el.appendChild(d);
-  return el;
-}
-
-function clearSection(n) {
-  document.getElementById(`head${n}`).innerHTML = "";
-  document.getElementById(`body${n}`).innerHTML = "";
-}
-
-function renderSection(n, headerRow, rows, section, leftAlign = false) {
-  const head = document.getElementById(`head${n}`);
-  const body = document.getElementById(`body${n}`);
-  head.innerHTML = "";
-  body.innerHTML = "";
-
-  for (let c = section.start; c <= section.end; c++) {
-    head.appendChild(makeCell("th", headerRow[c], leftAlign));
-  }
-
-  const rowCount = Math.max(rows.length, MIN_VISIBLE_ROWS);
-
-  for (let r = 0; r < rowCount; r++) {
-    const row = rows[r] || [];
-    const tr = document.createElement("tr");
-
-    for (let c = section.start; c <= section.end; c++) {
-      tr.appendChild(makeCell("td", row[c], leftAlign));
+      return rows.filter(r => r.some(c => String(c).trim() !== ""));
     }
 
-    body.appendChild(tr);
-  }
-}
+    function safe(row, idx) {
+      return row && row[idx] !== undefined ? String(row[idx]).trim() : "";
+    }
 
-function renderBulletin(rows, title = "BULLETIN") {
-  document.getElementById("bulletinTitle").textContent = title;
-  const box = document.getElementById("bulletinBox");
-  box.innerHTML = "";
+    function clean(value) {
+      if (value == null) return "";
+      const v = String(value).trim();
+      const m = v.match(/^Date\((\d+),(\d+),(\d+)/);
+      if (m) return `${m[3]}-${MONTHS[+m[2]]}`;
+      return v;
+    }
 
-  for (let i = 0; i < BULLETIN_LINES; i++) {
-    const row = rows[i] || [];
-    const parts = row.map(clean).filter(v => v !== "");
-    const line = document.createElement("div");
-    line.className = "bulletin-line";
-    line.textContent = parts.join("   ");
-    box.appendChild(line);
-  }
-}
+    function getStatus(value) {
+      const normalized = String(value || "").toUpperCase().replace(/[\s\-]+/g, "");
+      if (normalized.includes("DELAY")) return "delay";
+      if (normalized.includes("ONTIME")) return "ontime";
+      if (normalized.includes("RISK")) return "risk";
+      return "";
+    }
 
-function render(data) {
-  if (!data || data.length < 2) {
-    document.body.innerHTML = '<div class="error">NO DATA</div>';
-    return;
-  }
+    function isMuted(value) {
+      const t = String(value || "").trim().toUpperCase();
+      return t === "N/A" || t === "-";
+    }
 
-  const header = data[0];
-  const rows = data.slice(1);
-  const sections = detectSections(header);
+    /* =========================================================
+       8) SECTION DETECTION
+       Detects blocks from header row separated by blank columns
+       ========================================================= */
+    function detectSections(headerRow) {
+      const sections = [];
+      let start = null;
 
-  const bulletinSection = sections.find(s => s.title.toUpperCase().includes("BULLETIN"));
-  const nonBulletSections = sections.filter(s => !s.title.toUpperCase().includes("BULLETIN"));
+      for (let i = 0; i <= headerRow.length; i++) {
+        const value = i < headerRow.length ? clean(headerRow[i]) : "";
+        const filled = value !== "";
 
-  clearSection(1);
-  clearSection(2);
-  clearSection(3);
-  clearSection(4);
+        if (filled && start === null) start = i;
 
-  for (let i = 0; i < 4; i++) {
-    const section = nonBulletSections[i];
-    if (!section) continue;
+        if ((!filled || i === headerRow.length) && start !== null) {
+          sections.push({
+            start,
+            end: i - 1,
+            title: clean(headerRow[start])
+          });
+          start = null;
+        }
+      }
 
-    const leftAlign = i >= 2;
-    renderSection(i + 1, header, rows, section, leftAlign);
-  }
+      return sections;
+    }
 
-  if (bulletinSection) {
-    const bulletinRows = rows.map(r => r.slice(bulletinSection.start, bulletinSection.end + 1));
-    renderBulletin(bulletinRows, bulletinSection.title || "BULLETIN");
-  } else {
-    const fallbackIndex = rows.findIndex(r => clean(r[0]).toUpperCase() === "BULLETIN");
-    const bulletinRows = fallbackIndex >= 0 ? rows.slice(fallbackIndex + 1, fallbackIndex + 1 + BULLETIN_LINES) : [];
-    renderBulletin(bulletinRows, "BULLETIN");
-  }
-}
+    /* =========================================================
+       9) CELL CREATION
+       Replace here if you want new status handling later
+       ========================================================= */
+    function makeCell(tag, value, leftAlign = false) {
+      const raw = String(value || "").trim();
+      const txt = clean(raw);
+      const status = getStatus(raw);
 
-async function load() {
-  try {
-    const res = await fetch(CSV_URL + "&t=" + Date.now(), { cache: "no-store" });
-    const text = await res.text();
-    const data = parseCSV(text);
-    render(data);
-    fitToScreen();
-  } catch (e) {
-    document.body.innerHTML = '<div class="error">LOAD ERROR</div>';
-  }
-}
+      const el = document.createElement(tag);
 
-load();
-setInterval(load, REFRESH_MS);
-</script>
+      if (status === "delay") {
+        el.classList.add("delay-cell");
+        const fill = document.createElement("div");
+        fill.className = "delay-fill";
+        fill.textContent = txt;
+        el.appendChild(fill);
+        return el;
+      }
 
+      if (status === "ontime") el.classList.add("ontime-cell");
+      if (status === "risk") el.classList.add("risk-cell");
+
+      const d = document.createElement("div");
+      d.className = "cell" + (leftAlign ? " left" : "");
+      if (!status && isMuted(txt)) d.classList.add("muted");
+      d.textContent = txt;
+      el.appendChild(d);
+
+      return el;
+    }
+
+    /* =========================================================
+       10) PANEL RENDERERS
+       One for normal table sections, one for bulletin section
+       ========================================================= */
+    function renderTablePanel(section, headerRow, rows, leftAlign = false) {
+      const panel = document.createElement("div");
+      panel.className = "panel";
+
+      const table = document.createElement("table");
+      const thead = document.createElement("thead");
+      const tbody = document.createElement("tbody");
+      const trHead = document.createElement("tr");
+
+      for (let c = section.start; c <= section.end; c++) {
+        trHead.appendChild(makeCell("th", headerRow[c], leftAlign));
+      }
+
+      thead.appendChild(trHead);
+      table.appendChild(thead);
+
+      const rowCount = Math.max(rows.length, MIN_VISIBLE_ROWS);
+
+      for (let r = 0; r < rowCount; r++) {
+        const row = rows[r] || [];
+        const tr = document.createElement("tr");
+
+        for (let c = section.start; c <= section.end; c++) {
+          tr.appendChild(makeCell("td", row[c], leftAlign));
+        }
+
+        tbody.appendChild(tr);
+      }
+
+      table.appendChild(tbody);
+      panel.appendChild(table);
+      return panel;
+    }
+
+    function renderBulletinPanel(section, rows) {
+      const panel = document.createElement("div");
+      panel.className = "panel bulletin-panel";
+
+      const header = document.createElement("div");
+      header.className = "bulletin-header";
+      header.textContent = section.title || "BULLETIN";
+
+      const box = document.createElement("div");
+      box.className = "bulletin-box";
+
+      const rowCount = Math.max(rows.length, MIN_VISIBLE_ROWS);
+
+      for (let r = 0; r < rowCount; r++) {
+        const row = rows[r] || [];
+        const parts = [];
+
+        for (let c = section.start; c <= section.end; c++) {
+          const value = clean(row[c]);
+          if (value !== "") parts.push(value);
+        }
+
+        const line = document.createElement("div");
+        line.className = "bulletin-line";
+        line.textContent = parts.join("   ");
+        box.appendChild(line);
+      }
+
+      panel.appendChild(header);
+      panel.appendChild(box);
+      return panel;
+    }
+
+    /* =========================================================
+       11) MAIN RENDER
+       Bulletin now stays where it appears in sheet section order
+       ========================================================= */
+    function render(data) {
+      if (!data || data.length < 2) {
+        document.body.innerHTML = '<div class="error">NO DATA</div>';
+        return;
+      }
+
+      const topGrid = document.getElementById("topGrid");
+      topGrid.innerHTML = "";
+
+      const header = data[0];
+      const rows = data.slice(1);
+      const sections = detectSections(header);
+
+      sections.forEach((section, index) => {
+        const titleUpper = String(section.title || "").toUpperCase();
+        const isBulletin = titleUpper.includes("BULLETIN");
+
+        const leftAlign = index >= 2;
+
+        if (isBulletin) {
+          topGrid.appendChild(renderBulletinPanel(section, rows));
+        } else {
+          topGrid.appendChild(renderTablePanel(section, header, rows, leftAlign));
+        }
+      });
+    }
+
+    /* =========================================================
+       12) AUTO REFRESH
+       Replace here if you want different refresh timing logic
+       ========================================================= */
+    async function load() {
+      try {
+        const res = await fetch(CSV_URL + "&t=" + Date.now(), { cache: "no-store" });
+        const text = await res.text();
+        const data = parseCSV(text);
+        render(data);
+      } catch (e) {
+        document.body.innerHTML = '<div class="error">LOAD ERROR</div>';
+      }
+    }
+
+    load();
+    setInterval(load, REFRESH_MS);
+  </script>
 </body>
 </html>
