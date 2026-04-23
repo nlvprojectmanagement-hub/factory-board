@@ -8,13 +8,15 @@
 * { box-sizing: border-box; }
 
 :root{
-  --bg:#000;
-  --grid:rgba(255,255,255,0.24);
-  --text:#ff9d00;
+  --bg:#000000;
+  --grid:rgba(255,255,255,0.22);
+  --grid-strong:rgba(255,255,255,0.34);
+  --text:#f0a100;
   --muted:#cfcfcf;
-  --header-grad:linear-gradient(180deg,#6b3e00 0%,#120700 100%);
-  --panel-grad:linear-gradient(180deg,#151515 0%,#000 100%);
-  --bullet-grad:linear-gradient(180deg,#5a3200 0%,#0a0300 100%);
+
+  --header-grad:linear-gradient(180deg,#7a4700 0%,#2b1700 45%,#110700 100%);
+  --panel-grad:linear-gradient(180deg,#101010 0%,#000000 100%);
+  --bullet-grad:linear-gradient(180deg,#6a3a00 0%,#180a00 100%);
 }
 
 html, body {
@@ -23,15 +25,15 @@ html, body {
   height: 100%;
   background: var(--bg);
   color: #fff;
-  font-family: Arial, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   overflow: hidden;
 }
 
 body {
-  padding: 6px;
+  padding: 5px;
   background:
-    radial-gradient(circle at top left, rgba(255,166,0,0.10), transparent 30%),
-    radial-gradient(circle at top right, rgba(255,166,0,0.06), transparent 25%),
+    radial-gradient(circle at top left, rgba(255,166,0,0.09), transparent 28%),
+    radial-gradient(circle at top right, rgba(255,166,0,0.04), transparent 22%),
     #000;
 }
 
@@ -39,20 +41,23 @@ body {
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-rows: 88% 12%;
+  grid-template-rows: 89% 11%;
   gap: 6px;
 }
 
 .top {
   display: grid;
-  grid-template-columns: 66% 22% 12%;
-  gap: 10px;
+  grid-template-columns: 65% 23% 12%;
+  gap: 8px;
   min-height: 0;
 }
 
 .panel {
-  background: var(--panel-grad);
   min-height: 0;
+  background: var(--panel-grad);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,166,0,0.05),
+    inset 0 0 25px rgba(255,255,255,0.015);
 }
 
 table {
@@ -71,33 +76,37 @@ th, td {
 }
 
 th {
-  font-size: 13px;
-  background: var(--header-grad);
-  height: 28px;
-  padding: 2px 4px;
+  height: 24px;
+  padding: 1px 3px;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: clip;
+  background: var(--header-grad);
+  border-color: var(--grid-strong);
+  text-shadow: 0 0 6px rgba(255,166,0,0.16);
 }
 
 td {
-  font-size: 18px;
-  background: rgba(0,0,0,0.75);
-  height: 30px;
+  height: 24px;
   padding: 0;
+  font-size: 17px;
+  background: rgba(0,0,0,0.82);
 }
 
 .cell-inner {
   width: 100%;
   height: 100%;
-  min-height: 30px;
+  min-height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 4px;
+  padding: 1px 3px;
   color: inherit;
   background: transparent;
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1;
   white-space: nowrap;
   overflow: hidden;
@@ -105,20 +114,21 @@ td {
   text-align: center;
 }
 
-/* Main board widths */
-.main-table col:nth-child(1) { width: 18%; }
-.main-table col:nth-child(2) { width: 16%; }
-.main-table col:nth-child(3) { width: 22%; }
-.main-table col:nth-child(4) { width: 21%; }
-.main-table col:nth-child(5) { width: 23%; }
+/* Main panel widths */
+.main-table col:nth-child(1) { width: 19%; } /* SALES ORDER */
+.main-table col:nth-child(2) { width: 16%; } /* STAGE */
+.main-table col:nth-child(3) { width: 22%; } /* FORECAST ASSEMBLY */
+.main-table col:nth-child(4) { width: 21%; } /* FORECAST TESTING */
+.main-table col:nth-child(5) { width: 22%; } /* CRATE DEADLINE */
 
-/* Incoming / Date */
-.ship-table col:nth-child(1) { width: 62%; }
-.ship-table col:nth-child(2) { width: 38%; }
+/* Ship panel */
+.ship-table col:nth-child(1) { width: 64%; } /* INCOMING SHIPMENTS */
+.ship-table col:nth-child(2) { width: 36%; } /* DATE */
 
-/* Inspection */
+/* Inspect panel */
 .inspect-table col:nth-child(1) { width: 100%; }
 
+/* Bulletin */
 .bulletin-wrap {
   display: flex;
   flex-direction: column;
@@ -126,60 +136,61 @@ td {
 }
 
 .bulletin-title {
-  border: 1px solid var(--grid);
+  height: 24px;
+  padding: 1px 10px;
+  border: 1px solid var(--grid-strong);
   border-bottom: none;
   background: var(--bullet-grad);
   color: var(--text);
-  font-size: 18px;
-  padding: 3px 10px;
-  height: 26px;
+  font-size: 16px;
   display: flex;
   align-items: center;
   font-weight: 700;
+  text-shadow: 0 0 6px rgba(255,166,0,0.16);
 }
 
 .bulletin-box {
-  border: 1px solid var(--grid);
-  display: grid;
-  grid-template-rows: repeat(3, 1fr);
   flex: 1;
   min-height: 0;
+  border: 1px solid var(--grid);
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  background: rgba(0,0,0,0.82);
 }
 
 .bulletin-line {
   border-top: 1px solid var(--grid);
-  padding: 2px 8px;
-  font-size: 14px;
+  padding: 1px 8px;
+  font-size: 13px;
   color: #fff;
   display: flex;
   align-items: center;
+  line-height: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: clip;
-  line-height: 1;
 }
 
 .bulletin-line:first-child {
   border-top: none;
 }
 
-/* Status colors */
+/* Statuses */
 .delay-cell {
-  background: #2b0000 !important;
+  background: #250000 !important;
 }
 
 .delay-fill {
-  width: calc(100% - 4px);
-  height: calc(100% - 4px);
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
   display: flex;
   align-items: center;
   justify-content: center;
   background: #ff0000;
   color: #fff;
   font-weight: 800;
-  animation: flashDelay 0.8s linear infinite;
-  text-shadow: 0 0 10px #fff;
-  line-height: 1;
+  text-shadow: 0 0 8px rgba(255,255,255,0.8);
+  animation: flashDelay 0.75s linear infinite;
 }
 
 .ontime-cell {
@@ -193,9 +204,9 @@ td {
 }
 
 @keyframes flashDelay {
-  0%   { background:#ff0000; color:#fff; opacity:1; }
-  50%  { background:#330000; color:#ff6666; opacity:0.35; }
-  100% { background:#ff0000; color:#fff; opacity:1; }
+  0%   { background:#ff0000; color:#ffffff; opacity:1; }
+  50%  { background:#2e0000; color:#ff6b6b; opacity:0.35; }
+  100% { background:#ff0000; color:#ffffff; opacity:1; }
 }
 
 .muted {
@@ -204,14 +215,14 @@ td {
 
 .error {
   color: red;
-  font-size: 24px;
+  font-size: 22px;
   padding: 20px;
+  font-weight: 700;
 }
 </style>
 </head>
 
 <body>
-
 <div class="screen">
 
   <div class="top">
@@ -252,8 +263,14 @@ td {
 <script>
 const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
 
+const REFRESH_MS = 8000;
+const STABLE_POLLS_REQUIRED = 2;
+
 let isLoading = false;
-let lastSnapshot = "";
+let lastAppliedSnapshot = "";
+let pendingSnapshot = "";
+let pendingRows = null;
+let pendingCount = 0;
 
 const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -323,15 +340,15 @@ function isMuted(value) {
   return v === "N/A" || v === "-";
 }
 
-function fitText(text, limit) {
+function crop(text, maxChars) {
   const t = String(text || "").trim();
-  if (t.length <= limit) return t;
-  return t.slice(0, limit);
+  if (t.length <= maxChars) return t;
+  return t.slice(0, maxChars);
 }
 
-function makeCell(tag, value, limit = 30) {
+function makeCell(tag, value, maxChars = 28) {
   const raw = String(value || "").trim();
-  const text = fitText(formatValue(raw), limit);
+  const text = crop(formatValue(raw), maxChars);
   const status = getStatus(raw);
 
   const el = document.createElement(tag);
@@ -342,15 +359,12 @@ function makeCell(tag, value, limit = 30) {
     el.classList.add("delay-cell");
     inner.classList.add("delay-fill");
   }
-
   if (status === "ontime") {
     el.classList.add("ontime-cell");
   }
-
   if (status === "risk") {
     el.classList.add("risk-cell");
   }
-
   if (!status && isMuted(text)) {
     inner.classList.add("muted");
   }
@@ -366,16 +380,12 @@ function render(rows) {
     return;
   }
 
-  const snapshot = JSON.stringify(rows);
-  if (snapshot === lastSnapshot) return;
-  lastSnapshot = snapshot;
-
   const header = rows[0] || [];
   const dataRows = rows.slice(1);
 
   const bulletinIndex = dataRows.findIndex(r => safe(r, 0).toUpperCase() === "BULLETIN");
   const upperRows = bulletinIndex >= 0 ? dataRows.slice(0, bulletinIndex) : dataRows;
-  const bulletinRows = bulletinIndex >= 0 ? dataRows.slice(bulletinIndex + 1, bulletinIndex + 4) : [];
+  const bulletinRows = bulletinIndex >= 0 ? dataRows.slice(bulletinIndex + 1, bulletinIndex + 5) : [];
 
   const mainHead = document.getElementById("mainHead");
   const shipHead = document.getElementById("shipHead");
@@ -391,21 +401,21 @@ function render(rows) {
   shipBody.innerHTML = "";
   inspectBody.innerHTML = "";
 
-  [0,1,2,3,4].forEach(i => mainHead.appendChild(makeCell("th", safe(header, i), 22)));
+  [0,1,2,3,4].forEach(i => mainHead.appendChild(makeCell("th", safe(header, i), 24)));
   [6,7].forEach(i => shipHead.appendChild(makeCell("th", safe(header, i), 18)));
-  inspectHead.appendChild(makeCell("th", safe(header, 9), 14));
+  inspectHead.appendChild(makeCell("th", safe(header, 9), 14)));
 
-  const rowCount = Math.max(upperRows.length, 18);
+  const rowCount = Math.max(upperRows.length, 20);
 
   for (let r = 0; r < rowCount; r++) {
     const row = upperRows[r] || [];
 
     const trMain = document.createElement("tr");
-    [0,1,2,3,4].forEach(i => trMain.appendChild(makeCell("td", safe(row, i), 24)));
+    [0,1,2,3,4].forEach(i => trMain.appendChild(makeCell("td", safe(row, i), 28)));
     mainBody.appendChild(trMain);
 
     const trShip = document.createElement("tr");
-    [6,7].forEach(i => trShip.appendChild(makeCell("td", safe(row, i), 18)));
+    [6,7].forEach(i => trShip.appendChild(makeCell("td", safe(row, i), 20)));
     shipBody.appendChild(trShip);
 
     const trInspect = document.createElement("tr");
@@ -416,16 +426,51 @@ function render(rows) {
   const bulletinBox = document.getElementById("bulletinBox");
   bulletinBox.innerHTML = "";
 
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 4; i++) {
     const row = bulletinRows[i] || [];
     const parts = row
-      .map(v => formatValue(v))
+      .map(v => crop(formatValue(v), 80))
       .filter(v => String(v).trim() !== "");
 
     const line = document.createElement("div");
     line.className = "bulletin-line";
     line.textContent = parts.join("   ");
     bulletinBox.appendChild(line);
+  }
+}
+
+function maybeApply(rows, snapshot) {
+  if (!lastAppliedSnapshot) {
+    render(rows);
+    lastAppliedSnapshot = snapshot;
+    pendingSnapshot = "";
+    pendingRows = null;
+    pendingCount = 0;
+    return;
+  }
+
+  if (snapshot === lastAppliedSnapshot) {
+    pendingSnapshot = "";
+    pendingRows = null;
+    pendingCount = 0;
+    return;
+  }
+
+  if (snapshot !== pendingSnapshot) {
+    pendingSnapshot = snapshot;
+    pendingRows = rows;
+    pendingCount = 1;
+    return;
+  }
+
+  pendingCount += 1;
+
+  if (pendingCount >= STABLE_POLLS_REQUIRED) {
+    render(pendingRows);
+    lastAppliedSnapshot = pendingSnapshot;
+    pendingSnapshot = "";
+    pendingRows = null;
+    pendingCount = 0;
   }
 }
 
@@ -437,7 +482,8 @@ async function load() {
     const res = await fetch(csvUrl + "&t=" + Date.now(), { cache: "no-store" });
     const text = await res.text();
     const rows = parseCSV(text);
-    render(rows);
+    const snapshot = JSON.stringify(rows);
+    maybeApply(rows, snapshot);
   } catch (e) {
     document.body.innerHTML = '<div class="error">Error loading</div>';
   }
@@ -446,7 +492,7 @@ async function load() {
 }
 
 load();
-setInterval(load, 10000);
+setInterval(load, REFRESH_MS);
 </script>
 
 </body>
