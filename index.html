@@ -4,139 +4,178 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Factory Board</title>
-
 <style>
-body { margin:0; background:#000; font-family:Arial; color:#fff; overflow:hidden; }
-
-table { width:100%; height:100%; border-collapse:collapse; table-layout:fixed; }
-th,td { border:1px solid #333; text-align:center; color:#f0a100; font-weight:700; }
-
-th { background:#2b1700; font-size:12px; }
-td { font-size:18px; }
-
-.delay { background:red; color:#fff; animation:flash 0.7s infinite; }
-.ontime { background:#00a83a; color:#fff; }
-
-@keyframes flash {
-0%{opacity:1}
-50%{opacity:0.3}
-100%{opacity:1}
+body{
+  margin:0;
+  background:#000;
+  color:#fff;
+  font-family:Arial,sans-serif;
+  overflow:hidden;
 }
-
-#error {
-position:absolute;
-top:10px;
-left:10px;
-color:red;
-font-size:20px;
-z-index:999;
+#error{
+  position:fixed;
+  top:8px;
+  left:8px;
+  right:8px;
+  z-index:9999;
+  color:red;
+  font-size:18px;
+  white-space:pre-wrap;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+}
+th,td{
+  border:1px solid rgba(255,255,255,0.25);
+  text-align:center;
+  color:#f0a100;
+  font-weight:700;
+}
+th{
+  background:linear-gradient(#7a4700,#120700);
+  font-size:12px;
+  height:24px;
+}
+td{
+  font-size:16px;
+  height:24px;
+}
+.cell{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.delay{background:red;color:#fff;animation:flash .8s infinite;}
+.ontime{background:#00a83a;color:#fff;}
+@keyframes flash{
+  0%{opacity:1}
+  50%{opacity:.3}
+  100%{opacity:1}
 }
 </style>
 </head>
-
 <body>
 
 <div id="error"></div>
-
 <table>
-<thead>
-<tr id="head"></tr>
-</thead>
-<tbody id="body"></tbody>
+  <thead><tr id="head"></tr></thead>
+  <tbody id="body"></tbody>
 </table>
 
 <script>
+const URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
+const monthNames=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
+function parseCSV(text){
+  const rows = [];
+  let row = [];
+  let cell = "";
+  let inQuotes = false;
 
-function parseCSV(text) {
-  return text.split("\n").map(r => r.split(","));
+  for(let i=0;i<text.length;i++){
+    const ch = text[i];
+    const next = text[i+1];
+
+    if(ch === '"'){
+      if(inQuotes && next === '"'){
+        cell += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if(ch === ',' && !inQuotes){
+      row.push(cell);
+      cell = "";
+    } else if((ch === '\n' || ch === '\r') && !inQuotes){
+      if(ch === '\r' && next === '\n') i++;
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = "";
+    } else {
+      cell += ch;
+    }
+  }
+
+  if(cell.length || row.length){
+    row.push(cell);
+    rows.push(row);
+  }
+
+  return rows.filter(r => r.some(c => String(c).trim() !== ""));
 }
 
 function clean(v){
-  if(!v) return "";
-  v=v.trim();
-
-  // FIX DATE(2026,3,13)
-  let m=v.match(/Date\((\d+),(\d+),(\d+)/);
-  if(m){
-    const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    return m[3]+"-"+months[+m[2]];
-  }
-
+  v = String(v || "").trim();
+  const m = v.match(/^Date\((\d+),(\d+),(\d+)/);
+  if(m) return `${m[3]}-${monthNames[+m[2]]}`;
   return v;
 }
 
 function status(v){
-  let s=(v||"").toUpperCase().replace(/[\s\-]/g,"");
+  const s = String(v || "").toUpperCase().replace(/[\s\-]/g,"");
   if(s.includes("DELAY")) return "delay";
   if(s.includes("ONTIME")) return "ontime";
   return "";
 }
 
-function render(rows){
+function makeCell(tag,val){
+  const el = document.createElement(tag);
+  const div = document.createElement("div");
+  div.className = "cell";
+  const txt = clean(val);
+  const st = status(txt);
+  if(st) div.classList.add(st);
+  div.textContent = txt;
+  el.appendChild(div);
+  return el;
+}
 
-  if(!rows || rows.length<2){
-    document.getElementById("error").innerText="NO DATA";
+function render(rows){
+  const err = document.getElementById("error");
+  const head = document.getElementById("head");
+  const body = document.getElementById("body");
+
+  head.innerHTML = "";
+  body.innerHTML = "";
+
+  if(!rows || rows.length < 2){
+    err.textContent = "NO DATA\n\nResponse preview:\n" + window.__lastText.slice(0,500);
     return;
   }
 
-  document.getElementById("error").innerText="";
+  err.textContent = "";
 
-  const head=document.getElementById("head");
-  const body=document.getElementById("body");
+  const header = rows[0];
+  header.slice(0,5).forEach(h => head.appendChild(makeCell("th", h)));
 
-  head.innerHTML="";
-  body.innerHTML="";
-
-  // HEADER
-  rows[0].slice(0,5).forEach(h=>{
-    let th=document.createElement("th");
-    th.innerText=h;
-    head.appendChild(th);
-  });
-
-  // BODY
-  rows.slice(1).forEach(r=>{
-    let tr=document.createElement("tr");
-
+  rows.slice(1).forEach(r => {
+    const tr = document.createElement("tr");
     for(let i=0;i<5;i++){
-      let td=document.createElement("td");
-      let val=clean(r[i]);
-
-      let st=status(val);
-      if(st==="delay") td.className="delay";
-      if(st==="ontime") td.className="ontime";
-
-      td.innerText=val;
-      tr.appendChild(td);
+      tr.appendChild(makeCell("td", r[i] || ""));
     }
-
     body.appendChild(tr);
   });
 }
 
 async function load(){
   try{
-    const res=await fetch(url+"?t="+Date.now());
-    const text=await res.text();
-
-    if(!text || text.length<10){
-      document.getElementById("error").innerText="EMPTY CSV";
-      return;
-    }
-
-    const rows=parseCSV(text);
+    const res = await fetch(URL + "&t=" + Date.now(), {cache:"no-store"});
+    const text = await res.text();
+    window.__lastText = text;
+    const rows = parseCSV(text);
     render(rows);
-
-  }catch(e){
-    document.getElementById("error").innerText="LOAD ERROR";
+  } catch(e){
+    document.getElementById("error").textContent = "LOAD ERROR\n\n" + e;
   }
 }
 
 load();
 setInterval(load,8000);
-
 </script>
 
 </body>
