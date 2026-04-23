@@ -8,6 +8,17 @@
 <style>
 * { box-sizing: border-box; }
 
+:root {
+  --bg: #000;
+  --grid: rgba(255,255,255,0.20);
+  --grid-strong: rgba(255,255,255,0.30);
+  --text: #f0a100;
+  --muted: #cfcfcf;
+  --header-grad: linear-gradient(180deg, #7a4700 0%, #2b1700 50%, #120700 100%);
+  --panel-grad: linear-gradient(180deg, #101010 0%, #000000 100%);
+  --bullet-grad: linear-gradient(180deg, #6a3a00 0%, #180a00 100%);
+}
+
 html, body {
   margin: 0;
   width: 100%;
@@ -15,6 +26,8 @@ html, body {
   overflow: hidden;
   background: #000;
   font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 body {
@@ -24,7 +37,6 @@ body {
     #000;
 }
 
-/* FULLSCREEN CENTERING */
 #viewport {
   position: fixed;
   inset: 0;
@@ -40,27 +52,29 @@ body {
   height: 768px;
   transform-origin: top left;
   padding: 4px;
-  background: transparent;
 }
 
 .screen {
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-rows: 92% 8%;
+  grid-template-rows: 90% 10%;
   gap: 4px;
 }
 
 .top {
   display: grid;
-  grid-template-columns: 64% 20% 16%;
+  grid-template-columns: 62% 16% 12% 10%;
   gap: 6px;
   min-height: 0;
 }
 
 .panel {
-  background: #000;
   min-height: 0;
+  background: var(--panel-grad);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,166,0,0.04),
+    inset 0 0 20px rgba(255,255,255,0.01);
 }
 
 table {
@@ -71,28 +85,29 @@ table {
 }
 
 th, td {
-  border: 1px solid rgba(255,255,255,0.20);
+  border: 1px solid var(--grid);
   text-align: center;
   vertical-align: middle;
-  color: #f0a100;
+  color: var(--text);
   font-weight: 700;
 }
 
 th {
   height: 24px;
   padding: 1px 3px;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: clip;
-  background: linear-gradient(180deg, #7a4700 0%, #2b1700 50%, #120700 100%);
+  background: var(--header-grad);
+  border-color: var(--grid-strong);
 }
 
 td {
   height: 21px;
   padding: 0;
-  font-size: 15px;
+  font-size: 14px;
   background: rgba(0,0,0,0.82);
 }
 
@@ -109,6 +124,7 @@ td {
   overflow: hidden;
   text-overflow: clip;
   color: inherit;
+  background: transparent;
 }
 
 .cell.left {
@@ -149,7 +165,7 @@ td {
 }
 
 .muted {
-  color: #cfcfcf !important;
+  color: var(--muted) !important;
 }
 
 .bulletin-wrap {
@@ -159,15 +175,15 @@ td {
 }
 
 .bulletin-title {
-  height: 20px;
+  height: 22px;
   display: flex;
   align-items: center;
   padding: 1px 8px;
   font-size: 13px;
   font-weight: 700;
-  color: #f0a100;
-  background: linear-gradient(180deg, #6a3a00 0%, #180a00 100%);
-  border: 1px solid rgba(255,255,255,0.20);
+  color: var(--text);
+  background: var(--bullet-grad);
+  border: 1px solid var(--grid-strong);
   border-bottom: none;
 }
 
@@ -176,7 +192,7 @@ td {
   min-height: 0;
   display: grid;
   grid-template-rows: repeat(4, 1fr);
-  border: 1px solid rgba(255,255,255,0.20);
+  border: 1px solid var(--grid);
   background: rgba(0,0,0,0.82);
 }
 
@@ -184,7 +200,7 @@ td {
   display: flex;
   align-items: center;
   padding: 1px 8px;
-  font-size: 11px;
+  font-size: 12px;
   color: #fff;
   line-height: 1;
   white-space: nowrap;
@@ -201,6 +217,7 @@ td {
   color: red;
   font-size: 18px;
   padding: 10px;
+  white-space: pre-wrap;
 }
 </style>
 </head>
@@ -212,29 +229,36 @@ td {
 
       <div class="top">
         <div class="panel">
-          <table id="table1">
+          <table>
             <thead><tr id="head1"></tr></thead>
             <tbody id="body1"></tbody>
           </table>
         </div>
 
         <div class="panel">
-          <table id="table2">
+          <table>
             <thead><tr id="head2"></tr></thead>
             <tbody id="body2"></tbody>
           </table>
         </div>
 
         <div class="panel">
-          <table id="table3">
+          <table>
             <thead><tr id="head3"></tr></thead>
             <tbody id="body3"></tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <table>
+            <thead><tr id="head4"></tr></thead>
+            <tbody id="body4"></tbody>
           </table>
         </div>
       </div>
 
       <div class="bulletin-wrap">
-        <div class="bulletin-title">BULLETIN</div>
+        <div class="bulletin-title" id="bulletinTitle">BULLETIN</div>
         <div class="bulletin-box" id="bulletinBox"></div>
       </div>
 
@@ -247,28 +271,23 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk4
 const BASE_W = 1366;
 const BASE_H = 768;
 const REFRESH_MS = 8000;
-const MIN_VISIBLE_ROWS = 20;
+const MIN_VISIBLE_ROWS = 18;
 const BULLETIN_LINES = 4;
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 function fitToScreen() {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-
   const scaleX = vw / BASE_W;
   const scaleY = vh / BASE_H;
   const scale = Math.min(scaleX, scaleY);
-
   const scaledW = BASE_W * scale;
   const scaledH = BASE_H * scale;
-
   const left = (vw - scaledW) / 2;
   const top = (vh - scaledH) / 2;
-
   const wrapper = document.getElementById("scaleWrapper");
   wrapper.style.transform = `translate(${left}px, ${top}px) scale(${scale})`;
 }
-
 window.addEventListener("resize", fitToScreen);
 fitToScreen();
 
@@ -346,7 +365,7 @@ function detectSections(headerRow) {
 
     if (filled && start === null) start = i;
     if ((!filled || i === headerRow.length) && start !== null) {
-      sections.push({ start, end: i - 1 });
+      sections.push({ start, end: i - 1, title: clean(headerRow[start]) });
       start = null;
     }
   }
@@ -378,13 +397,17 @@ function makeCell(tag, value, leftAlign = false) {
   if (!status && isMuted(txt)) d.classList.add("muted");
   d.textContent = txt;
   el.appendChild(d);
-
   return el;
 }
 
-function renderSection(headId, bodyId, headerRow, rows, section, leftAlign = false) {
-  const head = document.getElementById(headId);
-  const body = document.getElementById(bodyId);
+function clearSection(n) {
+  document.getElementById(`head${n}`).innerHTML = "";
+  document.getElementById(`body${n}`).innerHTML = "";
+}
+
+function renderSection(n, headerRow, rows, section, leftAlign = false) {
+  const head = document.getElementById(`head${n}`);
+  const body = document.getElementById(`body${n}`);
   head.innerHTML = "";
   body.innerHTML = "";
 
@@ -406,7 +429,8 @@ function renderSection(headId, bodyId, headerRow, rows, section, leftAlign = fal
   }
 }
 
-function renderBulletin(rows) {
+function renderBulletin(rows, title = "BULLETIN") {
+  document.getElementById("bulletinTitle").textContent = title;
   const box = document.getElementById("bulletinBox");
   box.innerHTML = "";
 
@@ -427,21 +451,33 @@ function render(data) {
   }
 
   const header = data[0];
-  const allRows = data.slice(1);
-
-  const bulletinIndex = allRows.findIndex(r => clean(r[0]).toUpperCase() === "BULLETIN");
-  const upperRows = bulletinIndex >= 0 ? allRows.slice(0, bulletinIndex) : allRows;
-  const bulletinRows = bulletinIndex >= 0 ? allRows.slice(bulletinIndex + 1, bulletinIndex + 1 + BULLETIN_LINES) : [];
-
+  const rows = data.slice(1);
   const sections = detectSections(header);
-  const section1 = sections[0] || { start: 0, end: 4 };
-  const section2 = sections[1] || { start: 6, end: 7 };
-  const section3 = sections[2] || { start: 9, end: 9 };
 
-  renderSection("head1", "body1", header, upperRows, section1, false);
-  renderSection("head2", "body2", header, upperRows, section2, false);
-  renderSection("head3", "body3", header, upperRows, section3, true);
-  renderBulletin(bulletinRows);
+  const bulletinSection = sections.find(s => s.title.toUpperCase().includes("BULLETIN"));
+  const nonBulletSections = sections.filter(s => !s.title.toUpperCase().includes("BULLETIN"));
+
+  clearSection(1);
+  clearSection(2);
+  clearSection(3);
+  clearSection(4);
+
+  for (let i = 0; i < 4; i++) {
+    const section = nonBulletSections[i];
+    if (!section) continue;
+
+    const leftAlign = i >= 2;
+    renderSection(i + 1, header, rows, section, leftAlign);
+  }
+
+  if (bulletinSection) {
+    const bulletinRows = rows.map(r => r.slice(bulletinSection.start, bulletinSection.end + 1));
+    renderBulletin(bulletinRows, bulletinSection.title || "BULLETIN");
+  } else {
+    const fallbackIndex = rows.findIndex(r => clean(r[0]).toUpperCase() === "BULLETIN");
+    const bulletinRows = fallbackIndex >= 0 ? rows.slice(fallbackIndex + 1, fallbackIndex + 1 + BULLETIN_LINES) : [];
+    renderBulletin(bulletinRows, "BULLETIN");
+  }
 }
 
 async function load() {
