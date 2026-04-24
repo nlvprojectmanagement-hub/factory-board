@@ -9,22 +9,20 @@
 *{box-sizing:border-box}
 
 :root{
-  --bg:#000;
-  --grid:rgba(255,255,255,.24);
-  --grid-strong:rgba(255,255,255,.42);
+  --grid:rgba(255,255,255,.28);
+  --gridStrong:rgba(255,255,255,.45);
   --orange:#ffae00;
-  --white:#f5f5f5;
+  --white:#f4f4f4;
   --muted:#bdbdbd;
   --header:linear-gradient(180deg,#7a4700 0%,#2a1600 58%,#090400 100%);
-  --panel:linear-gradient(180deg,#050505 0%,#000 100%);
 }
 
 html,body{
   margin:0;
   width:100%;
   height:100%;
-  background:#000;
   overflow:hidden;
+  background:#000;
   font-family:Arial,Helvetica,sans-serif;
   -webkit-font-smoothing:antialiased;
   text-rendering:geometricPrecision;
@@ -32,20 +30,19 @@ html,body{
 
 .screen{
   width:100vw;
-  height:100vh;
+  height:100dvh;
   display:grid;
-  grid-template-rows:44px 1fr 132px;
+  grid-template-rows:48px 1fr 132px;
   gap:5px;
   padding:5px;
   background:#000;
 }
 
-/* TOP ROW */
+/* TOP */
 .top-row{
   display:grid;
   grid-template-columns:170px 1fr;
   gap:5px;
-  min-height:0;
 }
 
 .logo-box{
@@ -58,12 +55,12 @@ html,body{
 }
 
 .logo-box img{
-  max-height:38px;
+  max-height:40px;
   max-width:100%;
   object-fit:contain;
 }
 
-.announcement-bar{
+.announcement{
   border:1px solid var(--grid);
   background:#000;
   display:grid;
@@ -71,7 +68,7 @@ html,body{
   overflow:hidden;
 }
 
-.bar-label{
+.announcement-label{
   background:var(--header);
   color:var(--orange);
   font-size:13px;
@@ -79,9 +76,7 @@ html,body{
   display:flex;
   align-items:center;
   justify-content:center;
-  border-right:2px solid var(--grid-strong);
-  white-space:nowrap;
-  letter-spacing:.3px;
+  border-right:1px solid var(--gridStrong);
 }
 
 .marquee{
@@ -93,13 +88,12 @@ html,body{
 
 .marquee-track{
   display:inline-flex;
-  align-items:center;
   gap:80px;
   white-space:nowrap;
   color:#fff;
   font-size:14px;
   font-weight:800;
-  animation:marqueeMove 35s linear infinite;
+  animation:marqueeMove 36s linear infinite;
 }
 
 @keyframes marqueeMove{
@@ -107,95 +101,62 @@ html,body{
   100%{transform:translateX(-50%)}
 }
 
-/* MAIN AREA */
-.main-area{
-  width:100%;
-  height:100%;
+/* MAIN SHEET GRID */
+.main-grid{
   display:grid;
-  grid-template-columns:58% 18% 24%;
-  gap:6px;
-  min-height:0;
-}
-
-.panel{
-  min-height:0;
-  overflow:hidden;
-  background:var(--panel);
+  grid-template-columns:
+    1fr .95fr 1.05fr 1.35fr 1.35fr 1.25fr
+    .10fr
+    1.45fr .75fr
+    .10fr
+    2.45fr;
+  grid-auto-rows:1fr;
   border:1px solid var(--grid);
-}
-
-.split-panel{
-  display:grid;
-  grid-template-columns:1.25fr .75fr;
-  gap:6px;
-  min-height:0;
-}
-
-.sub-panel{
-  min-height:0;
+  background:#000;
   overflow:hidden;
-  background:var(--panel);
-  border:1px solid var(--grid);
 }
 
-table{
-  width:100%;
-  border-collapse:collapse;
-  table-layout:fixed;
-}
-
-th,td{
-  border:1px solid var(--grid);
-  text-align:center;
-  vertical-align:middle;
-  font-weight:800;
-}
-
-th{
-  height:21px;
-  background:var(--header);
-  color:var(--orange);
-  border-color:var(--grid-strong);
-  font-size:11px;
-  padding:1px 3px;
-  white-space:nowrap;
-  overflow:hidden;
-  letter-spacing:.1px;
-}
-
-td{
-  height:20px;
+.sheet-cell{
+  border-right:1px solid var(--grid);
+  border-bottom:1px solid var(--grid);
   background:#000;
   color:var(--white);
   font-size:12px;
-  padding:0;
-}
-
-.cell{
-  width:100%;
-  height:100%;
-  min-height:20px;
+  font-weight:800;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:1px 3px;
+  padding:1px 4px;
   white-space:nowrap;
   overflow:hidden;
-  color:inherit;
   position:relative;
 }
 
-.cell.left{
-  justify-content:flex-start;
-  padding-left:5px;
+.sheet-cell.header{
+  background:var(--header);
+  color:var(--orange);
   font-size:11px;
+  border-color:var(--gridStrong);
+}
+
+.sheet-cell.left{
+  justify-content:flex-start;
+  padding-left:6px;
+  font-size:11px;
+}
+
+.sheet-cell.separator{
+  background:#000;
+  border-left:2px solid var(--gridStrong);
+  border-right:2px solid var(--gridStrong);
+  padding:0;
 }
 
 .cell-inner{
   white-space:nowrap;
 }
 
-.cell.long .cell-inner{
+.sheet-cell.long .cell-inner{
   position:absolute;
   animation:cellScroll 18s linear infinite;
 }
@@ -206,19 +167,9 @@ td{
 }
 
 /* STATUS */
-.delay-cell{
-  background:#240000!important;
-}
-
-.delay-fill{
-  width:100%;
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#ff0000;
-  color:#fff;
-  font-weight:900;
+.delay{
+  background:#ff0000!important;
+  color:#fff!important;
   animation:flashDelay .65s linear infinite;
 }
 
@@ -228,12 +179,12 @@ td{
   100%{background:#ff0000}
 }
 
-.ontime-cell{
+.ontime{
   background:#00a83a!important;
   color:#fff!important;
 }
 
-.risk-cell{
+.risk{
   background:#ffbf00!important;
   color:#000!important;
 }
@@ -243,12 +194,12 @@ td{
 }
 
 /* NOTES */
-.notes-panel{
+.notes{
   border:1px solid var(--grid);
+  display:grid;
+  grid-template-rows:24px 1fr;
   background:#000;
   overflow:hidden;
-  display:grid;
-  grid-template-rows:23px 1fr;
 }
 
 .notes-title{
@@ -259,14 +210,13 @@ td{
   display:flex;
   align-items:center;
   padding-left:10px;
-  border-bottom:1px solid var(--grid-strong);
+  border-bottom:1px solid var(--gridStrong);
 }
 
 .notes-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  grid-auto-rows:18px;
-  overflow:hidden;
+  grid-auto-rows:1fr;
   height:100%;
 }
 
@@ -302,9 +252,8 @@ td{
 .error{
   color:red;
   font-size:22px;
-  font-weight:800;
+  font-weight:900;
   padding:20px;
-  white-space:pre-wrap;
 }
 </style>
 </head>
@@ -315,11 +264,11 @@ td{
 
   <div class="top-row">
     <div class="logo-box">
-      <img src="Picsart_24-07-23_20-35-10-625.png" alt="Company Logo">
+      <img src="Picsart_24-07-23_20-35-10-625.png">
     </div>
 
-    <div class="announcement-bar">
-      <div class="bar-label" id="announcementLabel">ANNOUNCEMENT</div>
+    <div class="announcement">
+      <div class="announcement-label" id="announcementLabel">ANNOUNCEMENT</div>
       <div class="marquee">
         <div class="marquee-track" id="announcementTrack">
           <span></span><span></span>
@@ -328,18 +277,9 @@ td{
     </div>
   </div>
 
-  <div class="main-area">
-    <div id="mainPanel"></div>
+  <div class="main-grid" id="mainGrid"></div>
 
-    <div class="split-panel">
-      <div id="incomingPanel"></div>
-      <div id="datePanel"></div>
-    </div>
-
-    <div id="inspectionPanel"></div>
-  </div>
-
-  <div class="notes-panel">
+  <div class="notes">
     <div class="notes-title">NOTES</div>
     <div class="notes-grid" id="notesGrid"></div>
   </div>
@@ -349,29 +289,20 @@ td{
 <script>
 const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
 const REFRESH_MS=8000;
-const EXTRA_BLANK_ROWS=1;
 const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 function parseCSV(text){
   const rows=[];
-  let row=[];
-  let cell="";
-  let q=false;
+  let row=[],cell="",q=false;
 
   for(let i=0;i<text.length;i++){
-    const ch=text[i];
-    const nx=text[i+1];
+    const ch=text[i],nx=text[i+1];
 
     if(ch==='"'){
-      if(q&&nx==='"'){
-        cell+='"';
-        i++;
-      }else{
-        q=!q;
-      }
+      if(q&&nx==='"'){cell+='"';i++}
+      else q=!q;
     }else if(ch===","&&!q){
-      row.push(cell);
-      cell="";
+      row.push(cell);cell="";
     }else if((ch==="\n"||ch==="\r")&&!q){
       if(ch==="\r"&&nx==="\n")i++;
       row.push(cell);
@@ -399,153 +330,19 @@ function clean(v){
   return s;
 }
 
-function norm(v){
-  return clean(v).toUpperCase().replace(/[\s\-]+/g,"");
+function findRow(rows,words){
+  return rows.findIndex(r=>r.some(c=>{
+    const v=clean(c).toUpperCase();
+    return words.some(w=>v===w || v.includes(w));
+  }));
 }
 
-function getStatus(v){
-  const s=norm(v);
+function statusClass(v){
+  const s=clean(v).toUpperCase().replace(/[\s\-]+/g,"");
   if(s.includes("DELAY"))return"delay";
   if(s.includes("ONTIME"))return"ontime";
   if(s.includes("RISK"))return"risk";
   return"";
-}
-
-function isMuted(v){
-  const s=clean(v).toUpperCase();
-  return s==="N/A"||s==="-";
-}
-
-function findRowByWords(rows,words){
-  return rows.findIndex(r=>{
-    return r.some(c=>{
-      const v=clean(c).toUpperCase();
-      return words.some(w=>v===w || v.includes(w));
-    });
-  });
-}
-
-function makeCell(tag,val,left=false){
-  const raw=String(val||"").trim();
-  const txt=clean(raw);
-  const st=getStatus(raw);
-  const el=document.createElement(tag);
-
-  if(st==="delay"){
-    el.classList.add("delay-cell");
-    const d=document.createElement("div");
-    d.className="delay-fill";
-    d.textContent=txt;
-    el.appendChild(d);
-    return el;
-  }
-
-  if(st==="ontime")el.classList.add("ontime-cell");
-  if(st==="risk")el.classList.add("risk-cell");
-
-  const d=document.createElement("div");
-  d.className="cell"+(left?" left":"");
-
-  const inner=document.createElement("span");
-  inner.className="cell-inner";
-  inner.textContent=txt;
-
-  if(!st&&isMuted(txt))d.classList.add("muted");
-
-  d.appendChild(inner);
-  el.appendChild(d);
-
-  requestAnimationFrame(()=>{
-    if(inner.scrollWidth > d.clientWidth){
-      d.classList.add("long");
-    }
-  });
-
-  return el;
-}
-
-function rowHasData(row,start,end){
-  for(let c=start;c<=end;c++){
-    if(clean(row[c])!=="")return true;
-  }
-  return false;
-}
-
-function renderTable(containerId, header, rows, start, end, left=false, panelClass="panel"){
-  const container=document.getElementById(containerId);
-  container.innerHTML="";
-
-  const panel=document.createElement("div");
-  panel.className=panelClass;
-
-  const table=document.createElement("table");
-  const thead=document.createElement("thead");
-  const tbody=document.createElement("tbody");
-  const trh=document.createElement("tr");
-
-  for(let c=start;c<=end;c++){
-    trh.appendChild(makeCell("th",header[c],left));
-  }
-
-  thead.appendChild(trh);
-  table.appendChild(thead);
-
-  const visible=rows.filter(r=>rowHasData(r,start,end));
-  const count=visible.length+EXTRA_BLANK_ROWS;
-
-  for(let r=0;r<count;r++){
-    const row=visible[r]||[];
-    const tr=document.createElement("tr");
-
-    for(let c=start;c<=end;c++){
-      tr.appendChild(makeCell("td",row[c],left));
-    }
-
-    tbody.appendChild(tr);
-  }
-
-  table.appendChild(tbody);
-  panel.appendChild(table);
-  container.appendChild(panel);
-}
-
-function renderSingleColumn(containerId, header, rows, col, left=false){
-  const container=document.getElementById(containerId);
-  container.innerHTML="";
-
-  const panel=document.createElement("div");
-  panel.className="sub-panel";
-
-  const table=document.createElement("table");
-  const thead=document.createElement("thead");
-  const tbody=document.createElement("tbody");
-  const trh=document.createElement("tr");
-
-  trh.appendChild(makeCell("th",header[col],left));
-  thead.appendChild(trh);
-  table.appendChild(thead);
-
-  const visible=rows.filter(r=>clean(r[col])!=="");
-  const count=Math.max(rows.length, visible.length+EXTRA_BLANK_ROWS);
-
-  for(let r=0;r<count;r++){
-    const row=rows[r]||[];
-    const tr=document.createElement("tr");
-    tr.appendChild(makeCell("td",row[col],left));
-    tbody.appendChild(tr);
-  }
-
-  table.appendChild(tbody);
-  panel.appendChild(table);
-  container.appendChild(panel);
-}
-
-function rowValues(row,start,end){
-  const vals=[];
-  for(let c=start;c<=end;c++){
-    vals.push(clean(row[c]));
-  }
-  return vals;
 }
 
 function setAnnouncement(label,text){
@@ -556,14 +353,24 @@ function setAnnouncement(label,text){
   spans[1].textContent=finalText;
 }
 
-function makeNoteCell(text){
+function makeGridCell(text,opts={}){
   const cell=document.createElement("div");
-  cell.className="note-cell";
+  cell.className="sheet-cell";
 
-  const inner=document.createElement("div");
-  inner.className="note-inner";
-  inner.textContent=text || "";
+  if(opts.header)cell.classList.add("header");
+  if(opts.left)cell.classList.add("left");
+  if(opts.separator)cell.classList.add("separator");
 
+  const st=statusClass(text);
+  if(st)cell.classList.add(st);
+
+  if(clean(text).toUpperCase()==="N/A" || clean(text)==="-"){
+    cell.classList.add("muted");
+  }
+
+  const inner=document.createElement("span");
+  inner.className="cell-inner";
+  inner.textContent=clean(text);
   cell.appendChild(inner);
 
   requestAnimationFrame(()=>{
@@ -575,42 +382,84 @@ function makeNoteCell(text){
   return cell;
 }
 
+function makeNoteCell(text){
+  const cell=document.createElement("div");
+  cell.className="note-cell";
+
+  const inner=document.createElement("div");
+  inner.className="note-inner";
+  inner.textContent=clean(text);
+  cell.appendChild(inner);
+
+  requestAnimationFrame(()=>{
+    if(inner.scrollWidth > cell.clientWidth){
+      cell.classList.add("long");
+    }
+  });
+
+  return cell;
+}
+
+function renderMain(header,rows){
+  const grid=document.getElementById("mainGrid");
+  grid.innerHTML="";
+
+  const sheetCols=[0,1,2,3,4,5,6,7,8,9,10];
+
+  sheetCols.forEach(c=>{
+    grid.appendChild(makeGridCell(header[c],{
+      header:true,
+      separator:c===6 || c===9,
+      left:c===10
+    }));
+  });
+
+  const visible=rows.filter(r=>r.some(c=>clean(c)!==""));
+  const totalRows=Math.max(visible.length+2,14);
+
+  for(let r=0;r<totalRows;r++){
+    const row=visible[r]||[];
+
+    sheetCols.forEach(c=>{
+      grid.appendChild(makeGridCell(row[c],{
+        separator:c===6 || c===9,
+        left:c===10
+      }));
+    });
+  }
+}
+
 function renderNotes(rows){
   const grid=document.getElementById("notesGrid");
   grid.innerHTML="";
 
-  rows.forEach(row=>{
-    grid.appendChild(makeNoteCell(clean(row[0])));
-    grid.appendChild(makeNoteCell(clean(row[6])));
-  });
+  const visible=rows.filter(r=>clean(r[0])!=="" || clean(r[6])!=="");
+  const total=Math.max(visible.length,6);
+
+  for(let i=0;i<total;i++){
+    const row=visible[i]||[];
+    grid.appendChild(makeNoteCell(row[0]));
+    grid.appendChild(makeNoteCell(row[6]));
+  }
 }
 
 function render(data){
-  if(!data||data.length<2){
-    document.body.innerHTML='<div class="error">NO DATA</div>';
-    return;
-  }
-
-  const announcementRow=findRowByWords(data,["ANNOUNCEMENT","ANOUNCEMENT","BULLETIN"]);
-  const salesRow=findRowByWords(data,["SALES ORDER"]);
-  const notesRow=findRowByWords(data,["NOTES"]);
+  const announcementRow=findRow(data,["ANNOUNCEMENT","ANOUNCEMENT","BULLETIN"]);
+  const salesRow=findRow(data,["SALES ORDER"]);
+  const notesRow=findRow(data,["NOTES"]);
 
   if(announcementRow>=0){
     const label=clean(data[announcementRow][0]);
-    const text=rowValues(data[announcementRow],1,11).filter(Boolean).join("     •     ");
+    const text=data[announcementRow].slice(1,12).map(clean).filter(Boolean).join("     •     ");
     setAnnouncement(label,text);
-  }else{
-    setAnnouncement("ANNOUNCEMENT","");
   }
 
   if(notesRow>=0){
     renderNotes(data.slice(notesRow+1));
-  }else{
-    renderNotes([]);
   }
 
   if(salesRow<0){
-    document.getElementById("mainPanel").innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
+    document.getElementById("mainGrid").innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
     return;
   }
 
@@ -618,10 +467,7 @@ function render(data){
   const tableEnd=notesRow>salesRow?notesRow:data.length;
   const rows=data.slice(salesRow+1,tableEnd);
 
-  renderTable("mainPanel",header,rows,0,5,false,"panel");
-  renderSingleColumn("incomingPanel",header,rows,7,false);
-  renderSingleColumn("datePanel",header,rows,8,false);
-  renderTable("inspectionPanel",header,rows,10,10,true,"panel");
+  renderMain(header,rows);
 }
 
 async function load(){
