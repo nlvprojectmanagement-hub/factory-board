@@ -8,66 +8,81 @@
 <style>
 *{box-sizing:border-box}
 
+:root{
+  --grid:rgba(255,255,255,.20);
+  --grid2:rgba(255,255,255,.32);
+  --orange:#f0a100;
+  --white:#fff;
+  --muted:#bdbdbd;
+  --head:linear-gradient(180deg,#7a4700 0%,#2b1700 55%,#120700 100%);
+}
+
 html,body{
   margin:0;
+  width:100%;
   height:100%;
   background:#000;
-  font-family:Arial,Helvetica,sans-serif;
   overflow:hidden;
+  font-family:Arial,Helvetica,sans-serif;
 }
 
-:root{
-  --grid:rgba(255,255,255,.18);
-  --orange:#f0a100;
-  --header:linear-gradient(180deg,#7a4700,#1a0b00);
-}
-
-/* LAYOUT */
 .screen{
-  display:grid;
-  grid-template-rows:70px 1fr 90px;
+  width:100vw;
   height:100vh;
+  display:grid;
+  grid-template-rows:70px 1fr 95px;
   gap:6px;
   padding:6px;
+  background:#000;
 }
 
-/* TOP BAR */
-.top{
+/* TOP */
+.top-row{
   display:grid;
   grid-template-columns:220px 1fr;
   gap:6px;
+  min-height:0;
 }
 
-.logo{
+.logo-box{
   border:1px solid var(--grid);
+  background:#000;
   display:flex;
   align-items:center;
   justify-content:center;
+  overflow:hidden;
 }
 
-.logo img{
+.logo-box img{
   max-height:60px;
   max-width:100%;
+  object-fit:contain;
 }
 
-/* BULLETIN */
-.bulletin{
+.ticker-panel,
+.notes-panel{
   border:1px solid var(--grid);
+  background:#000;
   display:flex;
   flex-direction:column;
+  overflow:hidden;
 }
 
-.title{
-  background:var(--header);
+.ticker-title,
+.notes-title{
+  height:26px;
+  background:var(--head);
   color:var(--orange);
-  font-weight:bold;
-  padding-left:10px;
-  height:24px;
+  font-weight:800;
+  font-size:15px;
   display:flex;
   align-items:center;
+  padding-left:10px;
+  border-bottom:1px solid var(--grid);
 }
 
-.scroll{
+.ticker-window,
+.notes-window{
   flex:1;
   position:relative;
   overflow:hidden;
@@ -75,94 +90,134 @@ html,body{
   align-items:center;
 }
 
-.scroll-text{
+.ticker-text,
+.notes-text{
   position:absolute;
   white-space:nowrap;
   color:#fff;
   font-size:20px;
-  font-weight:bold;
-  animation:scroll 25s linear infinite;
+  font-weight:800;
+  animation:scrollText 30s linear infinite;
 }
 
-@keyframes scroll{
+.notes-text{
+  animation-duration:38s;
+}
+
+@keyframes scrollText{
   0%{transform:translateX(-100%)}
   100%{transform:translateX(100vw)}
 }
 
-/* MAIN TABLE AREA */
-.main{
+/* MAIN */
+.main-area{
   display:grid;
-  grid-auto-flow:column;
-  grid-auto-columns:1fr;
   gap:6px;
+  min-height:0;
   overflow:hidden;
 }
 
 .panel{
-  border:1px solid var(--grid);
+  min-height:0;
   overflow:hidden;
+  background:#000;
+  border:1px solid var(--grid);
 }
 
 table{
   width:100%;
   border-collapse:collapse;
+  table-layout:auto;
 }
 
 th,td{
   border:1px solid var(--grid);
   text-align:center;
+  vertical-align:middle;
+  font-weight:800;
 }
 
 th{
-  background:var(--header);
+  height:28px;
+  background:var(--head);
   color:var(--orange);
-  font-size:14px;
-  padding:4px;
-}
-
-td{
-  height:26px;
-  font-size:14px;
-}
-
-/* FULL TEXT (NO CUT) */
-.cell{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:4px;
+  border-color:var(--grid2);
+  font-size:clamp(11px,.85vw,15px);
+  padding:2px 5px;
   white-space:nowrap;
   overflow:hidden;
 }
 
-/* STATUS */
-.delay{
-  background:red;
-  color:#fff;
-  font-weight:bold;
-  animation:flash .6s infinite;
+td{
+  height:26px;
+  background:#000;
+  color:var(--white);
+  font-size:clamp(11px,.95vw,16px);
+  padding:0;
 }
 
-@keyframes flash{
-  50%{background:#300}
-}
-
-.ontime{
-  background:#00a83a;
-  color:#fff;
-}
-
-/* NOTES */
-.notes{
-  border:1px solid var(--grid);
+.cell{
+  width:100%;
+  height:100%;
+  min-height:26px;
   display:flex;
-  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:2px 5px;
+  white-space:nowrap;
+  overflow:hidden;
+  color:inherit;
 }
 
-.notes .scroll-text{
-  animation-duration:35s;
+.cell.left{
+  justify-content:flex-start;
+  padding-left:6px;
 }
 
+/* STATUS */
+.delay-cell{
+  background:#240000!important;
+}
+
+.delay-fill{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#ff0000;
+  color:#fff;
+  font-weight:900;
+  animation:flashDelay .65s linear infinite;
+}
+
+@keyframes flashDelay{
+  0%{background:#ff0000}
+  50%{background:#320000}
+  100%{background:#ff0000}
+}
+
+.ontime-cell{
+  background:#00a83a!important;
+  color:#fff!important;
+}
+
+.risk-cell{
+  background:#ffbf00!important;
+  color:#000!important;
+}
+
+.muted{
+  color:var(--muted)!important;
+}
+
+.error{
+  color:red;
+  font-size:22px;
+  font-weight:800;
+  padding:20px;
+  white-space:pre-wrap;
+}
 </style>
 </head>
 
@@ -170,146 +225,267 @@ td{
 
 <div class="screen">
 
-  <!-- TOP -->
-  <div class="top">
-    <div class="logo">
-      <img src="Picsart_24-07-23_20-35-10-625.png">
+  <div class="top-row">
+    <div class="logo-box">
+      <img src="Picsart_24-07-23_20-35-10-625.png" alt="Company Logo">
     </div>
 
-    <div class="bulletin">
-      <div class="title">BULLETIN</div>
-      <div class="scroll">
-        <div class="scroll-text" id="bulletin"></div>
+    <div class="ticker-panel">
+      <div class="ticker-title">BULLETIN</div>
+      <div class="ticker-window">
+        <div class="ticker-text" id="bulletinText"></div>
       </div>
     </div>
   </div>
 
-  <!-- TABLES -->
-  <div class="main" id="main"></div>
+  <div class="main-area" id="mainArea"></div>
 
-  <!-- NOTES -->
-  <div class="notes">
-    <div class="title">NOTES</div>
-    <div class="scroll">
-      <div class="scroll-text" id="notes"></div>
+  <div class="notes-panel">
+    <div class="notes-title">NOTES</div>
+    <div class="notes-window">
+      <div class="notes-text" id="notesText"></div>
     </div>
   </div>
 
 </div>
 
 <script>
-const CSV="PASTE YOUR CSV LINK HERE";
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
+const REFRESH_MS=8000;
+const EXTRA_BLANK_ROWS=1;
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-/* PARSE */
-function parse(text){
-  return text.split("\n").map(r=>r.split(","));
+function parseCSV(text){
+  const rows=[];
+  let row=[];
+  let cell="";
+  let q=false;
+
+  for(let i=0;i<text.length;i++){
+    const ch=text[i];
+    const nx=text[i+1];
+
+    if(ch==='"'){
+      if(q&&nx==='"'){
+        cell+='"';
+        i++;
+      }else{
+        q=!q;
+      }
+    }else if(ch===","&&!q){
+      row.push(cell);
+      cell="";
+    }else if((ch==="\n"||ch==="\r")&&!q){
+      if(ch==="\r"&&nx==="\n")i++;
+      row.push(cell);
+      rows.push(row);
+      row=[];
+      cell="";
+    }else{
+      cell+=ch;
+    }
+  }
+
+  if(cell.length||row.length){
+    row.push(cell);
+    rows.push(row);
+  }
+
+  return rows;
 }
 
-/* CLEAN */
 function clean(v){
-  return (v||"").trim();
+  if(v==null)return "";
+  const s=String(v).trim();
+  const m=s.match(/^Date\((\d+),(\d+),(\d+)/);
+  if(m)return `${m[3]}-${MONTHS[+m[2]]}`;
+  return s;
 }
 
-/* FIND ROW */
-function findRow(data,name){
-  return data.findIndex(r=>r.includes(name));
+function norm(v){
+  return clean(v).toUpperCase().replace(/[\s\-]+/g,"");
 }
 
-/* STATUS */
-function status(v){
-  v=v.toUpperCase();
-  if(v.includes("DELAY"))return"delay";
-  if(v.includes("ON TIME"))return"ontime";
+function getStatus(v){
+  const s=norm(v);
+  if(s.includes("DELAY"))return"delay";
+  if(s.includes("ONTIME"))return"ontime";
+  if(s.includes("RISK"))return"risk";
   return"";
 }
 
-/* RENDER CELL */
-function td(v){
-  const el=document.createElement("td");
+function isMuted(v){
+  const s=clean(v).toUpperCase();
+  return s==="N/A"||s==="-";
+}
+
+function findRow(rows,word){
+  const w=word.toUpperCase();
+  return rows.findIndex(r=>r.some(c=>clean(c).toUpperCase()===w));
+}
+
+function detectSections(header){
+  const sections=[];
+  let start=null;
+
+  for(let i=0;i<=header.length;i++){
+    const filled=i<header.length&&clean(header[i])!=="";
+
+    if(filled&&start===null)start=i;
+
+    if((!filled||i===header.length)&&start!==null){
+      sections.push({
+        start:start,
+        end:i-1,
+        title:clean(header[start])
+      });
+      start=null;
+    }
+  }
+
+  return sections;
+}
+
+function makeCell(tag,val,left=false){
+  const raw=String(val||"").trim();
+  const txt=clean(raw);
+  const st=getStatus(raw);
+  const el=document.createElement(tag);
+
+  if(st==="delay"){
+    el.classList.add("delay-cell");
+    const d=document.createElement("div");
+    d.className="delay-fill";
+    d.textContent=txt;
+    el.appendChild(d);
+    return el;
+  }
+
+  if(st==="ontime")el.classList.add("ontime-cell");
+  if(st==="risk")el.classList.add("risk-cell");
+
   const d=document.createElement("div");
-  d.className="cell";
-
-  const s=status(v);
-  if(s)el.classList.add(s);
-
-  d.textContent=v;
+  d.className="cell"+(left?" left":"");
+  if(!st&&isMuted(txt))d.classList.add("muted");
+  d.textContent=txt;
   el.appendChild(d);
   return el;
 }
 
-/* DETECT SECTIONS */
-function sections(header){
-  let sec=[],start=null;
-
-  header.forEach((v,i)=>{
-    if(v && start===null)start=i;
-    if(!v && start!==null){
-      sec.push([start,i-1]);
-      start=null;
-    }
-  });
-
-  if(start!==null)sec.push([start,header.length-1]);
-  return sec;
+function rowHasData(row,sec){
+  for(let c=sec.start;c<=sec.end;c++){
+    if(clean(row[c])!=="")return true;
+  }
+  return false;
 }
 
-/* COLLECT TEXT A:L */
-function collect(row){
-  return row.slice(0,12).filter(x=>x).join("   •   ");
+function renderTable(section,header,rows,left=false){
+  const panel=document.createElement("div");
+  panel.className="panel";
+
+  const table=document.createElement("table");
+  const thead=document.createElement("thead");
+  const tbody=document.createElement("tbody");
+  const trh=document.createElement("tr");
+
+  for(let c=section.start;c<=section.end;c++){
+    trh.appendChild(makeCell("th",header[c],left));
+  }
+
+  thead.appendChild(trh);
+  table.appendChild(thead);
+
+  const visible=rows.filter(r=>rowHasData(r,section));
+  const count=visible.length+EXTRA_BLANK_ROWS;
+
+  for(let r=0;r<count;r++){
+    const row=visible[r]||[];
+    const tr=document.createElement("tr");
+
+    for(let c=section.start;c<=section.end;c++){
+      tr.appendChild(makeCell("td",row[c],left));
+    }
+
+    tbody.appendChild(tr);
+  }
+
+  table.appendChild(tbody);
+  panel.appendChild(table);
+  return panel;
+}
+
+function collectRow(row,start,end){
+  const parts=[];
+  for(let c=start;c<=end;c++){
+    const v=clean(row[c]);
+    if(v)parts.push(v);
+  }
+  return parts.join("     •     ");
+}
+
+function collectRows(rows,start,end){
+  return rows.map(r=>collectRow(r,start,end)).filter(Boolean).join("     •     ");
+}
+
+function render(data){
+  if(!data||data.length<2){
+    document.body.innerHTML='<div class="error">NO DATA</div>';
+    return;
+  }
+
+  const main=document.getElementById("mainArea");
+  const bulletin=document.getElementById("bulletinText");
+  const notes=document.getElementById("notesText");
+
+  main.innerHTML="";
+  bulletin.textContent="";
+  notes.textContent="";
+
+  const bulletinRow=findRow(data,"BULLETIN");
+  const salesRow=findRow(data,"SALES ORDER");
+  const notesRow=findRow(data,"NOTES");
+
+  /* BULLETIN IS ONE ROW: A:L. Label is A, text starts B. */
+  if(bulletinRow>=0){
+    bulletin.textContent=collectRow(data[bulletinRow],1,11);
+  }
+
+  /* NOTES ARE ALL ROWS BELOW NOTES: A:L */
+  if(notesRow>=0){
+    notes.textContent=collectRows(data.slice(notesRow+1),0,11);
+  }
+
+  if(salesRow<0){
+    main.innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
+    return;
+  }
+
+  const header=data[salesRow];
+  const tableEnd=notesRow>salesRow?notesRow:data.length;
+  const rows=data.slice(salesRow+1,tableEnd);
+  const sections=detectSections(header);
+
+  if(sections.length>0){
+    main.style.gridTemplateColumns=sections.map((s,i)=>i===0?"4fr":"1.6fr").join(" ");
+  }
+
+  sections.forEach((section,index)=>{
+    main.appendChild(renderTable(section,header,rows,index>=2));
+  });
 }
 
 async function load(){
-  const res=await fetch(CSV+"&t="+Date.now());
-  const text=await res.text();
-  const data=parse(text);
-
-  const sales=findRow(data,"SALES ORDER");
-  const notesRow=findRow(data,"NOTES");
-  const bulletinRow=findRow(data,"BULLETIN");
-
-  /* BULLETIN (ROW 1) */
-  document.getElementById("bulletin").textContent =
-    collect(data[bulletinRow]);
-
-  /* NOTES (ALL BELOW NOTES ROW) */
-  document.getElementById("notes").textContent =
-    data.slice(notesRow+1).map(collect).join("     ");
-
-  const header=data[sales];
-  const rows=data.slice(sales+1,notesRow);
-
-  const main=document.getElementById("main");
-  main.innerHTML="";
-
-  sections(header).forEach(([s,e])=>{
-    const panel=document.createElement("div");
-    panel.className="panel";
-
-    const table=document.createElement("table");
-
-    const trh=document.createElement("tr");
-    for(let i=s;i<=e;i++){
-      const th=document.createElement("th");
-      th.textContent=header[i];
-      trh.appendChild(th);
-    }
-    table.appendChild(trh);
-
-    rows.forEach(r=>{
-      const tr=document.createElement("tr");
-      for(let i=s;i<=e;i++){
-        tr.appendChild(td(clean(r[i])));
-      }
-      table.appendChild(tr);
-    });
-
-    panel.appendChild(table);
-    main.appendChild(panel);
-  });
+  try{
+    const res=await fetch(CSV_URL+"&t="+Date.now(),{cache:"no-store"});
+    const text=await res.text();
+    render(parseCSV(text));
+  }catch(e){
+    document.body.innerHTML='<div class="error">LOAD ERROR</div>';
+  }
 }
 
 load();
-setInterval(load,8000);
+setInterval(load,REFRESH_MS);
 </script>
 
 </body>
