@@ -9,8 +9,8 @@
 *{box-sizing:border-box}
 
 :root{
-  --grid:rgba(255,255,255,.28);
-  --gridStrong:rgba(255,255,255,.48);
+  --grid:rgba(255,255,255,.26);
+  --gridStrong:rgba(255,255,255,.45);
   --orange:#ffae00;
   --white:#f7f7f7;
   --blue:#0000ff;
@@ -32,7 +32,7 @@ html,body{
   width:100vw;
   height:100vh;
   display:grid;
-  grid-template-rows:42px 1fr 118px;
+  grid-template-rows:42px 1fr 112px;
   gap:4px;
   padding:4px;
   background:#000;
@@ -41,7 +41,7 @@ html,body{
 /* TOP */
 .top-row{
   display:grid;
-  grid-template-columns:150px 1fr 230px;
+  grid-template-columns:150px 1fr 240px;
   gap:4px;
 }
 
@@ -117,14 +117,20 @@ html,body{
 }
 
 /* MAIN */
+.main-wrap{
+  border:1px solid var(--grid);
+  background:#000;
+  overflow:hidden;
+}
+
 .main{
   display:grid;
   grid-template-columns:
     7fr 7fr 8fr 11fr 10fr 9fr
     11fr 7fr 16fr 14fr 7fr 7fr;
-  border:1px solid var(--grid);
-  overflow:hidden;
-  min-height:0;
+  grid-auto-rows:22px;
+  align-content:start;
+  width:100%;
 }
 
 .cell{
@@ -132,10 +138,10 @@ html,body{
   border-bottom:1px solid var(--grid);
   background:#000;
   color:var(--white);
-  height:20px;
   min-width:0;
   font-size:11px;
   font-weight:800;
+  line-height:1;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -148,7 +154,6 @@ html,body{
 .header{
   background:var(--blue);
   color:var(--orange);
-  height:21px;
   font-size:10.5px;
 }
 
@@ -236,7 +241,8 @@ html,body{
 .notes-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  grid-auto-rows:18px;
+  grid-auto-rows:16px;
+  align-content:start;
   overflow:hidden;
 }
 
@@ -247,6 +253,7 @@ html,body{
   background:#000;
   font-size:11px;
   font-weight:800;
+  line-height:1;
   display:flex;
   align-items:center;
   padding:1px 5px;
@@ -290,7 +297,9 @@ html,body{
     </div>
   </div>
 
-  <div class="main" id="mainGrid"></div>
+  <div class="main-wrap">
+    <div class="main" id="mainGrid"></div>
+  </div>
 
   <div class="notes">
     <div class="notes-title" id="notesTitle">NOTES / IMPORTANT REMARKS</div>
@@ -437,7 +446,8 @@ function render(data){
   const tableEnd=notesRow>headerRow ? notesRow : data.length;
   const rows=data.slice(headerRow+1,tableEnd).filter(r=>r.slice(0,12).some(c=>clean(c)!==""));
 
-  const totalRows=Math.max(rows.length+2,11);
+  const totalRows=Math.max(rows.length+1,11);
+
   for(let r=0;r<totalRows;r++){
     const row=rows[r] || [];
     for(let c=0;c<12;c++){
