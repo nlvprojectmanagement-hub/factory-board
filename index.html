@@ -9,9 +9,8 @@
 *{box-sizing:border-box}
 
 :root{
-  --bg:#000;
-  --grid:rgba(255,255,255,.28);
-  --gridStrong:rgba(255,255,255,.48);
+  --grid:rgba(255,255,255,.24);
+  --gridStrong:rgba(255,255,255,.42);
   --gold:#ffae00;
   --white:#f5f5f5;
   --header:linear-gradient(180deg,#6b3b00 0%,#1b0d00 70%,#050200 100%);
@@ -26,12 +25,11 @@ html,body{
   font-family:Arial,Helvetica,sans-serif;
 }
 
-/* WHOLE SCREEN */
 .screen{
   width:100vw;
   height:100vh;
   display:grid;
-  grid-template-rows:46px 1fr;
+  grid-template-rows:42px 1fr;
   gap:4px;
   padding:4px;
   background:#000;
@@ -42,7 +40,6 @@ html,body{
   display:grid;
   grid-template-columns:150px 1fr 250px;
   gap:4px;
-  min-height:0;
 }
 
 .logo,
@@ -60,7 +57,7 @@ html,body{
 }
 
 .logo img{
-  max-height:38px;
+  max-height:36px;
   max-width:100%;
   object-fit:contain;
 }
@@ -74,7 +71,7 @@ html,body{
   background:var(--header);
   color:var(--gold);
   font-weight:900;
-  font-size:clamp(10px,.75vw,14px);
+  font-size:12px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -94,7 +91,7 @@ html,body{
   white-space:nowrap;
   color:#fff;
   font-weight:800;
-  font-size:clamp(10px,.75vw,14px);
+  font-size:12px;
   animation:move 38s linear infinite;
 }
 
@@ -114,11 +111,11 @@ html,body{
   justify-content:center;
   color:var(--gold);
   font-weight:900;
-  font-size:clamp(10px,.75vw,14px);
+  font-size:12px;
   border-left:1px solid var(--grid);
 }
 
-/* MAIN DASHBOARD GRID */
+/* BOARD */
 .board{
   display:grid;
   grid-template-columns:
@@ -127,11 +124,14 @@ html,body{
     11fr 10fr
     11fr 10fr
     14fr 8fr 9fr;
+
+  /* tighter rows + more rows */
   grid-template-rows:
-    26px
-    repeat(10, minmax(20px,1fr))
-    26px
-    repeat(6, minmax(20px,1fr));
+    22px
+    repeat(16, 1fr)
+    22px
+    repeat(8, 1fr);
+
   border:1px solid var(--grid);
   background:#000;
   overflow:hidden;
@@ -144,7 +144,7 @@ html,body{
   background:#000;
   color:var(--white);
   font-weight:800;
-  font-size:clamp(10px,.72vw,14px);
+  font-size:clamp(9px,.65vw,12px);
   line-height:1;
   display:flex;
   align-items:center;
@@ -160,11 +160,11 @@ html,body{
   background:var(--header);
   color:var(--gold);
   font-weight:900;
-  font-size:clamp(10px,.70vw,13px);
+  font-size:clamp(9px,.62vw,11px);
 }
 
 .group-start{
-  border-left:2px solid rgba(255,174,0,.85);
+  border-left:1px solid rgba(255,174,0,.55);
 }
 
 .left{
@@ -415,24 +415,24 @@ function render(data){
 
   const header=data[headerRow];
 
-  /* HEADER ROW - matches your merged Google Sheet style */
+  /* TOP HEADER */
   board.appendChild(makeCell(header[0],{header:true,rowStart:1,colStart:1}));
   board.appendChild(makeCell(header[1],{header:true,rowStart:1,colStart:2}));
   board.appendChild(makeCell(header[2],{header:true,rowStart:1,colStart:3}));
 
-  board.appendChild(makeCell(header[3],{header:true,rowStart:1,colStart:4,colEnd:6}));
-  board.appendChild(makeCell(header[5],{header:true,rowStart:1,colStart:6,colEnd:8}));
-  board.appendChild(makeCell(header[7],{header:true,rowStart:1,colStart:8,colEnd:10}));
+  board.appendChild(makeCell(header[3],{header:true,rowStart:1,colStart:4,colEnd:6,groupStart:true}));
+  board.appendChild(makeCell(header[5],{header:true,rowStart:1,colStart:6,colEnd:8,groupStart:true}));
+  board.appendChild(makeCell(header[7],{header:true,rowStart:1,colStart:8,colEnd:10,groupStart:true}));
 
   board.appendChild(makeCell(header[9],{header:true,rowStart:1,colStart:10,groupStart:true}));
   board.appendChild(makeCell(header[10],{header:true,rowStart:1,colStart:11}));
-  board.appendChild(makeCell(header[11],{header:true,rowStart:1,colStart:12,groupStart:true}));
+  board.appendChild(makeCell(header[11],{header:true,rowStart:1,colStart:12}));
 
-  /* MAIN ROWS A:L from row 3 to row before notes */
+  /* MAIN ROWS - more rows, tighter height */
   const tableEnd=notesRow>headerRow ? notesRow : data.length;
   const mainRows=data.slice(headerRow+1,tableEnd);
 
-  for(let r=0;r<10;r++){
+  for(let r=0;r<16;r++){
     const row=mainRows[r] || [];
     const gridRow=2+r;
 
@@ -440,7 +440,7 @@ function render(data){
       board.appendChild(makeCell(row[c],{
         rowStart:gridRow,
         colStart:c+1,
-        groupStart:[9,11].includes(c+1)
+        groupStart:[4,6,8,10].includes(c+1)
       }));
     }
   }
@@ -451,14 +451,14 @@ function render(data){
   board.appendChild(makeCell(notesTitle,{
     header:true,
     left:true,
-    rowStart:12,
+    rowStart:18,
     colStart:1,
     colEnd:9
   }));
 
   board.appendChild(makeCell("INSPECTION",{
     header:true,
-    rowStart:12,
+    rowStart:18,
     colStart:9,
     colEnd:11,
     groupStart:true
@@ -466,22 +466,22 @@ function render(data){
 
   board.appendChild(makeCell("REQ DATE",{
     header:true,
-    rowStart:12,
+    rowStart:18,
     colStart:11
   }));
 
   board.appendChild(makeCell("STATUS",{
     header:true,
-    rowStart:12,
+    rowStart:18,
     colStart:12
   }));
 
-  /* BOTTOM NOTES + INSPECTION AREA */
+  /* BOTTOM NOTES / INSPECTION AREA */
   const bottomRows = notesRow>=0 ? data.slice(notesRow+1) : [];
 
-  for(let r=0;r<6;r++){
+  for(let r=0;r<8;r++){
     const row=bottomRows[r] || [];
-    const gridRow=13+r;
+    const gridRow=19+r;
 
     board.appendChild(makeCell(row[0],{
       left:true,
