@@ -9,8 +9,8 @@
 *{box-sizing:border-box}
 
 :root{
-  --grid:rgba(255,255,255,.20);
-  --grid2:rgba(255,255,255,.32);
+  --grid:rgba(255,255,255,.22);
+  --grid2:rgba(255,255,255,.34);
   --orange:#f0a100;
   --white:#fff;
   --muted:#bdbdbd;
@@ -30,7 +30,7 @@ html,body{
   width:100vw;
   height:100vh;
   display:grid;
-  grid-template-rows:70px 1fr 95px;
+  grid-template-rows:58px 1fr 64px;
   gap:6px;
   padding:6px;
   background:#000;
@@ -39,7 +39,7 @@ html,body{
 /* TOP */
 .top-row{
   display:grid;
-  grid-template-columns:220px 1fr;
+  grid-template-columns:190px 1fr;
   gap:6px;
   min-height:0;
 }
@@ -54,59 +54,63 @@ html,body{
 }
 
 .logo-box img{
-  max-height:60px;
+  max-height:52px;
   max-width:100%;
   object-fit:contain;
 }
 
-.ticker-panel,
-.notes-panel{
+/* BULLETIN + NOTES MOVING BAR */
+.moving-bar{
   border:1px solid var(--grid);
   background:#000;
-  display:flex;
-  flex-direction:column;
+  display:grid;
+  grid-template-columns:170px 1fr;
+  min-width:0;
   overflow:hidden;
 }
 
-.ticker-title,
-.notes-title{
-  height:26px;
+.bar-label{
   background:var(--head);
   color:var(--orange);
-  font-weight:800;
-  font-size:15px;
+  font-size:22px;
+  font-weight:900;
   display:flex;
   align-items:center;
-  padding-left:10px;
-  border-bottom:1px solid var(--grid);
+  justify-content:center;
+  border-right:1px solid var(--grid2);
 }
 
-.ticker-window,
-.notes-window{
-  flex:1;
+.marquee{
   position:relative;
   overflow:hidden;
   display:flex;
   align-items:center;
+  min-width:0;
 }
 
-.ticker-text,
-.notes-text{
-  position:absolute;
+.marquee-track{
+  display:inline-flex;
+  align-items:center;
+  gap:70px;
   white-space:nowrap;
   color:#fff;
-  font-size:20px;
+  font-size:22px;
   font-weight:800;
-  animation:scrollText 30s linear infinite;
+  animation:marqueeMove 28s linear infinite;
+  will-change:transform;
 }
 
-.notes-text{
+.notes-bar .marquee-track{
   animation-duration:38s;
 }
 
-@keyframes scrollText{
-  0%{transform:translateX(-100%)}
-  100%{transform:translateX(100vw)}
+.marquee-track span{
+  white-space:nowrap;
+}
+
+@keyframes marqueeMove{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
 }
 
 /* MAIN */
@@ -230,20 +234,24 @@ td{
       <img src="Picsart_24-07-23_20-35-10-625.png" alt="Company Logo">
     </div>
 
-    <div class="ticker-panel">
-      <div class="ticker-title">BULLETIN</div>
-      <div class="ticker-window">
-        <div class="ticker-text" id="bulletinText"></div>
+    <div class="moving-bar">
+      <div class="bar-label">BULLETIN</div>
+      <div class="marquee">
+        <div class="marquee-track" id="bulletinTrack">
+          <span></span><span></span>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="main-area" id="mainArea"></div>
 
-  <div class="notes-panel">
-    <div class="notes-title">NOTES</div>
-    <div class="notes-window">
-      <div class="notes-text" id="notesText"></div>
+  <div class="moving-bar notes-bar">
+    <div class="bar-label">NOTES</div>
+    <div class="marquee">
+      <div class="marquee-track" id="notesTrack">
+        <span></span><span></span>
+      </div>
     </div>
   </div>
 
@@ -427,6 +435,14 @@ function collectRows(rows,start,end){
   return rows.map(r=>collectRow(r,start,end)).filter(Boolean).join("     •     ");
 }
 
+function setMarquee(trackId,text){
+  const track=document.getElementById(trackId);
+  const finalText=text && text.trim() ? text : " ";
+  const spans=track.querySelectorAll("span");
+  spans[0].textContent=finalText;
+  spans[1].textContent=finalText;
+}
+
 function render(data){
   if(!data||data.length<2){
     document.body.innerHTML='<div class="error">NO DATA</div>';
@@ -434,25 +450,24 @@ function render(data){
   }
 
   const main=document.getElementById("mainArea");
-  const bulletin=document.getElementById("bulletinText");
-  const notes=document.getElementById("notesText");
-
   main.innerHTML="";
-  bulletin.textContent="";
-  notes.textContent="";
 
   const bulletinRow=findRow(data,"BULLETIN");
   const salesRow=findRow(data,"SALES ORDER");
   const notesRow=findRow(data,"NOTES");
 
-  /* BULLETIN IS ONE ROW: A:L. Label is A, text starts B. */
+  /* BULLETIN: same row, A:L. Label is A, text starts B. */
   if(bulletinRow>=0){
-    bulletin.textContent=collectRow(data[bulletinRow],1,11);
+    setMarquee("bulletinTrack",collectRow(data[bulletinRow],1,11));
+  }else{
+    setMarquee("bulletinTrack","");
   }
 
-  /* NOTES ARE ALL ROWS BELOW NOTES: A:L */
+  /* NOTES: all rows below NOTES, A:L */
   if(notesRow>=0){
-    notes.textContent=collectRows(data.slice(notesRow+1),0,11);
+    setMarquee("notesTrack",collectRows(data.slice(notesRow+1),0,11));
+  }else{
+    setMarquee("notesTrack","");
   }
 
   if(salesRow<0){
