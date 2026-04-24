@@ -123,7 +123,6 @@ html, body {
 /* MAIN TABLE AREA */
 .main-area {
   display:grid;
-  grid-template-columns:4fr 1.6fr 1.4fr;
   gap:6px;
   min-height:0;
 }
@@ -336,7 +335,7 @@ function parseCSV(text) {
     rows.push(row);
   }
 
-  return rows.filter(r => r.some(c => String(c).trim() !== ""));
+  return rows;
 }
 
 function clean(value) {
@@ -457,9 +456,16 @@ function renderTablePanel(section, headerRow, rows, leftAlign = false) {
   return panel;
 }
 
-function collectTextFromRows(rows) {
+function collectTextFromRange(rows, startCol, endCol) {
   return rows
-    .map(r => r.map(clean).filter(v => v !== "").join("   "))
+    .map(r => {
+      const parts = [];
+      for (let c = startCol; c <= endCol; c++) {
+        const v = clean(r[c]);
+        if (v !== "") parts.push(v);
+      }
+      return parts.join("   ");
+    })
     .filter(v => v !== "")
     .join("     •     ");
 }
@@ -482,17 +488,19 @@ function render(data) {
   const salesHeaderIndex = findRow(data, "SALES ORDER");
   const notesRowIndex = findRow(data, "NOTES");
 
+  /* BULLETIN = full width A:L, row(s) between BULLETIN and SALES ORDER */
   if (bulletinRowIndex >= 0) {
     document.getElementById("bulletinTitle").textContent = "BULLETIN";
     const nextBreak = salesHeaderIndex > bulletinRowIndex ? salesHeaderIndex : data.length;
-    const bulletinRows = data.slice(bulletinRowIndex + 1, nextBreak);
-    bulletinText.textContent = collectTextFromRows(bulletinRows);
+    const bulletinRows = data.slice(bulletinRowIndex, nextBreak);
+    bulletinText.textContent = collectTextFromRange(bulletinRows, 1, 11);
   }
 
+  /* NOTES = full width A:L, rows after NOTES */
   if (notesRowIndex >= 0) {
     document.getElementById("notesTitle").textContent = "NOTES";
     const notesRows = data.slice(notesRowIndex + 1);
-    notesText.textContent = collectTextFromRows(notesRows);
+    notesText.textContent = collectTextFromRange(notesRows, 0, 11);
   }
 
   if (salesHeaderIndex < 0) {
