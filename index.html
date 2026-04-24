@@ -9,70 +9,72 @@
 *{box-sizing:border-box}
 
 :root{
-  --grid:rgba(255,255,255,.26);
-  --gridStrong:rgba(255,255,255,.45);
-  --orange:#ffae00;
-  --white:#f7f7f7;
-  --blue:#0000ff;
-  --purple:#b4a0c8;
-  --action:#4f81bd;
-  --header:linear-gradient(180deg,#7a4700 0%,#2a1600 58%,#090400 100%);
+  --bg:#000;
+  --grid:rgba(255,255,255,.28);
+  --gridStrong:rgba(255,255,255,.48);
+  --gold:#ffae00;
+  --white:#f5f5f5;
+  --header:linear-gradient(180deg,#6b3b00 0%,#1b0d00 70%,#050200 100%);
 }
 
 html,body{
   margin:0;
   width:100%;
   height:100%;
-  overflow:hidden;
   background:#000;
+  overflow:hidden;
   font-family:Arial,Helvetica,sans-serif;
 }
 
+/* WHOLE SCREEN */
 .screen{
   width:100vw;
   height:100vh;
   display:grid;
-  grid-template-rows:42px 1fr 112px;
+  grid-template-rows:46px 1fr;
   gap:4px;
   padding:4px;
   background:#000;
 }
 
-/* TOP */
-.top-row{
+/* TOP BAR */
+.top{
   display:grid;
-  grid-template-columns:150px 1fr 240px;
+  grid-template-columns:150px 1fr 250px;
   gap:4px;
+  min-height:0;
 }
 
-.logo-box,.announce-box,.clock-box{
+.logo,
+.announcement,
+.clock{
   border:1px solid var(--grid);
   background:#000;
   overflow:hidden;
 }
 
-.logo-box{
+.logo{
   display:flex;
   align-items:center;
   justify-content:center;
 }
 
-.logo-box img{
-  max-height:36px;
+.logo img{
+  max-height:38px;
   max-width:100%;
   object-fit:contain;
 }
 
-.announce-box{
+.announcement{
   display:grid;
-  grid-template-columns:135px 1fr;
+  grid-template-columns:145px 1fr;
 }
 
-.announce-label{
+.announcement-label{
   background:var(--header);
-  color:var(--orange);
-  font-size:12px;
+  color:var(--gold);
   font-weight:900;
+  font-size:clamp(10px,.75vw,14px);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -88,12 +90,12 @@ html,body{
 
 .marquee-track{
   display:inline-flex;
-  gap:80px;
+  gap:90px;
   white-space:nowrap;
   color:#fff;
-  font-size:13px;
   font-weight:800;
-  animation:move 34s linear infinite;
+  font-size:clamp(10px,.75vw,14px);
+  animation:move 38s linear infinite;
 }
 
 @keyframes move{
@@ -101,7 +103,7 @@ html,body{
   100%{transform:translateX(-50%)}
 }
 
-.clock-box{
+.clock{
   display:grid;
   grid-template-columns:1fr 1fr;
 }
@@ -110,27 +112,30 @@ html,body{
   display:flex;
   align-items:center;
   justify-content:center;
-  color:var(--orange);
-  font-size:12px;
+  color:var(--gold);
   font-weight:900;
+  font-size:clamp(10px,.75vw,14px);
   border-left:1px solid var(--grid);
 }
 
-/* MAIN */
-.main-wrap{
+/* MAIN DASHBOARD GRID */
+.board{
+  display:grid;
+  grid-template-columns:
+    7fr 7fr 8fr
+    11fr 10fr
+    11fr 10fr
+    11fr 10fr
+    14fr 8fr 9fr;
+  grid-template-rows:
+    26px
+    repeat(10, minmax(20px,1fr))
+    26px
+    repeat(6, minmax(20px,1fr));
   border:1px solid var(--grid);
   background:#000;
   overflow:hidden;
-}
-
-.main{
-  display:grid;
-  grid-template-columns:
-    7fr 7fr 8fr 11fr 10fr 9fr
-    11fr 7fr 16fr 14fr 7fr 7fr;
-  grid-auto-rows:22px;
-  align-content:start;
-  width:100%;
+  min-height:0;
 }
 
 .cell{
@@ -138,35 +143,33 @@ html,body{
   border-bottom:1px solid var(--grid);
   background:#000;
   color:var(--white);
-  min-width:0;
-  font-size:11px;
   font-weight:800;
+  font-size:clamp(10px,.72vw,14px);
   line-height:1;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:1px 3px;
+  padding:1px 4px;
   white-space:nowrap;
   overflow:hidden;
   position:relative;
+  min-width:0;
 }
 
 .header{
-  background:var(--blue);
-  color:var(--orange);
-  font-size:10.5px;
+  background:var(--header);
+  color:var(--gold);
+  font-weight:900;
+  font-size:clamp(10px,.70vw,13px);
 }
 
 .group-start{
-  border-left:2px solid #ffff00;
+  border-left:2px solid rgba(255,174,0,.85);
 }
 
-.action-header{
-  background:var(--action);
-}
-
-.inspection-header{
-  background:var(--purple);
+.left{
+  justify-content:flex-start;
+  padding-left:6px;
 }
 
 .inner{
@@ -183,25 +186,23 @@ html,body{
   100%{transform:translateX(-100%)}
 }
 
-.delay{
+/* STATUS COLORS ONLY */
+.delay,
+.p1{
   background:#ff0000!important;
   color:#fff!important;
-  animation:flash .7s linear infinite;
+  animation:flashRed .65s linear infinite;
 }
 
-@keyframes flash{
+@keyframes flashRed{
   0%{background:#ff0000}
   50%{background:#330000}
   100%{background:#ff0000}
 }
 
-.ontime,.ready{
+.ontime,
+.ready{
   background:#00a83a!important;
-  color:#fff!important;
-}
-
-.p1{
-  background:#ff0000!important;
   color:#fff!important;
 }
 
@@ -220,49 +221,9 @@ html,body{
   color:#000!important;
 }
 
-/* NOTES */
-.notes{
-  border:1px solid var(--grid);
-  display:grid;
-  grid-template-rows:20px 1fr;
-  overflow:hidden;
+.waiting{
+  color:#cfcfcf!important;
 }
-
-.notes-title{
-  background:var(--blue);
-  color:var(--orange);
-  font-size:12px;
-  font-weight:900;
-  display:flex;
-  align-items:center;
-  padding-left:8px;
-}
-
-.notes-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  grid-auto-rows:16px;
-  align-content:start;
-  overflow:hidden;
-}
-
-.note{
-  border-right:1px solid var(--grid);
-  border-bottom:1px solid var(--grid);
-  color:#fff;
-  background:#000;
-  font-size:11px;
-  font-weight:800;
-  line-height:1;
-  display:flex;
-  align-items:center;
-  padding:1px 5px;
-  white-space:nowrap;
-  overflow:hidden;
-  position:relative;
-}
-
-.note:nth-child(2n){border-right:none}
 
 .error{
   color:red;
@@ -277,13 +238,13 @@ html,body{
 
 <div class="screen">
 
-  <div class="top-row">
-    <div class="logo-box">
+  <div class="top">
+    <div class="logo">
       <img src="Picsart_24-07-23_20-35-10-625.png">
     </div>
 
-    <div class="announce-box">
-      <div class="announce-label" id="announceLabel">ANNOUNCEMENT</div>
+    <div class="announcement">
+      <div class="announcement-label" id="announceLabel">ANNOUNCEMENT</div>
       <div class="marquee">
         <div class="marquee-track" id="announceTrack">
           <span></span><span></span>
@@ -291,20 +252,13 @@ html,body{
       </div>
     </div>
 
-    <div class="clock-box">
-      <div class="clock-cell" id="todayBox"></div>
+    <div class="clock">
+      <div class="clock-cell" id="dateBox"></div>
       <div class="clock-cell" id="timeBox"></div>
     </div>
   </div>
 
-  <div class="main-wrap">
-    <div class="main" id="mainGrid"></div>
-  </div>
-
-  <div class="notes">
-    <div class="notes-title" id="notesTitle">NOTES / IMPORTANT REMARKS</div>
-    <div class="notes-grid" id="notesGrid"></div>
-  </div>
+  <div class="board" id="board"></div>
 
 </div>
 
@@ -316,19 +270,32 @@ const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov",
 function parseCSV(text){
   const rows=[];
   let row=[],cell="",q=false;
+
   for(let i=0;i<text.length;i++){
     const ch=text[i],nx=text[i+1];
+
     if(ch==='"'){
       if(q&&nx==='"'){cell+='"';i++}
       else q=!q;
     }else if(ch===","&&!q){
-      row.push(cell);cell="";
+      row.push(cell);
+      cell="";
     }else if((ch==="\n"||ch==="\r")&&!q){
       if(ch==="\r"&&nx==="\n")i++;
-      row.push(cell);rows.push(row);row=[];cell="";
-    }else cell+=ch;
+      row.push(cell);
+      rows.push(row);
+      row=[];
+      cell="";
+    }else{
+      cell+=ch;
+    }
   }
-  if(cell.length||row.length){row.push(cell);rows.push(row)}
+
+  if(cell.length||row.length){
+    row.push(cell);
+    rows.push(row);
+  }
+
   return rows;
 }
 
@@ -340,6 +307,10 @@ function clean(v){
   return s;
 }
 
+function norm(v){
+  return clean(v).toUpperCase().replace(/[\s\-]+/g,"");
+}
+
 function findRow(data,terms){
   return data.findIndex(r=>r.some(c=>{
     const v=clean(c).toUpperCase();
@@ -348,7 +319,8 @@ function findRow(data,terms){
 }
 
 function statusClass(text){
-  const s=clean(text).toUpperCase().replace(/[\s\-]+/g,"");
+  const s=norm(text);
+
   if(s.includes("DELAY"))return"delay";
   if(s==="P1")return"p1";
   if(s==="P2")return"p2";
@@ -356,17 +328,49 @@ function statusClass(text){
   if(s==="PULLING")return"pulling";
   if(s==="READY")return"ready";
   if(s.includes("ONTIME"))return"ontime";
+  if(s==="WAITING")return"waiting";
+
   return"";
 }
 
-function makeCell(text, header=false, colIndex=0){
+function updateClock(){
+  const now=new Date();
+
+  document.getElementById("dateBox").textContent =
+    now.toLocaleDateString("en-US",{
+      month:"short",
+      day:"numeric",
+      year:"numeric"
+    });
+
+  document.getElementById("timeBox").textContent =
+    now.toLocaleTimeString("en-US",{
+      hour:"numeric",
+      minute:"2-digit",
+      second:"2-digit"
+    });
+}
+
+setInterval(updateClock,1000);
+updateClock();
+
+function setAnnouncement(label,text){
+  document.getElementById("announceLabel").textContent=label || "ANNOUNCEMENT";
+
+  const finalText=text && text.trim() ? text : " ";
+  const spans=document.querySelectorAll("#announceTrack span");
+
+  spans[0].textContent=finalText;
+  spans[1].textContent=finalText;
+}
+
+function makeCell(text, options={}){
   const div=document.createElement("div");
   div.className="cell";
-  if(header)div.classList.add("header");
 
-  if([6,8,9,10].includes(colIndex)) div.classList.add("group-start");
-  if(header && colIndex===8) div.classList.add("action-header");
-  if(header && colIndex===9) div.classList.add("inspection-header");
+  if(options.header)div.classList.add("header");
+  if(options.left)div.classList.add("left");
+  if(options.groupStart)div.classList.add("group-start");
 
   const cls=statusClass(text);
   if(cls)div.classList.add(cls);
@@ -374,7 +378,12 @@ function makeCell(text, header=false, colIndex=0){
   const inner=document.createElement("span");
   inner.className="inner";
   inner.textContent=clean(text);
+
   div.appendChild(inner);
+
+  if(options.colStart) div.style.gridColumnStart=options.colStart;
+  if(options.colEnd) div.style.gridColumnEnd=options.colEnd;
+  if(options.rowStart) div.style.gridRowStart=options.rowStart;
 
   requestAnimationFrame(()=>{
     if(inner.scrollWidth > div.clientWidth){
@@ -384,86 +393,120 @@ function makeCell(text, header=false, colIndex=0){
 
   return div;
 }
-
-function makeNote(text){
-  const div=document.createElement("div");
-  div.className="note";
-  const inner=document.createElement("span");
-  inner.className="inner";
-  inner.textContent=clean(text);
-  div.appendChild(inner);
-  requestAnimationFrame(()=>{
-    if(inner.scrollWidth > div.clientWidth){
-      div.classList.add("long");
-    }
-  });
-  return div;
-}
-
-function setAnnouncement(label,text){
-  document.getElementById("announceLabel").textContent=label || "ANNOUNCEMENT";
-  const finalText=text || " ";
-  const spans=document.querySelectorAll("#announceTrack span");
-  spans[0].textContent=finalText;
-  spans[1].textContent=finalText;
-}
-
-function updateClock(){
-  const now=new Date();
-  document.getElementById("todayBox").textContent =
-    now.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
-  document.getElementById("timeBox").textContent =
-    now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",second:"2-digit"});
-}
-setInterval(updateClock,1000);
-updateClock();
 
 function render(data){
-  const main=document.getElementById("mainGrid");
-  const notes=document.getElementById("notesGrid");
-  main.innerHTML="";
-  notes.innerHTML="";
+  const board=document.getElementById("board");
+  board.innerHTML="";
 
   const annRow=findRow(data,["ANNOUNCEMENT","ANOUNCEMENT"]);
   const headerRow=findRow(data,["SALES ORDER"]);
   const notesRow=findRow(data,["NOTES"]);
 
   if(annRow>=0){
-    setAnnouncement(
-      clean(data[annRow][0]),
-      data[annRow].slice(1,10).map(clean).filter(Boolean).join("     •     ")
-    );
+    const label=clean(data[annRow][0]);
+    const text=data[annRow].slice(1,11).map(clean).filter(Boolean).join("     •     ");
+    setAnnouncement(label,text);
   }
 
   if(headerRow<0){
-    main.innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
+    board.innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
     return;
   }
 
-  const headers=data[headerRow].slice(0,12);
-  headers.forEach((h,i)=>main.appendChild(makeCell(h,true,i)));
+  const header=data[headerRow];
 
+  /* HEADER ROW - matches your merged Google Sheet style */
+  board.appendChild(makeCell(header[0],{header:true,rowStart:1,colStart:1}));
+  board.appendChild(makeCell(header[1],{header:true,rowStart:1,colStart:2}));
+  board.appendChild(makeCell(header[2],{header:true,rowStart:1,colStart:3}));
+
+  board.appendChild(makeCell(header[3],{header:true,rowStart:1,colStart:4,colEnd:6}));
+  board.appendChild(makeCell(header[5],{header:true,rowStart:1,colStart:6,colEnd:8}));
+  board.appendChild(makeCell(header[7],{header:true,rowStart:1,colStart:8,colEnd:10}));
+
+  board.appendChild(makeCell(header[9],{header:true,rowStart:1,colStart:10,groupStart:true}));
+  board.appendChild(makeCell(header[10],{header:true,rowStart:1,colStart:11}));
+  board.appendChild(makeCell(header[11],{header:true,rowStart:1,colStart:12,groupStart:true}));
+
+  /* MAIN ROWS A:L from row 3 to row before notes */
   const tableEnd=notesRow>headerRow ? notesRow : data.length;
-  const rows=data.slice(headerRow+1,tableEnd).filter(r=>r.slice(0,12).some(c=>clean(c)!==""));
+  const mainRows=data.slice(headerRow+1,tableEnd);
 
-  const totalRows=Math.max(rows.length+1,11);
+  for(let r=0;r<10;r++){
+    const row=mainRows[r] || [];
+    const gridRow=2+r;
 
-  for(let r=0;r<totalRows;r++){
-    const row=rows[r] || [];
     for(let c=0;c<12;c++){
-      main.appendChild(makeCell(row[c],false,c));
+      board.appendChild(makeCell(row[c],{
+        rowStart:gridRow,
+        colStart:c+1,
+        groupStart:[9,11].includes(c+1)
+      }));
     }
   }
 
-  if(notesRow>=0){
-    document.getElementById("notesTitle").textContent=clean(data[notesRow][0]) || "NOTES / IMPORTANT REMARKS";
-    const nrows=data.slice(notesRow+1).filter(r=>clean(r[0])!=="" || clean(r[6])!=="");
-    const totalNotes=Math.max(nrows.length,6);
-    for(let i=0;i<totalNotes;i++){
-      const row=nrows[i] || [];
-      notes.appendChild(makeNote(row[0]));
-      notes.appendChild(makeNote(row[6]));
-    }
+  /* BOTTOM SECTION HEADER */
+  const notesTitle = notesRow>=0 ? clean(data[notesRow][0]) : "NOTES / IMPORTANT REMARKS";
+
+  board.appendChild(makeCell(notesTitle,{
+    header:true,
+    left:true,
+    rowStart:12,
+    colStart:1,
+    colEnd:9
+  }));
+
+  board.appendChild(makeCell("INSPECTION",{
+    header:true,
+    rowStart:12,
+    colStart:9,
+    colEnd:11,
+    groupStart:true
+  }));
+
+  board.appendChild(makeCell("REQ DATE",{
+    header:true,
+    rowStart:12,
+    colStart:11
+  }));
+
+  board.appendChild(makeCell("STATUS",{
+    header:true,
+    rowStart:12,
+    colStart:12
+  }));
+
+  /* BOTTOM NOTES + INSPECTION AREA */
+  const bottomRows = notesRow>=0 ? data.slice(notesRow+1) : [];
+
+  for(let r=0;r<6;r++){
+    const row=bottomRows[r] || [];
+    const gridRow=13+r;
+
+    board.appendChild(makeCell(row[0],{
+      left:true,
+      rowStart:gridRow,
+      colStart:1,
+      colEnd:9
+    }));
+
+    board.appendChild(makeCell(row[8],{
+      left:true,
+      rowStart:gridRow,
+      colStart:9,
+      colEnd:11,
+      groupStart:true
+    }));
+
+    board.appendChild(makeCell(row[10],{
+      rowStart:gridRow,
+      colStart:11
+    }));
+
+    board.appendChild(makeCell(row[11],{
+      rowStart:gridRow,
+      colStart:12
+    }));
   }
 }
 
