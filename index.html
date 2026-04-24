@@ -9,263 +9,233 @@
 * { box-sizing: border-box; }
 
 :root {
-  --bg: #000;
-  --grid: rgba(255,255,255,0.18);
-  --grid-strong: rgba(255,255,255,0.30);
-  --header-text: #f0a100;
-  --data-text: #ffffff;
-  --muted: #bdbdbd;
-  --header-grad: linear-gradient(180deg, #7a4700 0%, #2b1700 50%, #120700 100%);
-  --panel-grad: linear-gradient(180deg, #080808 0%, #000 100%);
-  --delay-bg: #ff0000;
-  --delay-dim: #320000;
-  --ontime-bg: #00a83a;
-  --risk-bg: #ffbf00;
+  --bg:#000;
+  --grid:rgba(255,255,255,0.18);
+  --grid-strong:rgba(255,255,255,0.30);
+  --header-text:#f0a100;
+  --data-text:#fff;
+  --muted:#bdbdbd;
+  --header-grad:linear-gradient(180deg,#7a4700 0%,#2b1700 50%,#120700 100%);
+  --panel-grad:linear-gradient(180deg,#080808 0%,#000 100%);
+  --delay-bg:#ff0000;
+  --delay-dim:#320000;
+  --ontime-bg:#00a83a;
+  --risk-bg:#ffbf00;
 }
 
 html, body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #000;
-  font-family: Arial, Helvetica, sans-serif;
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#000;
+  font-family:Arial, Helvetica, sans-serif;
 }
 
 #viewport {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-  background: #000;
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  background:#000;
 }
 
 #scaleWrapper {
-  width: 100vw;
-  height: 100vh;
-  padding: 6px;
+  width:100vw;
+  height:100vh;
+  padding:6px;
+}
+
+.logo-overlay {
+  position:absolute;
+  top:10px;
+  left:10px;
+  height:42px;
+  max-width:260px;
+  z-index:10;
+  object-fit:contain;
+  background:rgba(0,0,0,0.55);
+  padding:4px 8px;
+  border:1px solid rgba(255,255,255,0.18);
 }
 
 .screen {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-rows: 9% 91%;
-  gap: 6px;
-}
-
-/* LOGO ROW */
-.logo-row {
-  display: grid;
-  grid-template-columns: 4fr 1.8fr 1.6fr 1.8fr;
-  gap: 6px;
-  width: 100%;
-  height: 100%;
-}
-
-.logo-box {
-  grid-column: 1 / 2;
-  background: var(--panel-grad);
-  border: 1px solid var(--grid);
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 4px 12px;
-  overflow: hidden;
-}
-
-.logo-box img {
-  max-height: 100%;
-  max-width: 100%;
-  object-fit: contain;
-}
-
-.logo-spacer {
-  background: var(--panel-grad);
-  border: 1px solid var(--grid);
+  width:100%;
+  height:100%;
 }
 
 .top {
-  display: grid;
-  grid-template-columns: 4fr 1.8fr 1.6fr 1.8fr;
-  gap: 6px;
-  width: 100%;
-  height: 100%;
+  display:grid;
+  grid-template-columns:4fr 1.8fr 1.6fr 1.8fr;
+  gap:6px;
+  width:100%;
+  height:100%;
 }
 
 .panel {
-  min-height: 0;
-  background: var(--panel-grad);
-  overflow: hidden;
+  min-height:0;
+  background:var(--panel-grad);
+  overflow:hidden;
 }
 
 table {
-  width: 100%;
-  height: auto;
-  border-collapse: collapse;
-  table-layout: auto;
+  width:100%;
+  height:auto;
+  border-collapse:collapse;
+  table-layout:auto;
 }
 
 th, td {
-  border: 1px solid var(--grid);
-  text-align: center;
-  vertical-align: middle;
-  font-weight: 700;
+  border:1px solid var(--grid);
+  text-align:center;
+  vertical-align:middle;
+  font-weight:700;
 }
 
 th {
-  height: 26px;
-  padding: 2px 5px;
-  font-size: clamp(11px, 0.85vw, 15px);
-  background: var(--header-grad);
-  border-color: var(--grid-strong);
-  color: var(--header-text);
-  white-space: nowrap;
-  overflow: hidden;
+  height:26px;
+  padding:2px 5px;
+  font-size:clamp(11px,0.85vw,15px);
+  background:var(--header-grad);
+  border-color:var(--grid-strong);
+  color:var(--header-text);
+  white-space:nowrap;
+  overflow:hidden;
 }
 
 td {
-  height: 24px;
-  padding: 0;
-  font-size: clamp(11px, 0.95vw, 16px);
-  background: rgba(0,0,0,0.90);
-  color: var(--data-text);
+  height:24px;
+  padding:0;
+  font-size:clamp(11px,0.95vw,16px);
+  background:rgba(0,0,0,0.90);
+  color:var(--data-text);
 }
 
 .cell {
-  width: 100%;
-  height: 100%;
-  min-height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2px 5px;
-  white-space: nowrap;
-  overflow: hidden;
-  color: inherit;
+  width:100%;
+  height:100%;
+  min-height:24px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:2px 5px;
+  white-space:nowrap;
+  overflow:hidden;
+  color:inherit;
 }
 
 .cell.left {
-  justify-content: flex-start;
-  padding-left: 6px;
+  justify-content:flex-start;
+  padding-left:6px;
 }
 
-.delay-cell { background: #240000 !important; }
+.delay-cell { background:#240000 !important; }
 
 .delay-fill {
-  width: calc(100% - 2px);
-  height: calc(100% - 2px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--delay-bg);
-  color: #fff;
-  font-weight: 900;
-  animation: flashDelay 0.65s linear infinite;
+  width:calc(100% - 2px);
+  height:calc(100% - 2px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--delay-bg);
+  color:#fff;
+  font-weight:900;
+  animation:flashDelay .65s linear infinite;
 }
 
 @keyframes flashDelay {
-  0% { background: var(--delay-bg); }
-  50% { background: var(--delay-dim); }
-  100% { background: var(--delay-bg); }
+  0% { background:var(--delay-bg); }
+  50% { background:var(--delay-dim); }
+  100% { background:var(--delay-bg); }
 }
 
 .ontime-cell {
-  background: var(--ontime-bg) !important;
-  color: #fff !important;
+  background:var(--ontime-bg) !important;
+  color:#fff !important;
 }
 
 .risk-cell {
-  background: var(--risk-bg) !important;
-  color: #000 !important;
+  background:var(--risk-bg) !important;
+  color:#000 !important;
 }
 
-.muted { color: var(--muted) !important; }
+.muted { color:var(--muted) !important; }
 
 .bulletin-panel {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
 }
 
 .bulletin-header {
-  height: 26px;
-  padding: 2px 8px;
-  display: flex;
-  align-items: center;
-  color: var(--header-text);
-  font-size: clamp(11px, 0.85vw, 15px);
-  font-weight: 700;
-  background: var(--header-grad);
-  border: 1px solid var(--grid-strong);
-  border-bottom: none;
-  white-space: nowrap;
-  overflow: hidden;
+  height:26px;
+  padding:2px 8px;
+  display:flex;
+  align-items:center;
+  color:var(--header-text);
+  font-size:clamp(11px,0.85vw,15px);
+  font-weight:700;
+  background:var(--header-grad);
+  border:1px solid var(--grid-strong);
+  border-bottom:none;
+  white-space:nowrap;
+  overflow:hidden;
 }
 
 .bulletin-box {
-  flex: 1;
-  min-height: 0;
-  border: 1px solid var(--grid);
-  background: rgba(0,0,0,0.90);
+  flex:1;
+  min-height:0;
+  border:1px solid var(--grid);
+  background:rgba(0,0,0,0.90);
 }
 
 .bulletin-line {
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: 24px;
-  padding: 2px 8px;
-  font-size: clamp(11px, 0.9vw, 15px);
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  border-top: 1px solid rgba(255,255,255,0.16);
+  position:relative;
+  display:flex;
+  align-items:center;
+  height:24px;
+  padding:2px 8px;
+  font-size:clamp(11px,0.9vw,15px);
+  color:#fff;
+  white-space:nowrap;
+  overflow:hidden;
+  border-top:1px solid rgba(255,255,255,0.16);
 }
 
-.bulletin-line:first-child { border-top: none; }
+.bulletin-line:first-child { border-top:none; }
 
 .bulletin-scroll {
-  display: inline-block;
-  white-space: nowrap;
-  padding-left: 100%;
-  animation: scrollBulletin 22s linear infinite;
+  display:inline-block;
+  white-space:nowrap;
+  padding-left:100%;
+  animation:scrollBulletin 22s linear infinite;
 }
 
 .bulletin-line.short .bulletin-scroll {
-  padding-left: 0;
-  animation: none;
+  padding-left:0;
+  animation:none;
 }
 
 @keyframes scrollBulletin {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
+  0% { transform:translateX(0); }
+  100% { transform:translateX(-100%); }
 }
 
 .error {
-  color: red;
-  font-size: 18px;
-  padding: 10px;
-  white-space: pre-wrap;
+  color:red;
+  font-size:18px;
+  padding:10px;
+  white-space:pre-wrap;
 }
 </style>
 </head>
 
 <body>
 <div id="viewport">
+  <img class="logo-overlay" src="Picsart_24-07-23_20-35-10-625.png" alt="Company Logo">
+
   <div id="scaleWrapper">
     <div class="screen">
-
-      <div class="logo-row">
-        <div class="logo-box">
-          <img src="Picsart_24-07-23_20-35-10-625.png" alt="Company Logo">
-        </div>
-        <div class="logo-spacer"></div>
-        <div class="logo-spacer"></div>
-        <div class="logo-spacer"></div>
-      </div>
-
       <div class="top" id="topGrid"></div>
-
     </div>
   </div>
 </div>
@@ -322,3 +292,195 @@ function clean(value) {
 
 function getStatus(value) {
   const s = String(value || "").toUpperCase().replace(/[\s\-]+/g, "");
+  if (s.includes("DELAY")) return "delay";
+  if (s.includes("ONTIME")) return "ontime";
+  if (s.includes("RISK")) return "risk";
+  return "";
+}
+
+function isMuted(value) {
+  const t = String(value || "").trim().toUpperCase();
+  return t === "N/A" || t === "-";
+}
+
+function detectSections(headerRow) {
+  const sections = [];
+  let start = null;
+
+  for (let i = 0; i <= headerRow.length; i++) {
+    const value = i < headerRow.length ? clean(headerRow[i]) : "";
+    const filled = value !== "";
+
+    if (filled && start === null) start = i;
+
+    if ((!filled || i === headerRow.length) && start !== null) {
+      sections.push({ start, end:i - 1, title:clean(headerRow[start]) });
+      start = null;
+    }
+  }
+
+  return sections;
+}
+
+function makeCell(tag, value, leftAlign = false) {
+  const raw = String(value || "").trim();
+  const txt = clean(raw);
+  const status = getStatus(raw);
+
+  const el = document.createElement(tag);
+
+  if (status === "delay") {
+    el.classList.add("delay-cell");
+    const fill = document.createElement("div");
+    fill.className = "delay-fill";
+    fill.textContent = txt;
+    el.appendChild(fill);
+    return el;
+  }
+
+  if (status === "ontime") el.classList.add("ontime-cell");
+  if (status === "risk") el.classList.add("risk-cell");
+
+  const d = document.createElement("div");
+  d.className = "cell" + (leftAlign ? " left" : "");
+  if (!status && isMuted(txt)) d.classList.add("muted");
+  d.textContent = txt;
+  el.appendChild(d);
+  return el;
+}
+
+function rowHasData(row, section) {
+  for (let c = section.start; c <= section.end; c++) {
+    if (clean(row[c]) !== "") return true;
+  }
+  return false;
+}
+
+function renderTablePanel(section, headerRow, rows, leftAlign = false) {
+  const panel = document.createElement("div");
+  panel.className = "panel";
+
+  const table = document.createElement("table");
+  const thead = document.createElement("thead");
+  const tbody = document.createElement("tbody");
+  const trHead = document.createElement("tr");
+
+  for (let c = section.start; c <= section.end; c++) {
+    trHead.appendChild(makeCell("th", headerRow[c], leftAlign));
+  }
+
+  thead.appendChild(trHead);
+  table.appendChild(thead);
+
+  const visibleRows = rows.filter(r => rowHasData(r, section));
+  const rowCount = visibleRows.length + EXTRA_BLANK_ROWS;
+
+  for (let r = 0; r < rowCount; r++) {
+    const row = visibleRows[r] || [];
+    const tr = document.createElement("tr");
+
+    for (let c = section.start; c <= section.end; c++) {
+      tr.appendChild(makeCell("td", row[c], leftAlign));
+    }
+
+    tbody.appendChild(tr);
+  }
+
+  table.appendChild(tbody);
+  panel.appendChild(table);
+  return panel;
+}
+
+function renderBulletinPanel(section, rows) {
+  const panel = document.createElement("div");
+  panel.className = "panel bulletin-panel";
+
+  const header = document.createElement("div");
+  header.className = "bulletin-header";
+  header.textContent = section.title || "BULLETIN";
+
+  const box = document.createElement("div");
+  box.className = "bulletin-box";
+
+  const visibleRows = rows.filter(r => rowHasData(r, section));
+  const rowCount = visibleRows.length + EXTRA_BLANK_ROWS;
+
+  for (let r = 0; r < rowCount; r++) {
+    const row = visibleRows[r] || [];
+    const parts = [];
+
+    for (let c = section.start; c <= section.end; c++) {
+      const value = clean(row[c]);
+      if (value !== "") parts.push(value);
+    }
+
+    const line = document.createElement("div");
+    line.className = "bulletin-line";
+
+    const span = document.createElement("span");
+    span.className = "bulletin-scroll";
+    span.textContent = parts.join("   ");
+
+    line.appendChild(span);
+    box.appendChild(line);
+
+    requestAnimationFrame(() => {
+      if (span.scrollWidth <= line.clientWidth) {
+        line.classList.add("short");
+      }
+    });
+  }
+
+  panel.appendChild(header);
+  panel.appendChild(box);
+  return panel;
+}
+
+function render(data) {
+  if (!data || data.length < 2) {
+    document.body.innerHTML = '<div class="error">NO DATA</div>';
+    return;
+  }
+
+  const topGrid = document.getElementById("topGrid");
+  topGrid.innerHTML = "";
+
+  const header = data[0];
+  const rows = data.slice(1);
+  const sections = detectSections(header);
+
+  if (sections.length > 0) {
+    topGrid.style.gridTemplateColumns = sections
+      .map((s, i) => i === 0 ? "4fr" : "1.8fr")
+      .join(" ");
+  }
+
+  sections.forEach((section, index) => {
+    const title = String(section.title || "").toUpperCase();
+    const isBulletin = title.includes("BULLETIN");
+    const leftAlign = index >= 2 || isBulletin;
+
+    if (isBulletin) {
+      topGrid.appendChild(renderBulletinPanel(section, rows));
+    } else {
+      topGrid.appendChild(renderTablePanel(section, header, rows, leftAlign));
+    }
+  });
+}
+
+async function load() {
+  try {
+    const res = await fetch(CSV_URL + "&t=" + Date.now(), { cache:"no-store" });
+    const text = await res.text();
+    const data = parseCSV(text);
+    render(data);
+  } catch (e) {
+    document.body.innerHTML = '<div class="error">LOAD ERROR</div>';
+  }
+}
+
+load();
+setInterval(load, REFRESH_MS);
+</script>
+</body>
+</html>
