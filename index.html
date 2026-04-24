@@ -10,15 +10,13 @@
 
 :root{
   --bg:#000;
-  --panel:#03060a;
-  --panel2:#06101a;
-  --line:rgba(90,170,255,.42);
-  --line2:rgba(120,200,255,.72);
-  --orange:#ffb000;
-  --white:#f5fbff;
-  --muted:#b8c0c8;
-  --header:linear-gradient(180deg,#7a4600 0%,#301900 58%,#080300 100%);
-  --blueGlow:0 0 14px rgba(60,150,255,.20);
+  --grid:rgba(255,255,255,.24);
+  --grid-strong:rgba(255,255,255,.42);
+  --orange:#ffae00;
+  --white:#f5f5f5;
+  --muted:#bdbdbd;
+  --header:linear-gradient(180deg,#7a4700 0%,#2a1600 58%,#090400 100%);
+  --panel:linear-gradient(180deg,#050505 0%,#000 100%);
 }
 
 html,body{
@@ -36,31 +34,27 @@ html,body{
   width:100vw;
   height:100vh;
   display:grid;
-  grid-template-rows:44px 1fr 126px;
-  gap:4px;
-  padding:4px;
-  background:
-    radial-gradient(circle at top left,rgba(0,120,255,.12),transparent 30%),
-    radial-gradient(circle at bottom right,rgba(255,160,0,.06),transparent 24%),
-    #000;
+  grid-template-rows:44px 1fr 132px;
+  gap:5px;
+  padding:5px;
+  background:#000;
 }
 
-/* TOP */
+/* TOP ROW */
 .top-row{
   display:grid;
   grid-template-columns:170px 1fr;
-  gap:4px;
+  gap:5px;
   min-height:0;
 }
 
 .logo-box{
-  border:1px solid var(--line);
+  border:1px solid var(--grid);
   background:#000;
   display:flex;
   align-items:center;
   justify-content:center;
   overflow:hidden;
-  box-shadow:var(--blueGlow);
 }
 
 .logo-box img{
@@ -70,12 +64,11 @@ html,body{
 }
 
 .announcement-bar{
-  border:1px solid var(--line);
+  border:1px solid var(--grid);
   background:#000;
   display:grid;
   grid-template-columns:155px 1fr;
   overflow:hidden;
-  box-shadow:var(--blueGlow);
 }
 
 .bar-label{
@@ -86,9 +79,9 @@ html,body{
   display:flex;
   align-items:center;
   justify-content:center;
-  border-right:2px solid var(--line2);
+  border-right:2px solid var(--grid-strong);
   white-space:nowrap;
-  letter-spacing:.4px;
+  letter-spacing:.3px;
 }
 
 .marquee{
@@ -96,7 +89,6 @@ html,body{
   overflow:hidden;
   display:flex;
   align-items:center;
-  min-width:0;
 }
 
 .marquee-track{
@@ -110,31 +102,42 @@ html,body{
   animation:marqueeMove 35s linear infinite;
 }
 
-.marquee-track span{white-space:nowrap}
-
 @keyframes marqueeMove{
   0%{transform:translateX(0)}
   100%{transform:translateX(-50%)}
 }
 
-/* MAIN */
+/* MAIN AREA */
 .main-area{
+  width:100%;
+  height:100%;
   display:grid;
-  grid-template-columns:4.25fr 1.75fr 2.7fr !important;
-  gap:8px;
+  grid-template-columns:58% 18% 24%;
+  gap:6px;
   min-height:0;
-  overflow:hidden;
 }
 
 .panel{
   min-height:0;
   overflow:hidden;
-  background:linear-gradient(180deg,#05080d,#000);
-  border:1px solid var(--line);
-  box-shadow:var(--blueGlow);
+  background:var(--panel);
+  border:1px solid var(--grid);
 }
 
-/* Regular tables */
+.split-panel{
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:6px;
+  min-height:0;
+}
+
+.sub-panel{
+  min-height:0;
+  overflow:hidden;
+  background:var(--panel);
+  border:1px solid var(--grid);
+}
+
 table{
   width:100%;
   border-collapse:collapse;
@@ -142,26 +145,26 @@ table{
 }
 
 th,td{
-  border:1px solid var(--line);
+  border:1px solid var(--grid);
   text-align:center;
   vertical-align:middle;
   font-weight:800;
 }
 
 th{
-  height:20px;
+  height:21px;
   background:var(--header);
   color:var(--orange);
-  border-color:var(--line2);
+  border-color:var(--grid-strong);
   font-size:11px;
   padding:1px 3px;
   white-space:nowrap;
   overflow:hidden;
-  letter-spacing:.15px;
+  letter-spacing:.1px;
 }
 
 td{
-  height:18px;
+  height:20px;
   background:#000;
   color:var(--white);
   font-size:12px;
@@ -171,7 +174,7 @@ td{
 .cell{
   width:100%;
   height:100%;
-  min-height:18px;
+  min-height:20px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -185,7 +188,7 @@ td{
 .cell.left{
   justify-content:flex-start;
   padding-left:5px;
-  font-size:10.5px;
+  font-size:11px;
 }
 
 .cell-inner{
@@ -202,43 +205,10 @@ td{
   100%{transform:translateX(-100%)}
 }
 
-/* SPLIT PANEL FOR INCOMING SHIPMENTS + DATE */
-.split-panel{
-  display:grid;
-  grid-template-columns:1.35fr .75fr;
-  gap:7px;
-  background:transparent;
-  border:none;
-  box-shadow:none;
-}
-
-.mini-panel{
-  border:1px solid var(--line2);
-  background:linear-gradient(180deg,#06101a,#000);
-  box-shadow:0 0 16px rgba(60,150,255,.18);
-  overflow:hidden;
-}
-
-.mini-panel th{
-  background:linear-gradient(180deg,#8a5200 0%,#351b00 62%,#090400 100%);
-  border-bottom:2px solid var(--line2);
-  color:#ffbf2e;
-  font-size:11px;
-}
-
-.mini-panel td{
-  background:rgba(0,25,50,.16);
-}
-
-/* INSPECTION MORE READABLE */
-.inspection-panel td .cell{
-  justify-content:flex-start;
-  padding-left:6px;
-  font-size:10.5px;
-}
-
 /* STATUS */
-.delay-cell{background:#240000!important}
+.delay-cell{
+  background:#240000!important;
+}
 
 .delay-fill{
   width:100%;
@@ -250,12 +220,11 @@ td{
   color:#fff;
   font-weight:900;
   animation:flashDelay .65s linear infinite;
-  text-shadow:0 0 8px rgba(255,255,255,.65);
 }
 
 @keyframes flashDelay{
   0%{background:#ff0000}
-  50%{background:#2a0000}
+  50%{background:#320000}
   100%{background:#ff0000}
 }
 
@@ -269,16 +238,17 @@ td{
   color:#000!important;
 }
 
-.muted{color:var(--muted)!important}
+.muted{
+  color:var(--muted)!important;
+}
 
 /* NOTES */
 .notes-panel{
-  border:1px solid var(--line);
+  border:1px solid var(--grid);
   background:#000;
   overflow:hidden;
   display:grid;
-  grid-template-rows:22px 1fr;
-  box-shadow:var(--blueGlow);
+  grid-template-rows:23px 1fr;
 }
 
 .notes-title{
@@ -289,21 +259,20 @@ td{
   display:flex;
   align-items:center;
   padding-left:10px;
-  border-bottom:1px solid var(--line2);
-  letter-spacing:.4px;
+  border-bottom:1px solid var(--grid-strong);
 }
 
 .notes-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  grid-auto-rows:17px;
+  grid-auto-rows:18px;
   overflow:hidden;
   height:100%;
 }
 
 .note-cell{
-  border-right:1px solid var(--line);
-  border-bottom:1px solid var(--line);
+  border-right:1px solid var(--grid);
+  border-bottom:1px solid var(--grid);
   color:#fff;
   background:#000;
   font-size:12px;
@@ -317,9 +286,13 @@ td{
   position:relative;
 }
 
-.note-cell:nth-child(2n){border-right:none}
+.note-cell:nth-child(2n){
+  border-right:none;
+}
 
-.note-inner{white-space:nowrap}
+.note-inner{
+  white-space:nowrap;
+}
 
 .note-cell.long .note-inner{
   position:absolute;
@@ -355,7 +328,16 @@ td{
     </div>
   </div>
 
-  <div class="main-area" id="mainArea"></div>
+  <div class="main-area">
+    <div id="mainPanel"></div>
+
+    <div class="split-panel">
+      <div id="incomingPanel"></div>
+      <div id="datePanel"></div>
+    </div>
+
+    <div id="inspectionPanel"></div>
+  </div>
 
   <div class="notes-panel">
     <div class="notes-title">NOTES</div>
@@ -443,28 +425,6 @@ function findRowByWords(rows,words){
   });
 }
 
-function detectSections(header){
-  const sections=[];
-  let start=null;
-
-  for(let i=0;i<=header.length;i++){
-    const filled=i<header.length&&clean(header[i])!=="";
-
-    if(filled&&start===null)start=i;
-
-    if((!filled||i===header.length)&&start!==null){
-      sections.push({
-        start:start,
-        end:i-1,
-        title:clean(header[start])
-      });
-      start=null;
-    }
-  }
-
-  return sections;
-}
-
 function makeCell(tag,val,left=false){
   const raw=String(val||"").trim();
   const txt=clean(raw);
@@ -504,76 +464,40 @@ function makeCell(tag,val,left=false){
   return el;
 }
 
-function rowHasData(row,sec){
-  for(let c=sec.start;c<=sec.end;c++){
+function rowHasData(row,start,end){
+  for(let c=start;c<=end;c++){
     if(clean(row[c])!=="")return true;
   }
   return false;
 }
 
-function renderSingleColumnPanel(colIndex,header,rows,left=false){
+function renderTable(containerId, header, rows, start, end, left=false, panelClass="panel"){
+  const container=document.getElementById(containerId);
+  container.innerHTML="";
+
   const panel=document.createElement("div");
-  panel.className="mini-panel";
+  panel.className=panelClass;
 
   const table=document.createElement("table");
   const thead=document.createElement("thead");
   const tbody=document.createElement("tbody");
   const trh=document.createElement("tr");
 
-  trh.appendChild(makeCell("th",header[colIndex],left));
-  thead.appendChild(trh);
-  table.appendChild(thead);
-
-  const visible=rows.filter(r=>clean(r[colIndex])!=="");
-  const maxRows=Math.max(rows.length, visible.length + EXTRA_BLANK_ROWS);
-
-  for(let r=0;r<maxRows;r++){
-    const row=rows[r]||[];
-    const tr=document.createElement("tr");
-    tr.appendChild(makeCell("td",row[colIndex],left));
-    tbody.appendChild(tr);
-  }
-
-  table.appendChild(tbody);
-  panel.appendChild(table);
-  return panel;
-}
-
-function renderSplitPanel(section,header,rows){
-  const panel=document.createElement("div");
-  panel.className="split-panel";
-
-  for(let c=section.start;c<=section.end;c++){
-    panel.appendChild(renderSingleColumnPanel(c,header,rows,false));
-  }
-
-  return panel;
-}
-
-function renderTable(section,header,rows,left=false,extraClass=""){
-  const panel=document.createElement("div");
-  panel.className=("panel "+extraClass).trim();
-
-  const table=document.createElement("table");
-  const thead=document.createElement("thead");
-  const tbody=document.createElement("tbody");
-  const trh=document.createElement("tr");
-
-  for(let c=section.start;c<=section.end;c++){
+  for(let c=start;c<=end;c++){
     trh.appendChild(makeCell("th",header[c],left));
   }
 
   thead.appendChild(trh);
   table.appendChild(thead);
 
-  const visible=rows.filter(r=>rowHasData(r,section));
+  const visible=rows.filter(r=>rowHasData(r,start,end));
   const count=visible.length+EXTRA_BLANK_ROWS;
 
   for(let r=0;r<count;r++){
     const row=visible[r]||[];
     const tr=document.createElement("tr");
 
-    for(let c=section.start;c<=section.end;c++){
+    for(let c=start;c<=end;c++){
       tr.appendChild(makeCell("td",row[c],left));
     }
 
@@ -582,7 +506,38 @@ function renderTable(section,header,rows,left=false,extraClass=""){
 
   table.appendChild(tbody);
   panel.appendChild(table);
-  return panel;
+  container.appendChild(panel);
+}
+
+function renderSingleColumn(containerId, header, rows, col, left=false){
+  const container=document.getElementById(containerId);
+  container.innerHTML="";
+
+  const panel=document.createElement("div");
+  panel.className="sub-panel";
+
+  const table=document.createElement("table");
+  const thead=document.createElement("thead");
+  const tbody=document.createElement("tbody");
+  const trh=document.createElement("tr");
+
+  trh.appendChild(makeCell("th",header[col],left));
+  thead.appendChild(trh);
+  table.appendChild(thead);
+
+  const visible=rows.filter(r=>clean(r[col])!=="");
+  const count=Math.max(rows.length, visible.length+EXTRA_BLANK_ROWS);
+
+  for(let r=0;r<count;r++){
+    const row=rows[r]||[];
+    const tr=document.createElement("tr");
+    tr.appendChild(makeCell("td",row[col],left));
+    tbody.appendChild(tr);
+  }
+
+  table.appendChild(tbody);
+  panel.appendChild(table);
+  container.appendChild(panel);
 }
 
 function rowValues(row,start,end){
@@ -625,10 +580,8 @@ function renderNotes(rows){
   grid.innerHTML="";
 
   rows.forEach(row=>{
-    const left=clean(row[0]);
-    const right=clean(row[6]);
-    grid.appendChild(makeNoteCell(left));
-    grid.appendChild(makeNoteCell(right));
+    grid.appendChild(makeNoteCell(clean(row[0])));
+    grid.appendChild(makeNoteCell(clean(row[6])));
   });
 }
 
@@ -637,9 +590,6 @@ function render(data){
     document.body.innerHTML='<div class="error">NO DATA</div>';
     return;
   }
-
-  const main=document.getElementById("mainArea");
-  main.innerHTML="";
 
   const announcementRow=findRowByWords(data,["ANNOUNCEMENT","ANOUNCEMENT","BULLETIN"]);
   const salesRow=findRowByWords(data,["SALES ORDER"]);
@@ -660,28 +610,18 @@ function render(data){
   }
 
   if(salesRow<0){
-    main.innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
+    document.getElementById("mainPanel").innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
     return;
   }
 
   const header=data[salesRow];
   const tableEnd=notesRow>salesRow?notesRow:data.length;
   const rows=data.slice(salesRow+1,tableEnd);
-  const sections=detectSections(header);
 
-  main.style.gridTemplateColumns="4.25fr 1.75fr 2.7fr";
-
-  sections.forEach((section,index)=>{
-    const title=String(section.title||"").toUpperCase();
-
-    if(title.includes("INCOMING")){
-      main.appendChild(renderSplitPanel(section,header,rows));
-    }else if(title.includes("INSPECTION")){
-      main.appendChild(renderTable(section,header,rows,true,"inspection-panel"));
-    }else{
-      main.appendChild(renderTable(section,header,rows,false,""));
-    }
-  });
+  renderTable("mainPanel",header,rows,0,5,false,"panel");
+  renderSingleColumn("incomingPanel",header,rows,7,false);
+  renderSingleColumn("datePanel",header,rows,8,false);
+  renderTable("inspectionPanel",header,rows,10,10,true,"panel");
 }
 
 async function load(){
