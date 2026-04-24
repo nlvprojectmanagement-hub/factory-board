@@ -14,9 +14,10 @@
   --gold:#ffae00;
   --white:#f5f5f5;
   --header:linear-gradient(180deg,#6b3b00 0%,#1b0d00 70%,#050200 100%);
-  --panelA:#101820;
-  --panelB:#141414;
-  --panelC:#1a1622;
+
+  --incomingBlock:#101820;
+  --notesBlock:#111111;
+  --inspectionBlock:#1a1622;
 }
 
 html,body{
@@ -130,9 +131,9 @@ html,body{
 
   grid-template-rows:
     18px
-    repeat(16, 18px)
+    repeat(18, 18px)
     18px
-    repeat(8, 16px);
+    repeat(42, 16px);
 
   align-content:start;
   border:1px solid var(--grid);
@@ -172,16 +173,16 @@ html,body{
   border-left:1px solid rgba(255,174,0,.55);
 }
 
-.panel-a{
-  background:var(--panelA);
+.incoming-section{
+  background:var(--incomingBlock);
 }
 
-.panel-b{
-  background:var(--panelB);
+.notes-section{
+  background:var(--notesBlock);
 }
 
-.panel-c{
-  background:var(--panelC);
+.inspection-section{
+  background:var(--inspectionBlock);
 }
 
 .left{
@@ -282,6 +283,10 @@ html,body{
 const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
 const REFRESH_MS=8000;
 const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+const MAIN_ROWS = 18;
+const BOTTOM_START_ROW = 20;
+const BOTTOM_ROWS = 42;
 
 function parseCSV(text){
   const rows=[];
@@ -425,7 +430,10 @@ function render(data){
 
   if(annRow>=0){
     const label=clean(data[annRow][0]);
-    const text=data[annRow].slice(1,11).map(clean).filter(Boolean).join("     •     ");
+
+    /* IMPORTANT: only B1 is announcement text. This avoids old sheet date/time showing beside announcement. */
+    const text=clean(data[annRow][1]);
+
     setAnnouncement(label,text);
   }
 
@@ -443,17 +451,17 @@ function render(data){
 
   board.appendChild(makeCell(header[3],{header:true,rowStart:1,colStart:4,colEnd:6,groupStart:true}));
   board.appendChild(makeCell(header[5],{header:true,rowStart:1,colStart:6,colEnd:8,groupStart:true}));
-  board.appendChild(makeCell(header[7],{header:true,rowStart:1,colStart:8,colEnd:10,groupStart:true,extraClass:"panel-a"}));
+  board.appendChild(makeCell(header[7],{header:true,rowStart:1,colStart:8,colEnd:10,groupStart:true}));
 
-  board.appendChild(makeCell(header[9],{header:true,rowStart:1,colStart:10,groupStart:true,extraClass:"panel-a"}));
-  board.appendChild(makeCell(header[10],{header:true,rowStart:1,colStart:11,extraClass:"panel-a"}));
-  board.appendChild(makeCell(header[11],{header:true,rowStart:1,colStart:12,extraClass:"panel-a"}));
+  board.appendChild(makeCell(header[9],{header:true,rowStart:1,colStart:10,groupStart:true,extraClass:"incoming-section"}));
+  board.appendChild(makeCell(header[10],{header:true,rowStart:1,colStart:11,extraClass:"incoming-section"}));
+  board.appendChild(makeCell(header[11],{header:true,rowStart:1,colStart:12,extraClass:"incoming-section"}));
 
   /* MAIN ROWS */
   const tableEnd=notesRow>headerRow ? notesRow : data.length;
   const mainRows=data.slice(headerRow+1,tableEnd);
 
-  for(let r=0;r<16;r++){
+  for(let r=0;r<MAIN_ROWS;r++){
     const row=mainRows[r] || [];
     const gridRow=2+r;
 
@@ -464,8 +472,9 @@ function render(data){
         groupStart:[4,6,8,10].includes(c+1)
       };
 
-      if(c+1>=8 && c+1<=12){
-        opt.extraClass="panel-a";
+      /* Only Incoming / Date / Action = J:L */
+      if(c+1>=10 && c+1<=12){
+        opt.extraClass="incoming-section";
       }
 
       board.appendChild(makeCell(row[c],opt));
@@ -478,48 +487,48 @@ function render(data){
   board.appendChild(makeCell(notesTitle,{
     header:true,
     left:true,
-    rowStart:18,
+    rowStart:BOTTOM_START_ROW,
     colStart:1,
     colEnd:9,
-    extraClass:"panel-b"
+    extraClass:"notes-section"
   }));
 
   board.appendChild(makeCell("INSPECTION",{
     header:true,
-    rowStart:18,
+    rowStart:BOTTOM_START_ROW,
     colStart:9,
     colEnd:11,
     groupStart:true,
-    extraClass:"panel-c"
+    extraClass:"inspection-section"
   }));
 
   board.appendChild(makeCell("REQ DATE",{
     header:true,
-    rowStart:18,
+    rowStart:BOTTOM_START_ROW,
     colStart:11,
-    extraClass:"panel-c"
+    extraClass:"inspection-section"
   }));
 
   board.appendChild(makeCell("STATUS",{
     header:true,
-    rowStart:18,
+    rowStart:BOTTOM_START_ROW,
     colStart:12,
-    extraClass:"panel-c"
+    extraClass:"inspection-section"
   }));
 
   /* BOTTOM ROWS */
   const bottomRows = notesRow>=0 ? data.slice(notesRow+1) : [];
 
-  for(let r=0;r<8;r++){
+  for(let r=0;r<BOTTOM_ROWS;r++){
     const row=bottomRows[r] || [];
-    const gridRow=19+r;
+    const gridRow=BOTTOM_START_ROW+1+r;
 
     board.appendChild(makeCell(row[0],{
       left:true,
       rowStart:gridRow,
       colStart:1,
       colEnd:9,
-      extraClass:"panel-b"
+      extraClass:"notes-section"
     }));
 
     board.appendChild(makeCell(row[8],{
@@ -528,19 +537,19 @@ function render(data){
       colStart:9,
       colEnd:11,
       groupStart:true,
-      extraClass:"panel-c"
+      extraClass:"inspection-section"
     }));
 
     board.appendChild(makeCell(row[10],{
       rowStart:gridRow,
       colStart:11,
-      extraClass:"panel-c"
+      extraClass:"inspection-section"
     }));
 
     board.appendChild(makeCell(row[11],{
       rowStart:gridRow,
       colStart:12,
-      extraClass:"panel-c"
+      extraClass:"inspection-section"
     }));
   }
 }
