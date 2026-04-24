@@ -1,267 +1,474 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Factory Board</title>
 
 <style>
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+
+:root{
+  --grid:rgba(255,255,255,.28);
+  --gridStrong:rgba(255,255,255,.48);
+  --orange:#ffae00;
+  --white:#f7f7f7;
+  --blue:#0000ff;
+  --purple:#b4a0c8;
+  --action:#4f81bd;
+  --header:linear-gradient(180deg,#7a4700 0%,#2a1600 58%,#090400 100%);
 }
 
-body {
-  margin: 0;
-  background: #000;
-  color: #fff;
-  font-family: "Segoe UI", Arial, sans-serif;
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#000;
+  font-family:Arial,Helvetica,sans-serif;
 }
 
-/* ===== TOP BAR ===== */
-.top-bar {
-  display: grid;
-  grid-template-columns: 220px 1fr 260px;
-  align-items: center;
-  height: 50px;
-  border-bottom: 2px solid #333;
+.screen{
+  width:100vw;
+  height:100vh;
+  display:grid;
+  grid-template-rows:42px 1fr 118px;
+  gap:4px;
+  padding:4px;
+  background:#000;
 }
 
-.logo {
-  padding-left: 10px;
+/* TOP */
+.top-row{
+  display:grid;
+  grid-template-columns:150px 1fr 230px;
+  gap:4px;
 }
 
-.logo img {
-  height: 40px;
+.logo-box,.announce-box,.clock-box{
+  border:1px solid var(--grid);
+  background:#000;
+  overflow:hidden;
 }
 
-.announcement {
-  font-weight: 600;
-  font-size: 14px;
-  color: #ff9900;
-  white-space: nowrap;
-  overflow: hidden;
+.logo-box{
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
-.datetime {
-  text-align: right;
-  padding-right: 10px;
-  font-size: 14px;
-  color: #ff9900;
+.logo-box img{
+  max-height:36px;
+  max-width:100%;
+  object-fit:contain;
 }
 
-/* ===== TABLE ===== */
-.table-wrap {
-  height: calc(100vh - 120px);
-  padding: 5px;
+.announce-box{
+  display:grid;
+  grid-template-columns:135px 1fr;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
+.announce-label{
+  background:var(--header);
+  color:var(--orange);
+  font-size:12px;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-right:1px solid var(--gridStrong);
 }
 
-/* HEADER */
-th {
-  background: linear-gradient(#5a2e00, #000);
-  color: #ff9900;
-  font-size: 13px;
-  padding: 4px 6px;
-  border: 1px solid #444;
-  text-align: center;
+.marquee{
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
 }
 
-/* CELLS */
-td {
-  padding: 3px 6px;
-  font-size: 13px;
-  border: 1px solid #333;
-  text-align: center;
-  white-space: nowrap;
+.marquee-track{
+  display:inline-flex;
+  gap:80px;
+  white-space:nowrap;
+  color:#fff;
+  font-size:13px;
+  font-weight:800;
+  animation:move 34s linear infinite;
 }
 
-/* ===== COLUMN WIDTHS ===== */
-.col-order { width: 110px; }
-.col-type { width: 120px; }
-.col-stage { width: 120px; }
-.col-date { width: 120px; }
-.col-crate { width: 130px; }
-.col-incoming { width: 180px; }
-.col-inspection { width: 260px; }
-.col-action { width: 180px; }
-.col-status { width: 90px; }
-
-/* ===== VISUAL SEPARATORS ===== */
-.sep-left {
-  border-left: 3px solid #ffaa00 !important;
+@keyframes move{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
 }
 
-/* ===== STATUS COLORS ===== */
-.delay {
-  background: red;
-  color: white;
-  font-weight: bold;
+.clock-box{
+  display:grid;
+  grid-template-columns:1fr 1fr;
 }
 
-.ontime {
-  background: #00aa55;
-  color: white;
-  font-weight: bold;
+.clock-cell{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--orange);
+  font-size:12px;
+  font-weight:900;
+  border-left:1px solid var(--grid);
 }
 
-.p1 {
-  background: red;
-  font-weight: bold;
+/* MAIN */
+.main{
+  display:grid;
+  grid-template-columns:
+    7fr 7fr 8fr 11fr 10fr 9fr
+    11fr 7fr 16fr 14fr 7fr 7fr;
+  border:1px solid var(--grid);
+  overflow:hidden;
+  min-height:0;
 }
 
-.ready {
-  background: #00aa55;
-  font-weight: bold;
+.cell{
+  border-right:1px solid var(--grid);
+  border-bottom:1px solid var(--grid);
+  background:#000;
+  color:var(--white);
+  height:20px;
+  min-width:0;
+  font-size:11px;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1px 3px;
+  white-space:nowrap;
+  overflow:hidden;
+  position:relative;
 }
 
-/* ===== NOTES ===== */
-.notes {
-  height: 70px;
-  border-top: 2px solid #ffaa00;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  font-size: 13px;
+.header{
+  background:var(--blue);
+  color:var(--orange);
+  height:21px;
+  font-size:10.5px;
 }
 
-.notes div {
-  padding: 5px;
+.group-start{
+  border-left:2px solid #ffff00;
 }
 
-/* ===== RESPONSIVE SCALE FOR TV ===== */
-@media screen and (min-width: 1920px) {
-  td, th {
-    font-size: 14px;
-    padding: 4px 6px;
-  }
+.action-header{
+  background:var(--action);
+}
+
+.inspection-header{
+  background:var(--purple);
+}
+
+.inner{
+  white-space:nowrap;
+}
+
+.long .inner{
+  position:absolute;
+  animation:scrollCell 16s linear infinite;
+}
+
+@keyframes scrollCell{
+  0%{transform:translateX(100%)}
+  100%{transform:translateX(-100%)}
+}
+
+.delay{
+  background:#ff0000!important;
+  color:#fff!important;
+  animation:flash .7s linear infinite;
+}
+
+@keyframes flash{
+  0%{background:#ff0000}
+  50%{background:#330000}
+  100%{background:#ff0000}
+}
+
+.ontime,.ready{
+  background:#00a83a!important;
+  color:#fff!important;
+}
+
+.p1{
+  background:#ff0000!important;
+  color:#fff!important;
+}
+
+.p2{
+  background:#ffae00!important;
+  color:#000!important;
+}
+
+.pull{
+  background:#ffff00!important;
+  color:#000!important;
+}
+
+.pulling{
+  background:#00b0f0!important;
+  color:#000!important;
+}
+
+/* NOTES */
+.notes{
+  border:1px solid var(--grid);
+  display:grid;
+  grid-template-rows:20px 1fr;
+  overflow:hidden;
+}
+
+.notes-title{
+  background:var(--blue);
+  color:var(--orange);
+  font-size:12px;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  padding-left:8px;
+}
+
+.notes-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-auto-rows:18px;
+  overflow:hidden;
+}
+
+.note{
+  border-right:1px solid var(--grid);
+  border-bottom:1px solid var(--grid);
+  color:#fff;
+  background:#000;
+  font-size:11px;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  padding:1px 5px;
+  white-space:nowrap;
+  overflow:hidden;
+  position:relative;
+}
+
+.note:nth-child(2n){border-right:none}
+
+.error{
+  color:red;
+  font-size:22px;
+  font-weight:900;
+  padding:20px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- ===== TOP ===== -->
-<div class="top-bar">
-  <div class="logo">
-    <img src="logo.png">
+<div class="screen">
+
+  <div class="top-row">
+    <div class="logo-box">
+      <img src="Picsart_24-07-23_20-35-10-625.png">
+    </div>
+
+    <div class="announce-box">
+      <div class="announce-label" id="announceLabel">ANNOUNCEMENT</div>
+      <div class="marquee">
+        <div class="marquee-track" id="announceTrack">
+          <span></span><span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="clock-box">
+      <div class="clock-cell" id="todayBox"></div>
+      <div class="clock-cell" id="timeBox"></div>
+    </div>
   </div>
 
-  <div class="announcement">
-    Type announcement here
+  <div class="main" id="mainGrid"></div>
+
+  <div class="notes">
+    <div class="notes-title" id="notesTitle">NOTES / IMPORTANT REMARKS</div>
+    <div class="notes-grid" id="notesGrid"></div>
   </div>
 
-  <div class="datetime" id="datetime"></div>
 </div>
 
-<!-- ===== TABLE ===== -->
-<div class="table-wrap">
-<table>
-
-<tr>
-  <th class="col-order">SALES ORDER</th>
-  <th class="col-type">TYPE</th>
-  <th class="col-stage">STAGE</th>
-  <th class="col-date">FORECAST ASSY</th>
-  <th class="col-date">FORECAST TEST</th>
-  <th class="col-crate">CRATE DEADLINE</th>
-
-  <th class="col-incoming sep-left">INCOMING SHIPMENTS</th>
-  <th class="col-date">DATE</th>
-
-  <th class="col-action sep-left">ACTION</th>
-  <th class="col-inspection">INSPECTION</th>
-
-  <th class="col-date sep-left">REQ DATE</th>
-  <th class="col-status">STATUS</th>
-</tr>
-
-<tr>
-  <td>25-1274</td>
-  <td>TEST VALVE</td>
-  <td>PLATING</td>
-  <td>13-Apr</td>
-  <td>16-Apr</td>
-  <td>N/A</td>
-
-  <td class="sep-left">Dynamics Crate</td>
-  <td>TODAY</td>
-
-  <td class="sep-left">UNCRATE ASAP</td>
-  <td>323-00623-03-2 Retainer, Flow Cage</td>
-
-  <td class="sep-left">18-Apr</td>
-  <td class="p1">P1</td>
-</tr>
-
-<tr>
-  <td>25-1312</td>
-  <td>VALVE</td>
-  <td>WELDING</td>
-  <td></td>
-  <td class="delay">DELAY</td>
-  <td></td>
-
-  <td class="sep-left"></td>
-  <td></td>
-
-  <td class="sep-left">EXPEDITE</td>
-  <td></td>
-
-  <td class="sep-left">15-Apr</td>
-  <td class="delay">DELAY</td>
-</tr>
-
-<tr>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td class="ontime">ON TIME</td>
-  <td></td>
-  <td></td>
-
-  <td class="sep-left"></td>
-  <td></td>
-
-  <td class="sep-left"></td>
-  <td></td>
-
-  <td class="sep-left"></td>
-  <td class="ready">READY</td>
-</tr>
-
-</table>
-</div>
-
-<!-- ===== NOTES ===== -->
-<div class="notes">
-  <div>
-    1. this is the first note<br>
-    2. another<br>
-    3. test<br>
-    4. part number
-  </div>
-
-  <div>
-    7<br>
-    8<br>
-    9<br>
-    10. rework
-  </div>
-</div>
-
-<!-- ===== LIVE CLOCK ===== -->
 <script>
-function updateClock() {
-  const now = new Date();
-  document.getElementById("datetime").innerHTML =
-    now.toLocaleDateString() + " | " +
-    now.toLocaleTimeString();
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
+const REFRESH_MS=8000;
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function parseCSV(text){
+  const rows=[];
+  let row=[],cell="",q=false;
+  for(let i=0;i<text.length;i++){
+    const ch=text[i],nx=text[i+1];
+    if(ch==='"'){
+      if(q&&nx==='"'){cell+='"';i++}
+      else q=!q;
+    }else if(ch===","&&!q){
+      row.push(cell);cell="";
+    }else if((ch==="\n"||ch==="\r")&&!q){
+      if(ch==="\r"&&nx==="\n")i++;
+      row.push(cell);rows.push(row);row=[];cell="";
+    }else cell+=ch;
+  }
+  if(cell.length||row.length){row.push(cell);rows.push(row)}
+  return rows;
 }
-setInterval(updateClock, 1000);
+
+function clean(v){
+  if(v==null)return "";
+  const s=String(v).trim();
+  const m=s.match(/^Date\((\d+),(\d+),(\d+)/);
+  if(m)return `${m[3]}-${MONTHS[+m[2]]}`;
+  return s;
+}
+
+function findRow(data,terms){
+  return data.findIndex(r=>r.some(c=>{
+    const v=clean(c).toUpperCase();
+    return terms.some(t=>v.includes(t));
+  }));
+}
+
+function statusClass(text){
+  const s=clean(text).toUpperCase().replace(/[\s\-]+/g,"");
+  if(s.includes("DELAY"))return"delay";
+  if(s==="P1")return"p1";
+  if(s==="P2")return"p2";
+  if(s==="PULL")return"pull";
+  if(s==="PULLING")return"pulling";
+  if(s==="READY")return"ready";
+  if(s.includes("ONTIME"))return"ontime";
+  return"";
+}
+
+function makeCell(text, header=false, colIndex=0){
+  const div=document.createElement("div");
+  div.className="cell";
+  if(header)div.classList.add("header");
+
+  if([6,8,9,10].includes(colIndex)) div.classList.add("group-start");
+  if(header && colIndex===8) div.classList.add("action-header");
+  if(header && colIndex===9) div.classList.add("inspection-header");
+
+  const cls=statusClass(text);
+  if(cls)div.classList.add(cls);
+
+  const inner=document.createElement("span");
+  inner.className="inner";
+  inner.textContent=clean(text);
+  div.appendChild(inner);
+
+  requestAnimationFrame(()=>{
+    if(inner.scrollWidth > div.clientWidth){
+      div.classList.add("long");
+    }
+  });
+
+  return div;
+}
+
+function makeNote(text){
+  const div=document.createElement("div");
+  div.className="note";
+  const inner=document.createElement("span");
+  inner.className="inner";
+  inner.textContent=clean(text);
+  div.appendChild(inner);
+  requestAnimationFrame(()=>{
+    if(inner.scrollWidth > div.clientWidth){
+      div.classList.add("long");
+    }
+  });
+  return div;
+}
+
+function setAnnouncement(label,text){
+  document.getElementById("announceLabel").textContent=label || "ANNOUNCEMENT";
+  const finalText=text || " ";
+  const spans=document.querySelectorAll("#announceTrack span");
+  spans[0].textContent=finalText;
+  spans[1].textContent=finalText;
+}
+
+function updateClock(){
+  const now=new Date();
+  document.getElementById("todayBox").textContent =
+    now.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
+  document.getElementById("timeBox").textContent =
+    now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",second:"2-digit"});
+}
+setInterval(updateClock,1000);
 updateClock();
+
+function render(data){
+  const main=document.getElementById("mainGrid");
+  const notes=document.getElementById("notesGrid");
+  main.innerHTML="";
+  notes.innerHTML="";
+
+  const annRow=findRow(data,["ANNOUNCEMENT","ANOUNCEMENT"]);
+  const headerRow=findRow(data,["SALES ORDER"]);
+  const notesRow=findRow(data,["NOTES"]);
+
+  if(annRow>=0){
+    setAnnouncement(
+      clean(data[annRow][0]),
+      data[annRow].slice(1,10).map(clean).filter(Boolean).join("     •     ")
+    );
+  }
+
+  if(headerRow<0){
+    main.innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
+    return;
+  }
+
+  const headers=data[headerRow].slice(0,12);
+  headers.forEach((h,i)=>main.appendChild(makeCell(h,true,i)));
+
+  const tableEnd=notesRow>headerRow ? notesRow : data.length;
+  const rows=data.slice(headerRow+1,tableEnd).filter(r=>r.slice(0,12).some(c=>clean(c)!==""));
+
+  const totalRows=Math.max(rows.length+2,11);
+  for(let r=0;r<totalRows;r++){
+    const row=rows[r] || [];
+    for(let c=0;c<12;c++){
+      main.appendChild(makeCell(row[c],false,c));
+    }
+  }
+
+  if(notesRow>=0){
+    document.getElementById("notesTitle").textContent=clean(data[notesRow][0]) || "NOTES / IMPORTANT REMARKS";
+    const nrows=data.slice(notesRow+1).filter(r=>clean(r[0])!=="" || clean(r[6])!=="");
+    const totalNotes=Math.max(nrows.length,6);
+    for(let i=0;i<totalNotes;i++){
+      const row=nrows[i] || [];
+      notes.appendChild(makeNote(row[0]));
+      notes.appendChild(makeNote(row[6]));
+    }
+  }
+}
+
+async function load(){
+  try{
+    const res=await fetch(CSV_URL+"&t="+Date.now(),{cache:"no-store"});
+    const text=await res.text();
+    render(parseCSV(text));
+  }catch(e){
+    document.body.innerHTML='<div class="error">LOAD ERROR</div>';
+  }
+}
+
+load();
+setInterval(load,REFRESH_MS);
 </script>
 
 </body>
