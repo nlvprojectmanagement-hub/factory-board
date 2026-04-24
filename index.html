@@ -35,8 +35,8 @@ html, body {
 #viewport {
   position:fixed;
   inset:0;
-  overflow:hidden;
   background:#000;
+  overflow:hidden;
 }
 
 #scaleWrapper {
@@ -49,16 +49,16 @@ html, body {
   width:100%;
   height:100%;
   display:grid;
-  grid-template-rows:64px 1fr;
+  grid-template-rows:64px 1fr 92px;
   gap:6px;
 }
 
-.logo-row {
-  width:100%;
-  height:100%;
+/* TOP LOGO + BULLETIN */
+.top-bar {
   display:grid;
-  grid-template-columns:4fr 1.8fr 1.8fr 1.8fr;
+  grid-template-columns:220px 1fr;
   gap:6px;
+  min-height:0;
 }
 
 .logo-cell {
@@ -66,28 +66,65 @@ html, body {
   border:1px solid var(--grid);
   display:flex;
   align-items:center;
-  justify-content:flex-start;
-  padding:5px 12px;
+  justify-content:center;
   overflow:hidden;
+  padding:4px;
 }
 
 .logo-cell img {
-  max-height:52px;
+  max-height:54px;
   max-width:100%;
   object-fit:contain;
 }
 
-.logo-spacer {
+.ticker-panel {
   background:var(--panel-grad);
   border:1px solid var(--grid);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
 }
 
-.top {
+.ticker-title {
+  height:24px;
+  background:var(--header-grad);
+  color:var(--header-text);
+  font-weight:700;
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  padding-left:10px;
+  border-bottom:1px solid var(--grid);
+}
+
+.ticker-window {
+  position:relative;
+  flex:1;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  color:#fff;
+  font-size:18px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.ticker-text {
+  position:absolute;
+  white-space:nowrap;
+  animation:moveLeftRight 26s linear infinite;
+}
+
+@keyframes moveLeftRight {
+  0% { transform:translateX(-100%); }
+  100% { transform:translateX(100vw); }
+}
+
+/* MAIN TABLE AREA */
+.main-area {
   display:grid;
-  grid-template-columns:4fr 1.8fr 1.8fr 1.8fr;
+  grid-template-columns:4fr 1.6fr 1.4fr;
   gap:6px;
-  width:100%;
-  height:100%;
   min-height:0;
 }
 
@@ -148,6 +185,7 @@ td {
   padding-left:6px;
 }
 
+/* STATUS */
 .delay-cell { background:#240000 !important; }
 
 .delay-fill {
@@ -180,64 +218,43 @@ td {
 
 .muted { color:var(--muted) !important; }
 
-.bulletin-panel {
+/* NOTES */
+.notes-panel {
+  background:var(--panel-grad);
+  border:1px solid var(--grid);
+  overflow:hidden;
   display:flex;
   flex-direction:column;
-  min-height:0;
 }
 
-.bulletin-header {
-  height:26px;
-  padding:2px 8px;
-  display:flex;
-  align-items:center;
-  color:var(--header-text);
-  font-size:clamp(11px,0.85vw,15px);
-  font-weight:700;
-  background:var(--header-grad);
-  border:1px solid var(--grid-strong);
-  border-bottom:none;
-  white-space:nowrap;
-  overflow:hidden;
-}
-
-.bulletin-box {
-  flex:1;
-  min-height:0;
-  border:1px solid var(--grid);
-  background:rgba(0,0,0,0.90);
-}
-
-.bulletin-line {
-  position:relative;
-  display:flex;
-  align-items:center;
+.notes-title {
   height:24px;
-  padding:2px 8px;
-  font-size:clamp(11px,0.9vw,15px);
-  color:#fff;
-  white-space:nowrap;
+  background:var(--header-grad);
+  color:var(--header-text);
+  font-weight:700;
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  padding-left:10px;
+  border-bottom:1px solid var(--grid);
+}
+
+.notes-window {
+  position:relative;
+  flex:1;
   overflow:hidden;
-  border-top:1px solid rgba(255,255,255,0.16);
-}
-
-.bulletin-line:first-child { border-top:none; }
-
-.bulletin-scroll {
-  display:inline-block;
+  display:flex;
+  align-items:center;
+  color:#fff;
+  font-size:18px;
+  font-weight:700;
   white-space:nowrap;
-  padding-left:100%;
-  animation:scrollBulletin 22s linear infinite;
 }
 
-.bulletin-line.short .bulletin-scroll {
-  padding-left:0;
-  animation:none;
-}
-
-@keyframes scrollBulletin {
-  0% { transform:translateX(0); }
-  100% { transform:translateX(-100%); }
+.notes-text {
+  position:absolute;
+  white-space:nowrap;
+  animation:moveLeftRight 30s linear infinite;
 }
 
 .error {
@@ -254,16 +271,27 @@ td {
   <div id="scaleWrapper">
     <div class="screen">
 
-      <div class="logo-row">
+      <div class="top-bar">
         <div class="logo-cell">
           <img src="Picsart_24-07-23_20-35-10-625.png" alt="Company Logo">
         </div>
-        <div class="logo-spacer"></div>
-        <div class="logo-spacer"></div>
-        <div class="logo-spacer"></div>
+
+        <div class="ticker-panel">
+          <div class="ticker-title" id="bulletinTitle">BULLETIN</div>
+          <div class="ticker-window">
+            <div class="ticker-text" id="bulletinText"></div>
+          </div>
+        </div>
       </div>
 
-      <div class="top" id="topGrid"></div>
+      <div class="main-area" id="mainArea"></div>
+
+      <div class="notes-panel">
+        <div class="notes-title" id="notesTitle">NOTES</div>
+        <div class="notes-window">
+          <div class="notes-text" id="notesText"></div>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -289,11 +317,11 @@ function parseCSV(text) {
       } else {
         inQuotes = !inQuotes;
       }
-    } else if (ch === ',' && !inQuotes) {
+    } else if (ch === "," && !inQuotes) {
       row.push(cell);
       cell = "";
-    } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
-      if (ch === '\r' && next === '\n') i++;
+    } else if ((ch === "\n" || ch === "\r") && !inQuotes) {
+      if (ch === "\r" && next === "\n") i++;
       row.push(cell);
       rows.push(row);
       row = [];
@@ -319,8 +347,12 @@ function clean(value) {
   return v;
 }
 
+function normalize(value) {
+  return clean(value).toUpperCase().replace(/[\s\-]+/g, "");
+}
+
 function getStatus(value) {
-  const s = String(value || "").toUpperCase().replace(/[\s\-]+/g, "");
+  const s = normalize(value);
   if (s.includes("DELAY")) return "delay";
   if (s.includes("ONTIME")) return "ontime";
   if (s.includes("RISK")) return "risk";
@@ -328,8 +360,13 @@ function getStatus(value) {
 }
 
 function isMuted(value) {
-  const t = String(value || "").trim().toUpperCase();
+  const t = clean(value).toUpperCase();
   return t === "N/A" || t === "-";
+}
+
+function findRow(rows, keyword) {
+  const k = keyword.toUpperCase();
+  return rows.findIndex(r => r.some(c => clean(c).toUpperCase() === k));
 }
 
 function detectSections(headerRow) {
@@ -420,84 +457,63 @@ function renderTablePanel(section, headerRow, rows, leftAlign = false) {
   return panel;
 }
 
-function renderBulletinPanel(section, rows) {
-  const panel = document.createElement("div");
-  panel.className = "panel bulletin-panel";
-
-  const header = document.createElement("div");
-  header.className = "bulletin-header";
-  header.textContent = section.title || "BULLETIN";
-
-  const box = document.createElement("div");
-  box.className = "bulletin-box";
-
-  const visibleRows = rows.filter(r => rowHasData(r, section));
-  const rowCount = visibleRows.length + EXTRA_BLANK_ROWS;
-
-  for (let r = 0; r < rowCount; r++) {
-    const row = visibleRows[r] || [];
-    const parts = [];
-
-    for (let c = section.start; c <= section.end; c++) {
-      const value = clean(row[c]);
-      if (value !== "") parts.push(value);
-    }
-
-    const line = document.createElement("div");
-    line.className = "bulletin-line";
-
-    const span = document.createElement("span");
-    span.className = "bulletin-scroll";
-    span.textContent = parts.join("   ");
-
-    line.appendChild(span);
-    box.appendChild(line);
-
-    requestAnimationFrame(() => {
-      if (span.scrollWidth <= line.clientWidth) {
-        line.classList.add("short");
-      }
-    });
-  }
-
-  panel.appendChild(header);
-  panel.appendChild(box);
-  return panel;
-}
-
-function updateGridColumns(sections) {
-  if (sections.length > 0) {
-    const template = sections.map((s, i) => i === 0 ? "4fr" : "1.8fr").join(" ");
-    document.getElementById("topGrid").style.gridTemplateColumns = template;
-    document.querySelector(".logo-row").style.gridTemplateColumns = template;
-  }
+function collectTextFromRows(rows) {
+  return rows
+    .map(r => r.map(clean).filter(v => v !== "").join("   "))
+    .filter(v => v !== "")
+    .join("     •     ");
 }
 
 function render(data) {
+  const bulletinText = document.getElementById("bulletinText");
+  const notesText = document.getElementById("notesText");
+  const mainArea = document.getElementById("mainArea");
+
+  mainArea.innerHTML = "";
+  bulletinText.textContent = "";
+  notesText.textContent = "";
+
   if (!data || data.length < 2) {
     document.body.innerHTML = '<div class="error">NO DATA</div>';
     return;
   }
 
-  const topGrid = document.getElementById("topGrid");
-  topGrid.innerHTML = "";
+  const bulletinRowIndex = findRow(data, "BULLETIN");
+  const salesHeaderIndex = findRow(data, "SALES ORDER");
+  const notesRowIndex = findRow(data, "NOTES");
 
-  const header = data[0];
-  const rows = data.slice(1);
+  if (bulletinRowIndex >= 0) {
+    document.getElementById("bulletinTitle").textContent = "BULLETIN";
+    const nextBreak = salesHeaderIndex > bulletinRowIndex ? salesHeaderIndex : data.length;
+    const bulletinRows = data.slice(bulletinRowIndex + 1, nextBreak);
+    bulletinText.textContent = collectTextFromRows(bulletinRows);
+  }
+
+  if (notesRowIndex >= 0) {
+    document.getElementById("notesTitle").textContent = "NOTES";
+    const notesRows = data.slice(notesRowIndex + 1);
+    notesText.textContent = collectTextFromRows(notesRows);
+  }
+
+  if (salesHeaderIndex < 0) {
+    mainArea.innerHTML = '<div class="error">SALES ORDER HEADER NOT FOUND</div>';
+    return;
+  }
+
+  const header = data[salesHeaderIndex];
+  const tableEnd = notesRowIndex > salesHeaderIndex ? notesRowIndex : data.length;
+  const rows = data.slice(salesHeaderIndex + 1, tableEnd);
   const sections = detectSections(header);
 
-  updateGridColumns(sections);
+  if (sections.length > 0) {
+    mainArea.style.gridTemplateColumns = sections
+      .map((s, i) => i === 0 ? "4fr" : "1.8fr")
+      .join(" ");
+  }
 
   sections.forEach((section, index) => {
-    const title = String(section.title || "").toUpperCase();
-    const isBulletin = title.includes("BULLETIN");
-    const leftAlign = index >= 2 || isBulletin;
-
-    if (isBulletin) {
-      topGrid.appendChild(renderBulletinPanel(section, rows));
-    } else {
-      topGrid.appendChild(renderTablePanel(section, header, rows, leftAlign));
-    }
+    const leftAlign = index >= 2;
+    mainArea.appendChild(renderTablePanel(section, header, rows, leftAlign));
   });
 }
 
