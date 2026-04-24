@@ -1,503 +1,316 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Factory Board</title>
 
 <style>
 *{box-sizing:border-box}
 
-:root{
-  --grid:rgba(255,255,255,.18);
-  --grid2:rgba(255,255,255,.30);
-  --orange:#f0a100;
-  --white:#fff;
-  --muted:#bdbdbd;
-  --head:linear-gradient(180deg,#7a4700 0%,#2b1700 55%,#120700 100%);
-}
-
 html,body{
   margin:0;
-  width:100%;
   height:100%;
-  overflow:hidden;
   background:#000;
   font-family:Arial,Helvetica,sans-serif;
-}
-
-#viewport{
-  position:fixed;
-  inset:0;
-  background:#000;
   overflow:hidden;
 }
 
-#scaleWrapper{
-  width:100vw;
+:root{
+  --grid:rgba(255,255,255,.18);
+  --orange:#f0a100;
+  --header:linear-gradient(180deg,#7a4700,#1a0b00);
+}
+
+/* LAYOUT */
+.screen{
+  display:grid;
+  grid-template-rows:70px 1fr 90px;
   height:100vh;
+  gap:6px;
   padding:6px;
 }
 
-.screen{
-  width:100%;
-  height:100%;
-  display:grid;
-  grid-template-rows:64px 1fr 92px;
-  gap:6px;
-}
-
-/* TOP ROW */
-.top-bar{
+/* TOP BAR */
+.top{
   display:grid;
   grid-template-columns:220px 1fr;
   gap:6px;
 }
 
-.logo-cell{
+.logo{
   border:1px solid var(--grid);
-  background:#000;
   display:flex;
   align-items:center;
   justify-content:center;
-  overflow:hidden;
-  padding:4px;
 }
 
-.logo-cell img{
-  max-height:54px;
+.logo img{
+  max-height:60px;
   max-width:100%;
-  object-fit:contain;
 }
 
-.ticker-panel,
-.notes-panel{
+/* BULLETIN */
+.bulletin{
   border:1px solid var(--grid);
-  background:#000;
   display:flex;
   flex-direction:column;
-  overflow:hidden;
 }
 
-.ticker-title,
-.notes-title{
-  height:24px;
-  background:var(--head);
+.title{
+  background:var(--header);
   color:var(--orange);
-  font-weight:700;
-  font-size:14px;
+  font-weight:bold;
+  padding-left:10px;
+  height:24px;
   display:flex;
   align-items:center;
-  padding-left:10px;
-  border-bottom:1px solid var(--grid);
 }
 
-.ticker-window,
-.notes-window{
-  position:relative;
+.scroll{
   flex:1;
+  position:relative;
   overflow:hidden;
   display:flex;
   align-items:center;
-  color:#fff;
-  font-size:18px;
-  font-weight:700;
-  white-space:nowrap;
 }
 
-.ticker-text,
-.notes-text{
+.scroll-text{
   position:absolute;
   white-space:nowrap;
-  animation:moveText 30s linear infinite;
+  color:#fff;
+  font-size:20px;
+  font-weight:bold;
+  animation:scroll 25s linear infinite;
 }
 
-@keyframes moveText{
+@keyframes scroll{
   0%{transform:translateX(-100%)}
   100%{transform:translateX(100vw)}
 }
 
 /* MAIN TABLE AREA */
-.main-area{
+.main{
   display:grid;
-  grid-template-columns:4fr 1.6fr 1.5fr;
+  grid-auto-flow:column;
+  grid-auto-columns:1fr;
   gap:6px;
-  min-height:0;
+  overflow:hidden;
 }
 
 .panel{
-  background:#000;
+  border:1px solid var(--grid);
   overflow:hidden;
-  min-height:0;
 }
 
 table{
   width:100%;
-  height:auto;
   border-collapse:collapse;
-  table-layout:auto;
 }
 
 th,td{
   border:1px solid var(--grid);
   text-align:center;
-  vertical-align:middle;
-  font-weight:700;
 }
 
 th{
-  height:26px;
-  padding:2px 5px;
-  font-size:clamp(11px,.85vw,15px);
-  background:var(--head);
-  border-color:var(--grid2);
+  background:var(--header);
   color:var(--orange);
-  white-space:nowrap;
-  overflow:hidden;
+  font-size:14px;
+  padding:4px;
 }
 
 td{
-  height:24px;
-  padding:0;
-  font-size:clamp(11px,.95vw,16px);
-  background:#000;
-  color:var(--white);
+  height:26px;
+  font-size:14px;
 }
 
+/* FULL TEXT (NO CUT) */
 .cell{
-  width:100%;
-  height:100%;
-  min-height:24px;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:2px 5px;
+  padding:4px;
   white-space:nowrap;
   overflow:hidden;
-  color:inherit;
-}
-
-.cell.left{
-  justify-content:flex-start;
-  padding-left:6px;
 }
 
 /* STATUS */
-.delay-cell{
-  background:#240000!important;
-}
-
-.delay-fill{
-  width:100%;
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#f00;
+.delay{
+  background:red;
   color:#fff;
-  font-weight:900;
-  animation:flashDelay .65s linear infinite;
+  font-weight:bold;
+  animation:flash .6s infinite;
 }
 
-@keyframes flashDelay{
-  0%{background:#f00}
-  50%{background:#320000}
-  100%{background:#f00}
+@keyframes flash{
+  50%{background:#300}
 }
 
-.ontime-cell{
-  background:#00a83a!important;
-  color:#fff!important;
+.ontime{
+  background:#00a83a;
+  color:#fff;
 }
 
-.risk-cell{
-  background:#ffbf00!important;
-  color:#000!important;
+/* NOTES */
+.notes{
+  border:1px solid var(--grid);
+  display:flex;
+  flex-direction:column;
 }
 
-.muted{
-  color:var(--muted)!important;
+.notes .scroll-text{
+  animation-duration:35s;
 }
 
-.error{
-  color:red;
-  font-size:18px;
-  padding:10px;
-  white-space:pre-wrap;
-}
 </style>
 </head>
 
 <body>
-<div id="viewport">
-<div id="scaleWrapper">
+
 <div class="screen">
 
-  <div class="top-bar">
-    <div class="logo-cell">
-      <img src="Picsart_24-07-23_20-35-10-625.png" alt="Company Logo">
+  <!-- TOP -->
+  <div class="top">
+    <div class="logo">
+      <img src="Picsart_24-07-23_20-35-10-625.png">
     </div>
 
-    <div class="ticker-panel">
-      <div class="ticker-title">BULLETIN</div>
-      <div class="ticker-window">
-        <div class="ticker-text" id="bulletinText"></div>
+    <div class="bulletin">
+      <div class="title">BULLETIN</div>
+      <div class="scroll">
+        <div class="scroll-text" id="bulletin"></div>
       </div>
     </div>
   </div>
 
-  <div class="main-area" id="mainArea"></div>
+  <!-- TABLES -->
+  <div class="main" id="main"></div>
 
-  <div class="notes-panel">
-    <div class="notes-title">NOTES</div>
-    <div class="notes-window">
-      <div class="notes-text" id="notesText"></div>
+  <!-- NOTES -->
+  <div class="notes">
+    <div class="title">NOTES</div>
+    <div class="scroll">
+      <div class="scroll-text" id="notes"></div>
     </div>
   </div>
 
 </div>
-</div>
-</div>
 
 <script>
-const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
-const REFRESH_MS=8000;
-const EXTRA_BLANK_ROWS=1;
-const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const CSV="PASTE YOUR CSV LINK HERE";
 
-/* CSV PARSER */
-function parseCSV(text){
-  const rows=[];
-  let row=[],cell="",q=false;
-
-  for(let i=0;i<text.length;i++){
-    const ch=text[i],nx=text[i+1];
-
-    if(ch==='"'){
-      if(q&&nx==='"'){
-        cell+='"';
-        i++;
-      }else{
-        q=!q;
-      }
-    }else if(ch===","&&!q){
-      row.push(cell);
-      cell="";
-    }else if((ch==="\n"||ch==="\r")&&!q){
-      if(ch==="\r"&&nx==="\n")i++;
-      row.push(cell);
-      rows.push(row);
-      row=[];
-      cell="";
-    }else{
-      cell+=ch;
-    }
-  }
-
-  if(cell.length||row.length){
-    row.push(cell);
-    rows.push(row);
-  }
-
-  return rows;
+/* PARSE */
+function parse(text){
+  return text.split("\n").map(r=>r.split(","));
 }
 
-/* HELPERS */
+/* CLEAN */
 function clean(v){
-  if(v==null)return "";
-  const s=String(v).trim();
-  const m=s.match(/^Date\((\d+),(\d+),(\d+)/);
-  if(m)return `${m[3]}-${MONTHS[+m[2]]}`;
-  return s;
+  return (v||"").trim();
 }
 
-function norm(v){
-  return clean(v).toUpperCase().replace(/[\s\-]+/g,"");
+/* FIND ROW */
+function findRow(data,name){
+  return data.findIndex(r=>r.includes(name));
 }
 
-function getStatus(v){
-  const s=norm(v);
-  if(s.includes("DELAY"))return"delay";
-  if(s.includes("ONTIME"))return"ontime";
-  if(s.includes("RISK"))return"risk";
+/* STATUS */
+function status(v){
+  v=v.toUpperCase();
+  if(v.includes("DELAY"))return"delay";
+  if(v.includes("ON TIME"))return"ontime";
   return"";
 }
 
-function isMuted(v){
-  const s=clean(v).toUpperCase();
-  return s==="N/A"||s==="-";
-}
-
-function findRow(rows,word){
-  const w=word.toUpperCase();
-  return rows.findIndex(r=>r.some(c=>clean(c).toUpperCase()===w));
-}
-
-/* DETECT SECTIONS FROM SALES ORDER HEADER ROW */
-function detectSections(header){
-  const sections=[];
-  let start=null;
-
-  for(let i=0;i<=header.length;i++){
-    const filled=i<header.length&&clean(header[i])!=="";
-
-    if(filled&&start===null)start=i;
-
-    if((!filled||i===header.length)&&start!==null){
-      sections.push({
-        start,
-        end:i-1,
-        title:clean(header[start])
-      });
-      start=null;
-    }
-  }
-
-  return sections;
-}
-
-/* CELLS */
-function makeCell(tag,val,left=false){
-  const raw=String(val||"").trim();
-  const txt=clean(raw);
-  const st=getStatus(raw);
-  const el=document.createElement(tag);
-
-  if(st==="delay"){
-    el.classList.add("delay-cell");
-    const d=document.createElement("div");
-    d.className="delay-fill";
-    d.textContent=txt;
-    el.appendChild(d);
-    return el;
-  }
-
-  if(st==="ontime")el.classList.add("ontime-cell");
-  if(st==="risk")el.classList.add("risk-cell");
-
+/* RENDER CELL */
+function td(v){
+  const el=document.createElement("td");
   const d=document.createElement("div");
-  d.className="cell"+(left?" left":"");
-  if(!st&&isMuted(txt))d.classList.add("muted");
-  d.textContent=txt;
+  d.className="cell";
+
+  const s=status(v);
+  if(s)el.classList.add(s);
+
+  d.textContent=v;
   el.appendChild(d);
   return el;
 }
 
-function rowHasData(row,sec){
-  for(let c=sec.start;c<=sec.end;c++){
-    if(clean(row[c])!=="")return true;
-  }
-  return false;
-}
+/* DETECT SECTIONS */
+function sections(header){
+  let sec=[],start=null;
 
-/* RENDER TABLE PANEL */
-function renderTable(section,header,rows,left=false){
-  const panel=document.createElement("div");
-  panel.className="panel";
-
-  const table=document.createElement("table");
-  const thead=document.createElement("thead");
-  const tbody=document.createElement("tbody");
-  const trh=document.createElement("tr");
-
-  for(let c=section.start;c<=section.end;c++){
-    trh.appendChild(makeCell("th",header[c],left));
-  }
-
-  thead.appendChild(trh);
-  table.appendChild(thead);
-
-  const visible=rows.filter(r=>rowHasData(r,section));
-  const count=visible.length+EXTRA_BLANK_ROWS;
-
-  for(let r=0;r<count;r++){
-    const row=visible[r]||[];
-    const tr=document.createElement("tr");
-
-    for(let c=section.start;c<=section.end;c++){
-      tr.appendChild(makeCell("td",row[c],left));
+  header.forEach((v,i)=>{
+    if(v && start===null)start=i;
+    if(!v && start!==null){
+      sec.push([start,i-1]);
+      start=null;
     }
+  });
 
-    tbody.appendChild(tr);
-  }
-
-  table.appendChild(tbody);
-  panel.appendChild(table);
-  return panel;
+  if(start!==null)sec.push([start,header.length-1]);
+  return sec;
 }
 
-/* COLLECT TEXT ACROSS A:L */
-function collectRange(rows,start,end){
-  return rows.map(r=>{
-    const parts=[];
-    for(let c=start;c<=end;c++){
-      const v=clean(r[c]);
-      if(v)parts.push(v);
-    }
-    return parts.join("   ");
-  }).filter(Boolean).join("     •     ");
+/* COLLECT TEXT A:L */
+function collect(row){
+  return row.slice(0,12).filter(x=>x).join("   •   ");
 }
 
-/* MAIN RENDER */
-function render(data){
-  if(!data||data.length<2){
-    document.body.innerHTML='<div class="error">NO DATA</div>';
-    return;
-  }
+async function load(){
+  const res=await fetch(CSV+"&t="+Date.now());
+  const text=await res.text();
+  const data=parse(text);
 
-  const main=document.getElementById("mainArea");
+  const sales=findRow(data,"SALES ORDER");
+  const notesRow=findRow(data,"NOTES");
+  const bulletinRow=findRow(data,"BULLETIN");
+
+  /* BULLETIN (ROW 1) */
+  document.getElementById("bulletin").textContent =
+    collect(data[bulletinRow]);
+
+  /* NOTES (ALL BELOW NOTES ROW) */
+  document.getElementById("notes").textContent =
+    data.slice(notesRow+1).map(collect).join("     ");
+
+  const header=data[sales];
+  const rows=data.slice(sales+1,notesRow);
+
+  const main=document.getElementById("main");
   main.innerHTML="";
 
-  const bulletinRow=findRow(data,"BULLETIN");
-  const salesRow=findRow(data,"SALES ORDER");
-  const notesRow=findRow(data,"NOTES");
+  sections(header).forEach(([s,e])=>{
+    const panel=document.createElement("div");
+    panel.className="panel";
 
-  /* BULLETIN IS ONE LINE: ROW 1, A:L */
-  if(bulletinRow>=0){
-    document.getElementById("bulletinText").textContent=
-      collectRange([data[bulletinRow]],1,11);
-  }
+    const table=document.createElement("table");
 
-  /* NOTES START BELOW NOTES ROW, A:L */
-  if(notesRow>=0){
-    document.getElementById("notesText").textContent=
-      collectRange(data.slice(notesRow+1),0,11);
-  }
+    const trh=document.createElement("tr");
+    for(let i=s;i<=e;i++){
+      const th=document.createElement("th");
+      th.textContent=header[i];
+      trh.appendChild(th);
+    }
+    table.appendChild(trh);
 
-  if(salesRow<0){
-    main.innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
-    return;
-  }
+    rows.forEach(r=>{
+      const tr=document.createElement("tr");
+      for(let i=s;i<=e;i++){
+        tr.appendChild(td(clean(r[i])));
+      }
+      table.appendChild(tr);
+    });
 
-  const header=data[salesRow];
-  const end=notesRow>salesRow?notesRow:data.length;
-  const rows=data.slice(salesRow+1,end);
-  const sections=detectSections(header);
-
-  if(sections.length>0){
-    main.style.gridTemplateColumns=sections
-      .map((s,i)=>i===0?"4fr":"1.6fr")
-      .join(" ");
-  }
-
-  sections.forEach((s,i)=>{
-    main.appendChild(renderTable(s,header,rows,i>=2));
+    panel.appendChild(table);
+    main.appendChild(panel);
   });
 }
 
-/* LOAD */
-async function load(){
-  try{
-    const res=await fetch(CSV_URL+"&t="+Date.now(),{cache:"no-store"});
-    const text=await res.text();
-    render(parseCSV(text));
-  }catch(e){
-    document.body.innerHTML='<div class="error">LOAD ERROR</div>';
-  }
-}
-
 load();
-setInterval(load,REFRESH_MS);
+setInterval(load,8000);
 </script>
+
 </body>
 </html>
