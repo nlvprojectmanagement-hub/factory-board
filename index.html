@@ -59,8 +59,8 @@ html,body{
   object-fit:contain;
 }
 
-/* BULLETIN + NOTES MOVING BAR */
-.moving-bar{
+/* BULLETIN + NOTES CELL BARS */
+.cell-bar{
   border:1px solid var(--grid);
   background:#000;
   display:grid;
@@ -80,37 +80,51 @@ html,body{
   border-right:1px solid var(--grid2);
 }
 
-.marquee{
-  position:relative;
+.bar-cells{
+  display:grid;
+  min-width:0;
+  height:100%;
+}
+
+.bulletin-cells{
+  grid-template-columns:repeat(11,1fr);
+}
+
+.notes-cells{
+  grid-template-columns:repeat(12,1fr);
+}
+
+.bar-cell{
+  border-right:1px solid var(--grid);
+  min-width:0;
   overflow:hidden;
   display:flex;
   align-items:center;
-  min-width:0;
-}
-
-.marquee-track{
-  display:inline-flex;
-  align-items:center;
-  gap:70px;
-  white-space:nowrap;
+  justify-content:center;
+  position:relative;
   color:#fff;
-  font-size:22px;
+  font-size:20px;
   font-weight:800;
-  animation:marqueeMove 28s linear infinite;
-  will-change:transform;
-}
-
-.notes-bar .marquee-track{
-  animation-duration:38s;
-}
-
-.marquee-track span{
   white-space:nowrap;
 }
 
-@keyframes marqueeMove{
-  0%{transform:translateX(0)}
-  100%{transform:translateX(-50%)}
+.bar-cell:last-child{
+  border-right:none;
+}
+
+.cell-marquee{
+  white-space:nowrap;
+  display:inline-block;
+}
+
+.bar-cell.long .cell-marquee{
+  position:absolute;
+  animation:cellScroll 16s linear infinite;
+}
+
+@keyframes cellScroll{
+  0%{transform:translateX(100%)}
+  100%{transform:translateX(-100%)}
 }
 
 /* MAIN */
@@ -234,25 +248,17 @@ td{
       <img src="Picsart_24-07-23_20-35-10-625.png" alt="Company Logo">
     </div>
 
-    <div class="moving-bar">
+    <div class="cell-bar">
       <div class="bar-label">BULLETIN</div>
-      <div class="marquee">
-        <div class="marquee-track" id="bulletinTrack">
-          <span></span><span></span>
-        </div>
-      </div>
+      <div class="bar-cells bulletin-cells" id="bulletinCells"></div>
     </div>
   </div>
 
   <div class="main-area" id="mainArea"></div>
 
-  <div class="moving-bar notes-bar">
+  <div class="cell-bar">
     <div class="bar-label">NOTES</div>
-    <div class="marquee">
-      <div class="marquee-track" id="notesTrack">
-        <span></span><span></span>
-      </div>
-    </div>
+    <div class="bar-cells notes-cells" id="notesCells"></div>
   </div>
 
 </div>
@@ -422,25 +428,51 @@ function renderTable(section,header,rows,left=false){
   return panel;
 }
 
-function collectRow(row,start,end){
-  const parts=[];
-  for(let c=start;c<=end;c++){
-    const v=clean(row[c]);
-    if(v)parts.push(v);
+function makeBarCell(text){
+  const cell=document.createElement("div");
+  cell.className="bar-cell";
+
+  const span=document.createElement("span");
+  span.className="cell-marquee";
+  span.textContent=text || "";
+
+  cell.appendChild(span);
+
+  requestAnimationFrame(()=>{
+    if(span.scrollWidth > cell.clientWidth){
+      cell.classList.add("long");
+    }
+  });
+
+  return cell;
+}
+
+function renderCellBar(containerId,values,count){
+  const box=document.getElementById(containerId);
+  box.innerHTML="";
+
+  for(let i=0;i<count;i++){
+    box.appendChild(makeBarCell(values[i] || ""));
   }
-  return parts.join("     •     ");
 }
 
-function collectRows(rows,start,end){
-  return rows.map(r=>collectRow(r,start,end)).filter(Boolean).join("     •     ");
+function getRowValues(row,start,end){
+  const vals=[];
+  for(let c=start;c<=end;c++){
+    vals.push(clean(row[c]));
+  }
+  return vals;
 }
 
-function setMarquee(trackId,text){
-  const track=document.getElementById(trackId);
-  const finalText=text && text.trim() ? text : " ";
-  const spans=track.querySelectorAll("span");
-  spans[0].textContent=finalText;
-  spans[1].textContent=finalText;
+function getNotesValues(rows,start,end){
+  const vals=[];
+  rows.forEach(row=>{
+    for(let c=start;c<=end;c++){
+      const v=clean(row[c]);
+      if(v)vals.push(v);
+    }
+  });
+  return vals;
 }
 
 function render(data){
@@ -456,18 +488,18 @@ function render(data){
   const salesRow=findRow(data,"SALES ORDER");
   const notesRow=findRow(data,"NOTES");
 
-  /* BULLETIN: same row, A:L. Label is A, text starts B. */
+  /* BULLETIN: row 1, B:L = 11 separate cells */
   if(bulletinRow>=0){
-    setMarquee("bulletinTrack",collectRow(data[bulletinRow],1,11));
+    renderCellBar("bulletinCells",getRowValues(data[bulletinRow],1,11),11);
   }else{
-    setMarquee("bulletinTrack","");
+    renderCellBar("bulletinCells",[],11);
   }
 
-  /* NOTES: all rows below NOTES, A:L */
+  /* NOTES: rows below NOTES, A:L = 12 separate cells */
   if(notesRow>=0){
-    setMarquee("notesTrack",collectRows(data.slice(notesRow+1),0,11));
+    renderCellBar("notesCells",getNotesValues(data.slice(notesRow+1),0,11),12);
   }else{
-    setMarquee("notesTrack","");
+    renderCellBar("notesCells",[],12);
   }
 
   if(salesRow<0){
