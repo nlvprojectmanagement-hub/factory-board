@@ -48,6 +48,40 @@ html, body {
 .screen {
   width: 100%;
   height: 100%;
+  display: grid;
+  grid-template-rows: 9% 91%;
+  gap: 6px;
+}
+
+/* LOGO ROW */
+.logo-row {
+  display: grid;
+  grid-template-columns: 4fr 1.8fr 1.6fr 1.8fr;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+}
+
+.logo-box {
+  grid-column: 1 / 2;
+  background: var(--panel-grad);
+  border: 1px solid var(--grid);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 4px 12px;
+  overflow: hidden;
+}
+
+.logo-box img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.logo-spacer {
+  background: var(--panel-grad);
+  border: 1px solid var(--grid);
 }
 
 .top {
@@ -220,7 +254,18 @@ td {
 <div id="viewport">
   <div id="scaleWrapper">
     <div class="screen">
+
+      <div class="logo-row">
+        <div class="logo-box">
+          <img src="Picsart_24-07-23_20-35-10-625.png" alt="Company Logo">
+        </div>
+        <div class="logo-spacer"></div>
+        <div class="logo-spacer"></div>
+        <div class="logo-spacer"></div>
+      </div>
+
       <div class="top" id="topGrid"></div>
+
     </div>
   </div>
 </div>
@@ -277,196 +322,3 @@ function clean(value) {
 
 function getStatus(value) {
   const s = String(value || "").toUpperCase().replace(/[\s\-]+/g, "");
-  if (s.includes("DELAY")) return "delay";
-  if (s.includes("ONTIME")) return "ontime";
-  if (s.includes("RISK")) return "risk";
-  return "";
-}
-
-function isMuted(value) {
-  const t = String(value || "").trim().toUpperCase();
-  return t === "N/A" || t === "-";
-}
-
-function detectSections(headerRow) {
-  const sections = [];
-  let start = null;
-
-  for (let i = 0; i <= headerRow.length; i++) {
-    const value = i < headerRow.length ? clean(headerRow[i]) : "";
-    const filled = value !== "";
-
-    if (filled && start === null) start = i;
-
-    if ((!filled || i === headerRow.length) && start !== null) {
-      sections.push({ start, end: i - 1, title: clean(headerRow[start]) });
-      start = null;
-    }
-  }
-
-  return sections;
-}
-
-function makeCell(tag, value, leftAlign = false) {
-  const raw = String(value || "").trim();
-  const txt = clean(raw);
-  const status = getStatus(raw);
-
-  const el = document.createElement(tag);
-
-  if (status === "delay") {
-    el.classList.add("delay-cell");
-    const fill = document.createElement("div");
-    fill.className = "delay-fill";
-    fill.textContent = txt;
-    el.appendChild(fill);
-    return el;
-  }
-
-  if (status === "ontime") el.classList.add("ontime-cell");
-  if (status === "risk") el.classList.add("risk-cell");
-
-  const d = document.createElement("div");
-  d.className = "cell" + (leftAlign ? " left" : "");
-  if (!status && isMuted(txt)) d.classList.add("muted");
-  d.textContent = txt;
-  el.appendChild(d);
-  return el;
-}
-
-function rowHasData(row, section) {
-  for (let c = section.start; c <= section.end; c++) {
-    if (clean(row[c]) !== "") return true;
-  }
-  return false;
-}
-
-function renderTablePanel(section, headerRow, rows, leftAlign = false) {
-  const panel = document.createElement("div");
-  panel.className = "panel";
-
-  const table = document.createElement("table");
-  const thead = document.createElement("thead");
-  const tbody = document.createElement("tbody");
-  const trHead = document.createElement("tr");
-
-  for (let c = section.start; c <= section.end; c++) {
-    trHead.appendChild(makeCell("th", headerRow[c], leftAlign));
-  }
-
-  thead.appendChild(trHead);
-  table.appendChild(thead);
-
-  const visibleRows = rows.filter(r => rowHasData(r, section));
-  const rowCount = visibleRows.length + EXTRA_BLANK_ROWS;
-
-  for (let r = 0; r < rowCount; r++) {
-    const row = visibleRows[r] || [];
-    const tr = document.createElement("tr");
-
-    for (let c = section.start; c <= section.end; c++) {
-      tr.appendChild(makeCell("td", row[c], leftAlign));
-    }
-
-    tbody.appendChild(tr);
-  }
-
-  table.appendChild(tbody);
-  panel.appendChild(table);
-  return panel;
-}
-
-function renderBulletinPanel(section, rows) {
-  const panel = document.createElement("div");
-  panel.className = "panel bulletin-panel";
-
-  const header = document.createElement("div");
-  header.className = "bulletin-header";
-  header.textContent = section.title || "BULLETIN";
-
-  const box = document.createElement("div");
-  box.className = "bulletin-box";
-
-  const visibleRows = rows.filter(r => rowHasData(r, section));
-  const rowCount = visibleRows.length + EXTRA_BLANK_ROWS;
-
-  for (let r = 0; r < rowCount; r++) {
-    const row = visibleRows[r] || [];
-    const parts = [];
-
-    for (let c = section.start; c <= section.end; c++) {
-      const value = clean(row[c]);
-      if (value !== "") parts.push(value);
-    }
-
-    const line = document.createElement("div");
-    line.className = "bulletin-line";
-
-    const span = document.createElement("span");
-    span.className = "bulletin-scroll";
-    span.textContent = parts.join("   ");
-
-    line.appendChild(span);
-    box.appendChild(line);
-
-    requestAnimationFrame(() => {
-      if (span.scrollWidth <= line.clientWidth) {
-        line.classList.add("short");
-      }
-    });
-  }
-
-  panel.appendChild(header);
-  panel.appendChild(box);
-  return panel;
-}
-
-function render(data) {
-  if (!data || data.length < 2) {
-    document.body.innerHTML = '<div class="error">NO DATA</div>';
-    return;
-  }
-
-  const topGrid = document.getElementById("topGrid");
-  topGrid.innerHTML = "";
-
-  const header = data[0];
-  const rows = data.slice(1);
-  const sections = detectSections(header);
-
-  const count = sections.length;
-  if (count > 0) {
-    topGrid.style.gridTemplateColumns = sections
-      .map((s, i) => i === 0 ? "4fr" : "1.8fr")
-      .join(" ");
-  }
-
-  sections.forEach((section, index) => {
-    const title = String(section.title || "").toUpperCase();
-    const isBulletin = title.includes("BULLETIN");
-    const leftAlign = index >= 2 || isBulletin;
-
-    if (isBulletin) {
-      topGrid.appendChild(renderBulletinPanel(section, rows));
-    } else {
-      topGrid.appendChild(renderTablePanel(section, header, rows, leftAlign));
-    }
-  });
-}
-
-async function load() {
-  try {
-    const res = await fetch(CSV_URL + "&t=" + Date.now(), { cache: "no-store" });
-    const text = await res.text();
-    const data = parseCSV(text);
-    render(data);
-  } catch (e) {
-    document.body.innerHTML = '<div class="error">LOAD ERROR</div>';
-  }
-}
-
-load();
-setInterval(load, REFRESH_MS);
-</script>
-</body>
-</html>
