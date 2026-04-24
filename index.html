@@ -9,7 +9,6 @@
 *{box-sizing:border-box}
 
 :root{
-  --bg:#000;
   --grid:rgba(255,255,255,.26);
   --gridStrong:rgba(255,255,255,.45);
   --orange:#ffae00;
@@ -37,7 +36,6 @@ html,body{
   background:#000;
 }
 
-/* TOP */
 .top-row{
   display:grid;
   grid-template-columns:170px 1fr;
@@ -100,7 +98,6 @@ html,body{
   100%{transform:translateX(-50%)}
 }
 
-/* MAIN: 4 SEPARATE PANELS */
 .main-area{
   display:grid;
   grid-template-columns:58fr 16fr 8fr 18fr;
@@ -182,7 +179,6 @@ td{
   100%{transform:translateX(-100%)}
 }
 
-/* STATUS */
 .delay{
   background:#ff0000!important;
   color:#fff!important;
@@ -209,7 +205,6 @@ td{
   color:var(--muted)!important;
 }
 
-/* NOTES */
 .notes{
   border:1px solid var(--grid);
   display:grid;
@@ -311,6 +306,14 @@ td{
 const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
 const REFRESH_MS=8000;
 const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+const COL = {
+  MAIN_START: 0,   // A
+  MAIN_END: 5,     // F
+  INCOMING: 7,     // H
+  DATE: 8,         // I
+  INSPECTION: 10   // K
+};
 
 function parseCSV(text){
   const rows=[];
@@ -495,9 +498,9 @@ function render(data){
   const rows=data.slice(salesRow+1,tableEnd);
 
   renderTable("mainPanel",header,rows,[0,1,2,3,4,5],false);
-  renderTable("incomingPanel",header,rows,[7],false);
-  renderTable("datePanel",header,rows,[8],false);
-  renderTable("inspectionPanel",header,rows,[10],true);
+  renderTable("incomingPanel",header,rows,[COL.INCOMING],false);
+  renderTable("datePanel",header,rows,[COL.DATE],false);
+  renderTable("inspectionPanel",header,rows,[COL.INSPECTION],true);
 }
 
 async function load(){
