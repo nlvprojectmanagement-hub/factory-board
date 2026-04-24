@@ -14,6 +14,9 @@
   --gold:#ffae00;
   --white:#f5f5f5;
   --header:linear-gradient(180deg,#6b3b00 0%,#1b0d00 70%,#050200 100%);
+  --panelA:#101820;
+  --panelB:#141414;
+  --panelC:#1a1622;
 }
 
 html,body{
@@ -29,7 +32,7 @@ html,body{
   width:100vw;
   height:100vh;
   display:grid;
-  grid-template-rows:42px 1fr;
+  grid-template-rows:40px 1fr;
   gap:4px;
   padding:4px;
   background:#000;
@@ -57,7 +60,7 @@ html,body{
 }
 
 .logo img{
-  max-height:36px;
+  max-height:34px;
   max-width:100%;
   object-fit:contain;
 }
@@ -71,7 +74,7 @@ html,body{
   background:var(--header);
   color:var(--gold);
   font-weight:900;
-  font-size:12px;
+  font-size:11px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -91,7 +94,7 @@ html,body{
   white-space:nowrap;
   color:#fff;
   font-weight:800;
-  font-size:12px;
+  font-size:11px;
   animation:move 38s linear infinite;
 }
 
@@ -111,7 +114,7 @@ html,body{
   justify-content:center;
   color:var(--gold);
   font-weight:900;
-  font-size:12px;
+  font-size:11px;
   border-left:1px solid var(--grid);
 }
 
@@ -125,13 +128,13 @@ html,body{
     11fr 10fr
     14fr 8fr 9fr;
 
-  /* tighter rows + more rows */
   grid-template-rows:
-    22px
-    repeat(16, 1fr)
-    22px
-    repeat(8, 1fr);
+    18px
+    repeat(16, 18px)
+    18px
+    repeat(8, 16px);
 
+  align-content:start;
   border:1px solid var(--grid);
   background:#000;
   overflow:hidden;
@@ -139,17 +142,19 @@ html,body{
 }
 
 .cell{
+  height:100%;
+  min-height:0;
   border-right:1px solid var(--grid);
   border-bottom:1px solid var(--grid);
   background:#000;
   color:var(--white);
   font-weight:800;
-  font-size:clamp(9px,.65vw,12px);
+  font-size:10px;
   line-height:1;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:1px 4px;
+  padding:0 3px;
   white-space:nowrap;
   overflow:hidden;
   position:relative;
@@ -160,16 +165,28 @@ html,body{
   background:var(--header);
   color:var(--gold);
   font-weight:900;
-  font-size:clamp(9px,.62vw,11px);
+  font-size:9.5px;
 }
 
 .group-start{
   border-left:1px solid rgba(255,174,0,.55);
 }
 
+.panel-a{
+  background:var(--panelA);
+}
+
+.panel-b{
+  background:var(--panelB);
+}
+
+.panel-c{
+  background:var(--panelC);
+}
+
 .left{
   justify-content:flex-start;
-  padding-left:6px;
+  padding-left:5px;
 }
 
 .inner{
@@ -186,18 +203,17 @@ html,body{
   100%{transform:translateX(-100%)}
 }
 
-/* STATUS COLORS ONLY */
+/* STATUS COLORS */
 .delay,
 .p1{
-  background:#ff0000!important;
   color:#fff!important;
-  animation:flashRed .65s linear infinite;
+  animation:flashRed .65s steps(2,end) infinite!important;
 }
 
 @keyframes flashRed{
-  0%{background:#ff0000}
-  50%{background:#330000}
-  100%{background:#ff0000}
+  0%{background:#ff0000;color:#fff}
+  50%{background:#330000;color:#fff}
+  100%{background:#ff0000;color:#fff}
 }
 
 .ontime,
@@ -275,8 +291,12 @@ function parseCSV(text){
     const ch=text[i],nx=text[i+1];
 
     if(ch==='"'){
-      if(q&&nx==='"'){cell+='"';i++}
-      else q=!q;
+      if(q&&nx==='"'){
+        cell+='"';
+        i++;
+      }else{
+        q=!q;
+      }
     }else if(ch===","&&!q){
       row.push(cell);
       cell="";
@@ -371,6 +391,7 @@ function makeCell(text, options={}){
   if(options.header)div.classList.add("header");
   if(options.left)div.classList.add("left");
   if(options.groupStart)div.classList.add("group-start");
+  if(options.extraClass)div.classList.add(options.extraClass);
 
   const cls=statusClass(text);
   if(cls)div.classList.add(cls);
@@ -415,20 +436,20 @@ function render(data){
 
   const header=data[headerRow];
 
-  /* TOP HEADER */
+  /* MAIN HEADER */
   board.appendChild(makeCell(header[0],{header:true,rowStart:1,colStart:1}));
   board.appendChild(makeCell(header[1],{header:true,rowStart:1,colStart:2}));
   board.appendChild(makeCell(header[2],{header:true,rowStart:1,colStart:3}));
 
   board.appendChild(makeCell(header[3],{header:true,rowStart:1,colStart:4,colEnd:6,groupStart:true}));
   board.appendChild(makeCell(header[5],{header:true,rowStart:1,colStart:6,colEnd:8,groupStart:true}));
-  board.appendChild(makeCell(header[7],{header:true,rowStart:1,colStart:8,colEnd:10,groupStart:true}));
+  board.appendChild(makeCell(header[7],{header:true,rowStart:1,colStart:8,colEnd:10,groupStart:true,extraClass:"panel-a"}));
 
-  board.appendChild(makeCell(header[9],{header:true,rowStart:1,colStart:10,groupStart:true}));
-  board.appendChild(makeCell(header[10],{header:true,rowStart:1,colStart:11}));
-  board.appendChild(makeCell(header[11],{header:true,rowStart:1,colStart:12}));
+  board.appendChild(makeCell(header[9],{header:true,rowStart:1,colStart:10,groupStart:true,extraClass:"panel-a"}));
+  board.appendChild(makeCell(header[10],{header:true,rowStart:1,colStart:11,extraClass:"panel-a"}));
+  board.appendChild(makeCell(header[11],{header:true,rowStart:1,colStart:12,extraClass:"panel-a"}));
 
-  /* MAIN ROWS - more rows, tighter height */
+  /* MAIN ROWS */
   const tableEnd=notesRow>headerRow ? notesRow : data.length;
   const mainRows=data.slice(headerRow+1,tableEnd);
 
@@ -437,15 +458,21 @@ function render(data){
     const gridRow=2+r;
 
     for(let c=0;c<12;c++){
-      board.appendChild(makeCell(row[c],{
+      const opt={
         rowStart:gridRow,
         colStart:c+1,
         groupStart:[4,6,8,10].includes(c+1)
-      }));
+      };
+
+      if(c+1>=8 && c+1<=12){
+        opt.extraClass="panel-a";
+      }
+
+      board.appendChild(makeCell(row[c],opt));
     }
   }
 
-  /* BOTTOM SECTION HEADER */
+  /* BOTTOM HEADER */
   const notesTitle = notesRow>=0 ? clean(data[notesRow][0]) : "NOTES / IMPORTANT REMARKS";
 
   board.appendChild(makeCell(notesTitle,{
@@ -453,7 +480,8 @@ function render(data){
     left:true,
     rowStart:18,
     colStart:1,
-    colEnd:9
+    colEnd:9,
+    extraClass:"panel-b"
   }));
 
   board.appendChild(makeCell("INSPECTION",{
@@ -461,22 +489,25 @@ function render(data){
     rowStart:18,
     colStart:9,
     colEnd:11,
-    groupStart:true
+    groupStart:true,
+    extraClass:"panel-c"
   }));
 
   board.appendChild(makeCell("REQ DATE",{
     header:true,
     rowStart:18,
-    colStart:11
+    colStart:11,
+    extraClass:"panel-c"
   }));
 
   board.appendChild(makeCell("STATUS",{
     header:true,
     rowStart:18,
-    colStart:12
+    colStart:12,
+    extraClass:"panel-c"
   }));
 
-  /* BOTTOM NOTES / INSPECTION AREA */
+  /* BOTTOM ROWS */
   const bottomRows = notesRow>=0 ? data.slice(notesRow+1) : [];
 
   for(let r=0;r<8;r++){
@@ -487,7 +518,8 @@ function render(data){
       left:true,
       rowStart:gridRow,
       colStart:1,
-      colEnd:9
+      colEnd:9,
+      extraClass:"panel-b"
     }));
 
     board.appendChild(makeCell(row[8],{
@@ -495,17 +527,20 @@ function render(data){
       rowStart:gridRow,
       colStart:9,
       colEnd:11,
-      groupStart:true
+      groupStart:true,
+      extraClass:"panel-c"
     }));
 
     board.appendChild(makeCell(row[10],{
       rowStart:gridRow,
-      colStart:11
+      colStart:11,
+      extraClass:"panel-c"
     }));
 
     board.appendChild(makeCell(row[11],{
       rowStart:gridRow,
-      colStart:12
+      colStart:12,
+      extraClass:"panel-c"
     }));
   }
 }
