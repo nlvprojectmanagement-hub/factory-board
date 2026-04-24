@@ -10,7 +10,7 @@
 
 :root{
   --grid:rgba(255,255,255,.22);
-  --grid2:rgba(255,255,255,.34);
+  --grid2:rgba(255,255,255,.36);
   --orange:#f0a100;
   --white:#fff;
   --muted:#bdbdbd;
@@ -30,13 +30,13 @@ html,body{
   width:100vw;
   height:100vh;
   display:grid;
-  grid-template-rows:58px 1fr 64px;
+  grid-template-rows:62px 1fr 150px;
   gap:6px;
   padding:6px;
   background:#000;
 }
 
-/* TOP */
+/* TOP: LOGO + ANNOUNCEMENT */
 .top-row{
   display:grid;
   grid-template-columns:190px 1fr;
@@ -54,17 +54,16 @@ html,body{
 }
 
 .logo-box img{
-  max-height:52px;
+  max-height:54px;
   max-width:100%;
   object-fit:contain;
 }
 
-/* BULLETIN + NOTES CELL BARS */
-.cell-bar{
+.announcement-bar{
   border:1px solid var(--grid);
   background:#000;
   display:grid;
-  grid-template-columns:170px 1fr;
+  grid-template-columns:220px 1fr;
   min-width:0;
   overflow:hidden;
 }
@@ -78,56 +77,38 @@ html,body{
   align-items:center;
   justify-content:center;
   border-right:1px solid var(--grid2);
+  white-space:nowrap;
 }
 
-.bar-cells{
-  display:grid;
-  min-width:0;
-  height:100%;
-}
-
-.bulletin-cells{
-  grid-template-columns:repeat(11,1fr);
-}
-
-.notes-cells{
-  grid-template-columns:repeat(12,1fr);
-}
-
-.bar-cell{
-  border-right:1px solid var(--grid);
-  min-width:0;
+.marquee{
+  position:relative;
   overflow:hidden;
   display:flex;
   align-items:center;
-  justify-content:center;
-  position:relative;
+  min-width:0;
+}
+
+.marquee-track{
+  display:inline-flex;
+  align-items:center;
+  gap:80px;
+  white-space:nowrap;
   color:#fff;
-  font-size:20px;
-  font-weight:800;
+  font-size:22px;
+  font-weight:900;
+  animation:marqueeMove 30s linear infinite;
+}
+
+.marquee-track span{
   white-space:nowrap;
 }
 
-.bar-cell:last-child{
-  border-right:none;
+@keyframes marqueeMove{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
 }
 
-.cell-marquee{
-  white-space:nowrap;
-  display:inline-block;
-}
-
-.bar-cell.long .cell-marquee{
-  position:absolute;
-  animation:cellScroll 16s linear infinite;
-}
-
-@keyframes cellScroll{
-  0%{transform:translateX(100%)}
-  100%{transform:translateX(-100%)}
-}
-
-/* MAIN */
+/* MAIN TABLE AREA */
 .main-area{
   display:grid;
   gap:6px;
@@ -229,6 +210,67 @@ td{
   color:var(--muted)!important;
 }
 
+/* NOTES: FULL WIDTH STACKED CELLS */
+.notes-panel{
+  border:1px solid var(--grid);
+  background:#000;
+  overflow:hidden;
+}
+
+.notes-title{
+  height:28px;
+  background:var(--head);
+  color:var(--orange);
+  font-size:20px;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  padding-left:12px;
+  border-bottom:1px solid var(--grid2);
+}
+
+.notes-grid{
+  width:100%;
+  height:calc(100% - 28px);
+  display:grid;
+  grid-template-columns:repeat(12, 1fr);
+  grid-auto-rows:24px;
+  overflow:hidden;
+}
+
+.note-cell{
+  border-right:1px solid var(--grid);
+  border-bottom:1px solid var(--grid);
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  padding:2px 6px;
+  white-space:nowrap;
+  overflow:hidden;
+  position:relative;
+}
+
+.note-cell:nth-child(12n){
+  border-right:none;
+}
+
+.note-inner{
+  white-space:nowrap;
+}
+
+.note-cell.long .note-inner{
+  position:absolute;
+  animation:cellScroll 16s linear infinite;
+}
+
+@keyframes cellScroll{
+  0%{transform:translateX(100%)}
+  100%{transform:translateX(-100%)}
+}
+
 .error{
   color:red;
   font-size:22px;
@@ -248,17 +290,21 @@ td{
       <img src="Picsart_24-07-23_20-35-10-625.png" alt="Company Logo">
     </div>
 
-    <div class="cell-bar">
-      <div class="bar-label">BULLETIN</div>
-      <div class="bar-cells bulletin-cells" id="bulletinCells"></div>
+    <div class="announcement-bar">
+      <div class="bar-label" id="announcementLabel">ANNOUNCEMENT</div>
+      <div class="marquee">
+        <div class="marquee-track" id="announcementTrack">
+          <span></span><span></span>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="main-area" id="mainArea"></div>
 
-  <div class="cell-bar">
-    <div class="bar-label">NOTES</div>
-    <div class="bar-cells notes-cells" id="notesCells"></div>
+  <div class="notes-panel">
+    <div class="notes-title">NOTES</div>
+    <div class="notes-grid" id="notesGrid"></div>
   </div>
 
 </div>
@@ -333,9 +379,13 @@ function isMuted(v){
   return s==="N/A"||s==="-";
 }
 
-function findRow(rows,word){
-  const w=word.toUpperCase();
-  return rows.findIndex(r=>r.some(c=>clean(c).toUpperCase()===w));
+function findRowByWords(rows,words){
+  return rows.findIndex(r=>{
+    return r.some(c=>{
+      const v=clean(c).toUpperCase();
+      return words.some(w=>v===w || v.includes(w));
+    });
+  });
 }
 
 function detectSections(header){
@@ -428,35 +478,7 @@ function renderTable(section,header,rows,left=false){
   return panel;
 }
 
-function makeBarCell(text){
-  const cell=document.createElement("div");
-  cell.className="bar-cell";
-
-  const span=document.createElement("span");
-  span.className="cell-marquee";
-  span.textContent=text || "";
-
-  cell.appendChild(span);
-
-  requestAnimationFrame(()=>{
-    if(span.scrollWidth > cell.clientWidth){
-      cell.classList.add("long");
-    }
-  });
-
-  return cell;
-}
-
-function renderCellBar(containerId,values,count){
-  const box=document.getElementById(containerId);
-  box.innerHTML="";
-
-  for(let i=0;i<count;i++){
-    box.appendChild(makeBarCell(values[i] || ""));
-  }
-}
-
-function getRowValues(row,start,end){
+function rowValues(row,start,end){
   const vals=[];
   for(let c=start;c<=end;c++){
     vals.push(clean(row[c]));
@@ -464,15 +486,43 @@ function getRowValues(row,start,end){
   return vals;
 }
 
-function getNotesValues(rows,start,end){
-  const vals=[];
-  rows.forEach(row=>{
-    for(let c=start;c<=end;c++){
-      const v=clean(row[c]);
-      if(v)vals.push(v);
+function setAnnouncement(label,text){
+  document.getElementById("announcementLabel").textContent=label || "ANNOUNCEMENT";
+
+  const finalText=text && text.trim() ? text : " ";
+  const spans=document.querySelectorAll("#announcementTrack span");
+  spans[0].textContent=finalText;
+  spans[1].textContent=finalText;
+}
+
+function makeNoteCell(text){
+  const cell=document.createElement("div");
+  cell.className="note-cell";
+
+  const inner=document.createElement("div");
+  inner.className="note-inner";
+  inner.textContent=text || "";
+
+  cell.appendChild(inner);
+
+  requestAnimationFrame(()=>{
+    if(inner.scrollWidth > cell.clientWidth){
+      cell.classList.add("long");
     }
   });
-  return vals;
+
+  return cell;
+}
+
+function renderNotes(rows,startCol,endCol){
+  const grid=document.getElementById("notesGrid");
+  grid.innerHTML="";
+
+  rows.forEach(row=>{
+    for(let c=startCol;c<=endCol;c++){
+      grid.appendChild(makeNoteCell(clean(row[c])));
+    }
+  });
 }
 
 function render(data){
@@ -484,22 +534,24 @@ function render(data){
   const main=document.getElementById("mainArea");
   main.innerHTML="";
 
-  const bulletinRow=findRow(data,"BULLETIN");
-  const salesRow=findRow(data,"SALES ORDER");
-  const notesRow=findRow(data,"NOTES");
+  const announcementRow=findRowByWords(data,["ANNOUNCEMENT","ANOUNCEMENT","BULLETIN"]);
+  const salesRow=findRowByWords(data,["SALES ORDER"]);
+  const notesRow=findRowByWords(data,["NOTES"]);
 
-  /* BULLETIN: row 1, B:L = 11 separate cells */
-  if(bulletinRow>=0){
-    renderCellBar("bulletinCells",getRowValues(data[bulletinRow],1,11),11);
+  /* ANNOUNCEMENT / BULLETIN: one row, label in A, text from B:L, spans screen beside logo */
+  if(announcementRow>=0){
+    const label=clean(data[announcementRow][0]);
+    const text=rowValues(data[announcementRow],1,11).filter(Boolean).join("     •     ");
+    setAnnouncement(label,text);
   }else{
-    renderCellBar("bulletinCells",[],11);
+    setAnnouncement("ANNOUNCEMENT","");
   }
 
-  /* NOTES: rows below NOTES, A:L = 12 separate cells */
+  /* NOTES: full-width stacked cells, A:L, same shape as sheet */
   if(notesRow>=0){
-    renderCellBar("notesCells",getNotesValues(data.slice(notesRow+1),0,11),12);
+    renderNotes(data.slice(notesRow+1),0,11);
   }else{
-    renderCellBar("notesCells",[],12);
+    renderNotes([],0,11);
   }
 
   if(salesRow<0){
