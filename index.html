@@ -9,8 +9,8 @@
 *{box-sizing:border-box}
 
 :root{
-  --grid:rgba(255,255,255,.28);
-  --gridStrong:rgba(255,255,255,.45);
+  --grid:rgba(255,255,255,.24);
+  --gridStrong:rgba(255,255,255,.42);
   --orange:#ffae00;
   --white:#f4f4f4;
   --muted:#bdbdbd;
@@ -24,13 +24,11 @@ html,body{
   overflow:hidden;
   background:#000;
   font-family:Arial,Helvetica,sans-serif;
-  -webkit-font-smoothing:antialiased;
-  text-rendering:geometricPrecision;
 }
 
 .screen{
   width:100vw;
-  height:100dvh;
+  height:100vh;
   display:grid;
   grid-template-rows:48px 1fr 132px;
   gap:5px;
@@ -101,62 +99,94 @@ html,body{
   100%{transform:translateX(-50%)}
 }
 
-/* MAIN SHEET GRID */
-.main-grid{
+/* MAIN LAYOUT */
+.main-area{
   display:grid;
-  grid-template-columns:
-    1fr .95fr 1.05fr 1.35fr 1.35fr 1.25fr
-    .10fr
-    1.45fr .75fr
-    .10fr
-    2.45fr;
-  grid-auto-rows:1fr;
+  grid-template-columns:59% 18% 23%;
+  gap:7px;
+  min-height:0;
+  overflow:hidden;
+}
+
+.panel{
   border:1px solid var(--grid);
   background:#000;
   overflow:hidden;
+  min-width:0;
 }
 
-.sheet-cell{
-  border-right:1px solid var(--grid);
-  border-bottom:1px solid var(--grid);
+.ship-date-panel{
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:7px;
+  min-width:0;
+}
+
+.sub-panel{
+  border:1px solid var(--grid);
+  background:#000;
+  overflow:hidden;
+  min-width:0;
+}
+
+table{
+  width:100%;
+  height:auto;
+  border-collapse:collapse;
+  table-layout:fixed;
+}
+
+th,td{
+  border:1px solid var(--grid);
+  text-align:center;
+  vertical-align:middle;
+  font-weight:800;
+}
+
+th{
+  height:22px;
+  background:var(--header);
+  color:var(--orange);
+  border-color:var(--gridStrong);
+  font-size:11px;
+  padding:1px 3px;
+  white-space:nowrap;
+  overflow:hidden;
+}
+
+td{
+  height:21px;
   background:#000;
   color:var(--white);
   font-size:12px;
-  font-weight:800;
+  padding:0;
+}
+
+.cell{
+  width:100%;
+  height:100%;
+  min-height:21px;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:1px 4px;
+  padding:1px 3px;
   white-space:nowrap;
   overflow:hidden;
+  color:inherit;
   position:relative;
 }
 
-.sheet-cell.header{
-  background:var(--header);
-  color:var(--orange);
-  font-size:11px;
-  border-color:var(--gridStrong);
-}
-
-.sheet-cell.left{
+.cell.left{
   justify-content:flex-start;
   padding-left:6px;
   font-size:11px;
-}
-
-.sheet-cell.separator{
-  background:#000;
-  border-left:2px solid var(--gridStrong);
-  border-right:2px solid var(--gridStrong);
-  padding:0;
 }
 
 .cell-inner{
   white-space:nowrap;
 }
 
-.sheet-cell.long .cell-inner{
+.cell.long .cell-inner{
   position:absolute;
   animation:cellScroll 18s linear infinite;
 }
@@ -277,7 +307,16 @@ html,body{
     </div>
   </div>
 
-  <div class="main-grid" id="mainGrid"></div>
+  <div class="main-area">
+    <div id="mainPanel"></div>
+
+    <div class="ship-date-panel">
+      <div id="shipPanel"></div>
+      <div id="datePanel"></div>
+    </div>
+
+    <div id="inspectionPanel"></div>
+  </div>
 
   <div class="notes">
     <div class="notes-title">NOTES</div>
@@ -353,33 +392,62 @@ function setAnnouncement(label,text){
   spans[1].textContent=finalText;
 }
 
-function makeGridCell(text,opts={}){
-  const cell=document.createElement("div");
-  cell.className="sheet-cell";
+function makeCell(tag,text,left=false){
+  const el=document.createElement(tag);
+  const value=clean(text);
+  const st=statusClass(value);
 
-  if(opts.header)cell.classList.add("header");
-  if(opts.left)cell.classList.add("left");
-  if(opts.separator)cell.classList.add("separator");
+  if(st) el.classList.add(st);
+  if(value.toUpperCase()==="N/A" || value==="-") el.classList.add("muted");
 
-  const st=statusClass(text);
-  if(st)cell.classList.add(st);
-
-  if(clean(text).toUpperCase()==="N/A" || clean(text)==="-"){
-    cell.classList.add("muted");
-  }
+  const div=document.createElement("div");
+  div.className="cell"+(left?" left":"");
 
   const inner=document.createElement("span");
   inner.className="cell-inner";
-  inner.textContent=clean(text);
-  cell.appendChild(inner);
+  inner.textContent=value;
+
+  div.appendChild(inner);
+  el.appendChild(div);
 
   requestAnimationFrame(()=>{
-    if(inner.scrollWidth > cell.clientWidth){
-      cell.classList.add("long");
+    if(inner.scrollWidth > div.clientWidth){
+      div.classList.add("long");
     }
   });
 
-  return cell;
+  return el;
+}
+
+function renderTable(containerId,header,rows,cols,left=false){
+  const container=document.getElementById(containerId);
+  container.innerHTML="";
+
+  const panel=document.createElement("div");
+  panel.className=containerId==="shipPanel" || containerId==="datePanel" ? "sub-panel" : "panel";
+
+  const table=document.createElement("table");
+  const thead=document.createElement("thead");
+  const tbody=document.createElement("tbody");
+
+  const htr=document.createElement("tr");
+  cols.forEach(c=>htr.appendChild(makeCell("th",header[c],left)));
+  thead.appendChild(htr);
+  table.appendChild(thead);
+
+  const visible=rows.filter(r=>cols.some(c=>clean(r[c])!==""));
+  const totalRows=Math.max(visible.length+2,14);
+
+  for(let i=0;i<totalRows;i++){
+    const row=visible[i] || [];
+    const tr=document.createElement("tr");
+    cols.forEach(c=>tr.appendChild(makeCell("td",row[c],left)));
+    tbody.appendChild(tr);
+  }
+
+  table.appendChild(tbody);
+  panel.appendChild(table);
+  container.appendChild(panel);
 }
 
 function makeNoteCell(text){
@@ -389,6 +457,7 @@ function makeNoteCell(text){
   const inner=document.createElement("div");
   inner.className="note-inner";
   inner.textContent=clean(text);
+
   cell.appendChild(inner);
 
   requestAnimationFrame(()=>{
@@ -398,35 +467,6 @@ function makeNoteCell(text){
   });
 
   return cell;
-}
-
-function renderMain(header,rows){
-  const grid=document.getElementById("mainGrid");
-  grid.innerHTML="";
-
-  const sheetCols=[0,1,2,3,4,5,6,7,8,9,10];
-
-  sheetCols.forEach(c=>{
-    grid.appendChild(makeGridCell(header[c],{
-      header:true,
-      separator:c===6 || c===9,
-      left:c===10
-    }));
-  });
-
-  const visible=rows.filter(r=>r.some(c=>clean(c)!==""));
-  const totalRows=Math.max(visible.length+2,14);
-
-  for(let r=0;r<totalRows;r++){
-    const row=visible[r]||[];
-
-    sheetCols.forEach(c=>{
-      grid.appendChild(makeGridCell(row[c],{
-        separator:c===6 || c===9,
-        left:c===10
-      }));
-    });
-  }
 }
 
 function renderNotes(rows){
@@ -437,7 +477,7 @@ function renderNotes(rows){
   const total=Math.max(visible.length,6);
 
   for(let i=0;i<total;i++){
-    const row=visible[i]||[];
+    const row=visible[i] || [];
     grid.appendChild(makeNoteCell(row[0]));
     grid.appendChild(makeNoteCell(row[6]));
   }
@@ -452,22 +492,29 @@ function render(data){
     const label=clean(data[announcementRow][0]);
     const text=data[announcementRow].slice(1,12).map(clean).filter(Boolean).join("     •     ");
     setAnnouncement(label,text);
+  }else{
+    setAnnouncement("ANNOUNCEMENT","");
   }
 
   if(notesRow>=0){
     renderNotes(data.slice(notesRow+1));
+  }else{
+    renderNotes([]);
   }
 
   if(salesRow<0){
-    document.getElementById("mainGrid").innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
+    document.getElementById("mainPanel").innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
     return;
   }
 
   const header=data[salesRow];
-  const tableEnd=notesRow>salesRow?notesRow:data.length;
+  const tableEnd=notesRow>salesRow ? notesRow : data.length;
   const rows=data.slice(salesRow+1,tableEnd);
 
-  renderMain(header,rows);
+  renderTable("mainPanel",header,rows,[0,1,2,3,4,5],false);
+  renderTable("shipPanel",header,rows,[7],false);
+  renderTable("datePanel",header,rows,[8],false);
+  renderTable("inspectionPanel",header,rows,[10],true);
 }
 
 async function load(){
