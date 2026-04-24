@@ -1,552 +1,267 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Factory Board</title>
 
 <style>
-*{box-sizing:border-box}
-
-:root{
-  --grid:rgba(255,255,255,.26);
-  --gridStrong:rgba(255,255,255,.45);
-  --orange:#ffae00;
-  --white:#f7f7f7;
-  --muted:#bdbdbd;
-  --header:linear-gradient(180deg,#7a4700 0%,#2a1600 58%,#090400 100%);
+* {
+  box-sizing: border-box;
 }
 
-html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  background:#000;
-  font-family:Arial,Helvetica,sans-serif;
+body {
+  margin: 0;
+  background: #000;
+  color: #fff;
+  font-family: "Segoe UI", Arial, sans-serif;
 }
 
-.screen{
-  width:100vw;
-  height:100vh;
-  display:grid;
-  grid-template-rows:48px 1fr 132px;
-  gap:5px;
-  padding:5px;
-  background:#000;
+/* ===== TOP BAR ===== */
+.top-bar {
+  display: grid;
+  grid-template-columns: 220px 1fr 260px;
+  align-items: center;
+  height: 50px;
+  border-bottom: 2px solid #333;
 }
 
-.top-row{
-  display:grid;
-  grid-template-columns:170px 1fr;
-  gap:5px;
+.logo {
+  padding-left: 10px;
 }
 
-.logo-box{
-  border:1px solid var(--grid);
-  background:#000;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
+.logo img {
+  height: 40px;
 }
 
-.logo-box img{
-  max-height:40px;
-  max-width:100%;
-  object-fit:contain;
+.announcement {
+  font-weight: 600;
+  font-size: 14px;
+  color: #ff9900;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-.announcement{
-  border:1px solid var(--grid);
-  background:#000;
-  display:grid;
-  grid-template-columns:155px 1fr;
-  overflow:hidden;
+.datetime {
+  text-align: right;
+  padding-right: 10px;
+  font-size: 14px;
+  color: #ff9900;
 }
 
-.announcement-label{
-  background:var(--header);
-  color:var(--orange);
-  font-size:13px;
-  font-weight:900;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-right:1px solid var(--gridStrong);
+/* ===== TABLE ===== */
+.table-wrap {
+  height: calc(100vh - 120px);
+  padding: 5px;
 }
 
-.marquee{
-  position:relative;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
 }
 
-.marquee-track{
-  display:inline-flex;
-  gap:80px;
-  white-space:nowrap;
-  color:#fff;
-  font-size:14px;
-  font-weight:800;
-  animation:marqueeMove 36s linear infinite;
+/* HEADER */
+th {
+  background: linear-gradient(#5a2e00, #000);
+  color: #ff9900;
+  font-size: 13px;
+  padding: 4px 6px;
+  border: 1px solid #444;
+  text-align: center;
 }
 
-@keyframes marqueeMove{
-  0%{transform:translateX(0)}
-  100%{transform:translateX(-50%)}
+/* CELLS */
+td {
+  padding: 3px 6px;
+  font-size: 13px;
+  border: 1px solid #333;
+  text-align: center;
+  white-space: nowrap;
 }
 
-.main-area{
-  display:grid;
-  grid-template-columns:58fr 16fr 8fr 18fr;
-  gap:7px;
-  min-height:0;
-  overflow:hidden;
+/* ===== COLUMN WIDTHS ===== */
+.col-order { width: 110px; }
+.col-type { width: 120px; }
+.col-stage { width: 120px; }
+.col-date { width: 120px; }
+.col-crate { width: 130px; }
+.col-incoming { width: 180px; }
+.col-inspection { width: 260px; }
+.col-action { width: 180px; }
+.col-status { width: 90px; }
+
+/* ===== VISUAL SEPARATORS ===== */
+.sep-left {
+  border-left: 3px solid #ffaa00 !important;
 }
 
-.panel{
-  border:1px solid var(--grid);
-  background:#000;
-  overflow:hidden;
-  min-width:0;
+/* ===== STATUS COLORS ===== */
+.delay {
+  background: red;
+  color: white;
+  font-weight: bold;
 }
 
-table{
-  width:100%;
-  border-collapse:collapse;
-  table-layout:fixed;
+.ontime {
+  background: #00aa55;
+  color: white;
+  font-weight: bold;
 }
 
-th,td{
-  border:1px solid var(--grid);
-  text-align:center;
-  vertical-align:middle;
-  font-weight:800;
+.p1 {
+  background: red;
+  font-weight: bold;
 }
 
-th{
-  height:22px;
-  background:var(--header);
-  color:var(--orange);
-  border-color:var(--gridStrong);
-  font-size:11px;
-  padding:1px 3px;
-  white-space:nowrap;
-  overflow:hidden;
+.ready {
+  background: #00aa55;
+  font-weight: bold;
 }
 
-td{
-  height:21px;
-  background:#000;
-  color:var(--white);
-  font-size:12px;
-  padding:0;
+/* ===== NOTES ===== */
+.notes {
+  height: 70px;
+  border-top: 2px solid #ffaa00;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-size: 13px;
 }
 
-.cell{
-  width:100%;
-  height:100%;
-  min-height:21px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:1px 3px;
-  white-space:nowrap;
-  overflow:hidden;
-  color:inherit;
-  position:relative;
+.notes div {
+  padding: 5px;
 }
 
-.cell.left{
-  justify-content:flex-start;
-  padding-left:6px;
-  font-size:11px;
-}
-
-.cell-inner{
-  white-space:nowrap;
-}
-
-.cell.long .cell-inner{
-  position:absolute;
-  animation:cellScroll 18s linear infinite;
-}
-
-@keyframes cellScroll{
-  0%{transform:translateX(100%)}
-  100%{transform:translateX(-100%)}
-}
-
-.delay{
-  background:#ff0000!important;
-  color:#fff!important;
-  animation:flashDelay .65s linear infinite;
-}
-
-@keyframes flashDelay{
-  0%{background:#ff0000}
-  50%{background:#320000}
-  100%{background:#ff0000}
-}
-
-.ontime{
-  background:#00a83a!important;
-  color:#fff!important;
-}
-
-.risk{
-  background:#ffbf00!important;
-  color:#000!important;
-}
-
-.muted{
-  color:var(--muted)!important;
-}
-
-.notes{
-  border:1px solid var(--grid);
-  display:grid;
-  grid-template-rows:24px 1fr;
-  background:#000;
-  overflow:hidden;
-}
-
-.notes-title{
-  background:var(--header);
-  color:var(--orange);
-  font-size:13px;
-  font-weight:900;
-  display:flex;
-  align-items:center;
-  padding-left:10px;
-  border-bottom:1px solid var(--gridStrong);
-}
-
-.notes-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  grid-auto-rows:1fr;
-  height:100%;
-}
-
-.note-cell{
-  border-right:1px solid var(--grid);
-  border-bottom:1px solid var(--grid);
-  color:#fff;
-  background:#000;
-  font-size:12px;
-  font-weight:800;
-  display:flex;
-  align-items:center;
-  justify-content:flex-start;
-  padding:1px 6px;
-  white-space:nowrap;
-  overflow:hidden;
-  position:relative;
-}
-
-.note-cell:nth-child(2n){
-  border-right:none;
-}
-
-.note-inner{
-  white-space:nowrap;
-}
-
-.note-cell.long .note-inner{
-  position:absolute;
-  animation:cellScroll 18s linear infinite;
-}
-
-.error{
-  color:red;
-  font-size:22px;
-  font-weight:900;
-  padding:20px;
+/* ===== RESPONSIVE SCALE FOR TV ===== */
+@media screen and (min-width: 1920px) {
+  td, th {
+    font-size: 14px;
+    padding: 4px 6px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="screen">
-
-  <div class="top-row">
-    <div class="logo-box">
-      <img src="Picsart_24-07-23_20-35-10-625.png">
-    </div>
-
-    <div class="announcement">
-      <div class="announcement-label" id="announcementLabel">ANNOUNCEMENT</div>
-      <div class="marquee">
-        <div class="marquee-track" id="announcementTrack">
-          <span></span><span></span>
-        </div>
-      </div>
-    </div>
+<!-- ===== TOP ===== -->
+<div class="top-bar">
+  <div class="logo">
+    <img src="logo.png">
   </div>
 
-  <div class="main-area">
-    <div id="mainPanel"></div>
-    <div id="incomingPanel"></div>
-    <div id="datePanel"></div>
-    <div id="inspectionPanel"></div>
+  <div class="announcement">
+    Type announcement here
   </div>
 
-  <div class="notes">
-    <div class="notes-title">NOTES</div>
-    <div class="notes-grid" id="notesGrid"></div>
-  </div>
-
+  <div class="datetime" id="datetime"></div>
 </div>
 
+<!-- ===== TABLE ===== -->
+<div class="table-wrap">
+<table>
+
+<tr>
+  <th class="col-order">SALES ORDER</th>
+  <th class="col-type">TYPE</th>
+  <th class="col-stage">STAGE</th>
+  <th class="col-date">FORECAST ASSY</th>
+  <th class="col-date">FORECAST TEST</th>
+  <th class="col-crate">CRATE DEADLINE</th>
+
+  <th class="col-incoming sep-left">INCOMING SHIPMENTS</th>
+  <th class="col-date">DATE</th>
+
+  <th class="col-action sep-left">ACTION</th>
+  <th class="col-inspection">INSPECTION</th>
+
+  <th class="col-date sep-left">REQ DATE</th>
+  <th class="col-status">STATUS</th>
+</tr>
+
+<tr>
+  <td>25-1274</td>
+  <td>TEST VALVE</td>
+  <td>PLATING</td>
+  <td>13-Apr</td>
+  <td>16-Apr</td>
+  <td>N/A</td>
+
+  <td class="sep-left">Dynamics Crate</td>
+  <td>TODAY</td>
+
+  <td class="sep-left">UNCRATE ASAP</td>
+  <td>323-00623-03-2 Retainer, Flow Cage</td>
+
+  <td class="sep-left">18-Apr</td>
+  <td class="p1">P1</td>
+</tr>
+
+<tr>
+  <td>25-1312</td>
+  <td>VALVE</td>
+  <td>WELDING</td>
+  <td></td>
+  <td class="delay">DELAY</td>
+  <td></td>
+
+  <td class="sep-left"></td>
+  <td></td>
+
+  <td class="sep-left">EXPEDITE</td>
+  <td></td>
+
+  <td class="sep-left">15-Apr</td>
+  <td class="delay">DELAY</td>
+</tr>
+
+<tr>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td class="ontime">ON TIME</td>
+  <td></td>
+  <td></td>
+
+  <td class="sep-left"></td>
+  <td></td>
+
+  <td class="sep-left"></td>
+  <td></td>
+
+  <td class="sep-left"></td>
+  <td class="ready">READY</td>
+</tr>
+
+</table>
+</div>
+
+<!-- ===== NOTES ===== -->
+<div class="notes">
+  <div>
+    1. this is the first note<br>
+    2. another<br>
+    3. test<br>
+    4. part number
+  </div>
+
+  <div>
+    7<br>
+    8<br>
+    9<br>
+    10. rework
+  </div>
+</div>
+
+<!-- ===== LIVE CLOCK ===== -->
 <script>
-const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
-const REFRESH_MS=8000;
-const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-
-function parseCSV(text){
-  const rows=[];
-  let row=[],cell="",q=false;
-
-  for(let i=0;i<text.length;i++){
-    const ch=text[i],nx=text[i+1];
-
-    if(ch==='"'){
-      if(q&&nx==='"'){cell+='"';i++}
-      else q=!q;
-    }else if(ch===","&&!q){
-      row.push(cell);
-      cell="";
-    }else if((ch==="\n"||ch==="\r")&&!q){
-      if(ch==="\r"&&nx==="\n")i++;
-      row.push(cell);
-      rows.push(row);
-      row=[];
-      cell="";
-    }else{
-      cell+=ch;
-    }
-  }
-
-  if(cell.length||row.length){
-    row.push(cell);
-    rows.push(row);
-  }
-
-  return rows;
+function updateClock() {
+  const now = new Date();
+  document.getElementById("datetime").innerHTML =
+    now.toLocaleDateString() + " | " +
+    now.toLocaleTimeString();
 }
-
-function clean(v){
-  if(v==null)return "";
-  const s=String(v).trim();
-  const m=s.match(/^Date\((\d+),(\d+),(\d+)/);
-  if(m)return `${m[3]}-${MONTHS[+m[2]]}`;
-  return s;
-}
-
-function normalized(v){
-  return clean(v).toUpperCase().replace(/[^A-Z0-9]/g,"");
-}
-
-function findRow(rows,words){
-  return rows.findIndex(r=>r.some(c=>{
-    const v=normalized(c);
-    return words.some(w=>v.includes(normalized(w)));
-  }));
-}
-
-function findCol(header,words){
-  return header.findIndex(c=>{
-    const v=normalized(c);
-    return words.some(w=>v.includes(normalized(w)));
-  });
-}
-
-function statusClass(v){
-  const s=normalized(v);
-  if(s.includes("DELAY"))return"delay";
-  if(s.includes("ONTIME"))return"ontime";
-  if(s.includes("RISK"))return"risk";
-  return"";
-}
-
-function setAnnouncement(label,text){
-  document.getElementById("announcementLabel").textContent=label || "ANNOUNCEMENT";
-  const finalText=text && text.trim() ? text : " ";
-  const spans=document.querySelectorAll("#announcementTrack span");
-  spans[0].textContent=finalText;
-  spans[1].textContent=finalText;
-}
-
-function makeCell(tag,text,left=false){
-  const el=document.createElement(tag);
-  const value=clean(text);
-  const st=statusClass(value);
-
-  if(st)el.classList.add(st);
-  if(value.toUpperCase()==="N/A" || value==="-")el.classList.add("muted");
-
-  const div=document.createElement("div");
-  div.className="cell"+(left?" left":"");
-
-  const inner=document.createElement("span");
-  inner.className="cell-inner";
-  inner.textContent=value;
-
-  div.appendChild(inner);
-  el.appendChild(div);
-
-  requestAnimationFrame(()=>{
-    if(inner.scrollWidth > div.clientWidth){
-      div.classList.add("long");
-    }
-  });
-
-  return el;
-}
-
-function renderTable(containerId,header,rows,cols,left=false){
-  const container=document.getElementById(containerId);
-  container.innerHTML="";
-
-  const panel=document.createElement("div");
-  panel.className="panel";
-
-  const table=document.createElement("table");
-  const thead=document.createElement("thead");
-  const tbody=document.createElement("tbody");
-
-  const htr=document.createElement("tr");
-  cols.forEach(c=>htr.appendChild(makeCell("th",header[c],left)));
-  thead.appendChild(htr);
-  table.appendChild(thead);
-
-  const visible=rows.filter(r=>cols.some(c=>clean(r[c])!==""));
-  const totalRows=Math.max(visible.length+2,14);
-
-  for(let i=0;i<totalRows;i++){
-    const row=visible[i] || [];
-    const tr=document.createElement("tr");
-    cols.forEach(c=>tr.appendChild(makeCell("td",row[c],left)));
-    tbody.appendChild(tr);
-  }
-
-  table.appendChild(tbody);
-  panel.appendChild(table);
-  container.appendChild(panel);
-}
-
-function makeNoteCell(text){
-  const cell=document.createElement("div");
-  cell.className="note-cell";
-
-  const inner=document.createElement("div");
-  inner.className="note-inner";
-  inner.textContent=clean(text);
-
-  cell.appendChild(inner);
-
-  requestAnimationFrame(()=>{
-    if(inner.scrollWidth > cell.clientWidth){
-      cell.classList.add("long");
-    }
-  });
-
-  return cell;
-}
-
-function renderNotes(rows){
-  const grid=document.getElementById("notesGrid");
-  grid.innerHTML="";
-
-  const visible=rows.filter(r=>clean(r[0])!=="" || clean(r[6])!=="");
-  const total=Math.max(visible.length,6);
-
-  for(let i=0;i<total;i++){
-    const row=visible[i] || [];
-    grid.appendChild(makeNoteCell(row[0]));
-    grid.appendChild(makeNoteCell(row[6]));
-  }
-}
-
-function render(data){
-  const announcementRow=findRow(data,["ANNOUNCEMENT","ANOUNCEMENT","BULLETIN"]);
-  const salesRow=findRow(data,["SALES ORDER"]);
-  const notesRow=findRow(data,["NOTES"]);
-
-  if(announcementRow>=0){
-    const label=clean(data[announcementRow][0]);
-    const text=data[announcementRow].slice(1,12).map(clean).filter(Boolean).join("     •     ");
-    setAnnouncement(label,text);
-  }else{
-    setAnnouncement("ANNOUNCEMENT","");
-  }
-
-  if(notesRow>=0){
-    renderNotes(data.slice(notesRow+1));
-  }else{
-    renderNotes([]);
-  }
-
-  if(salesRow<0){
-    document.getElementById("mainPanel").innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
-    return;
-  }
-
-  const header=data[salesRow];
-  const tableEnd=notesRow>salesRow ? notesRow : data.length;
-  const rows=data.slice(salesRow+1,tableEnd);
-
-  const salesCol=findCol(header,["SALES ORDER"]);
-  const crateCol=findCol(header,["CRATE DEADLINE"]);
-  const incomingCol=findCol(header,["INCOMING SHIPMENTS","INCOMING SHIPMENT"]);
-  const dateCol=findCol(header,["DATE"]);
-  const inspectionCol=findCol(header,["INSPECTION"]);
-
-  const mainStart=salesCol >= 0 ? salesCol : 0;
-  const mainEnd=crateCol >= 0 ? crateCol : 5;
-
-  const mainCols=[];
-  for(let c=mainStart;c<=mainEnd;c++){
-    if(clean(header[c])!=="") mainCols.push(c);
-  }
-
-  renderTable("mainPanel",header,rows,mainCols,false);
-
-  if(incomingCol>=0){
-    renderTable("incomingPanel",header,rows,[incomingCol],false);
-  }else{
-    document.getElementById("incomingPanel").innerHTML='<div class="panel"><div class="error">INCOMING NOT FOUND</div></div>';
-  }
-
-  if(dateCol>=0){
-    renderTable("datePanel",header,rows,[dateCol],false);
-  }else{
-    document.getElementById("datePanel").innerHTML='<div class="panel"><div class="error">DATE NOT FOUND</div></div>';
-  }
-
-  if(inspectionCol>=0){
-    renderTable("inspectionPanel",header,rows,[inspectionCol],true);
-  }else{
-    document.getElementById("inspectionPanel").innerHTML='<div class="panel"><div class="error">INSPECTION NOT FOUND</div></div>';
-  }
-}
-
-async function load(){
-  try{
-    const res=await fetch(CSV_URL+"&t="+Date.now(),{cache:"no-store"});
-    const text=await res.text();
-    render(parseCSV(text));
-  }catch(e){
-    document.body.innerHTML='<div class="error">LOAD ERROR</div>';
-  }
-}
-
-load();
-setInterval(load,REFRESH_MS);
+setInterval(updateClock, 1000);
+updateClock();
 </script>
 
 </body>
