@@ -9,10 +9,11 @@
 *{box-sizing:border-box}
 
 :root{
-  --grid:rgba(255,255,255,.55);
-  --gridStrong:rgba(255,174,0,.75);
-  --gold:#ffae00;
+  --grid:rgba(255,255,255,.32);
+  --gridStrong:rgba(255,122,0,.65);
+  --gold:#ff7a00;
   --white:#f5f5f5;
+
   --incomingBlock:#071016;
   --notesBlock:#0b0b0b;
   --inspectionBlock:#120f16;
@@ -34,9 +35,9 @@ html,body{
   grid-template-rows:40px 1fr;
   gap:4px;
   padding:4px;
-  background:#000;
 }
 
+/* TOP */
 .top{
   display:grid;
   grid-template-columns:150px 1fr 250px;
@@ -46,7 +47,6 @@ html,body{
 .logo,.announcement,.clock{
   border:1px solid var(--grid);
   background:#000;
-  overflow:hidden;
 }
 
 .logo{
@@ -57,8 +57,6 @@ html,body{
 
 .logo img{
   max-height:34px;
-  max-width:100%;
-  object-fit:contain;
 }
 
 .announcement{
@@ -75,7 +73,6 @@ html,body{
   align-items:center;
   justify-content:center;
   border-right:1px solid var(--gridStrong);
-  letter-spacing:.6px;
 }
 
 .marquee{
@@ -86,17 +83,20 @@ html,body{
 
 .marquee-track{
   display:inline-flex;
-  gap:90px;
+  gap:120px;
   white-space:nowrap;
   color:#fff;
   font-weight:800;
   font-size:11px;
-  animation:move 38s linear infinite;
+
+  animation:move 60s linear infinite;
+  will-change:transform;
+  transform:translate3d(0,0,0);
 }
 
 @keyframes move{
-  0%{transform:translateX(0)}
-  100%{transform:translateX(-50%)}
+  from{transform:translate3d(100%,0,0)}
+  to{transform:translate3d(-100%,0,0)}
 }
 
 .clock{
@@ -114,6 +114,7 @@ html,body{
   border-left:1px solid var(--grid);
 }
 
+/* BOARD */
 .board{
   display:grid;
   grid-template-columns:
@@ -129,122 +130,90 @@ html,body{
     18px
     repeat(42, 16px);
 
-  align-content:start;
   border-top:1px solid var(--grid);
   border-left:1px solid var(--grid);
-  background:#000;
-  overflow:hidden;
-  min-height:0;
 }
 
 .cell{
-  height:100%;
-  min-height:0;
   border-right:1px solid var(--grid);
   border-bottom:1px solid var(--grid);
   background:#000;
-  color:var(--white);
+  color:#fff;
   font-weight:800;
   font-size:10px;
-  line-height:1;
+
   display:flex;
   align-items:center;
   justify-content:center;
   padding:0 3px;
+
   white-space:nowrap;
   overflow:hidden;
-  position:relative;
-  min-width:0;
 }
 
 .header{
-  background:#000!important;
+  background:#000;
   color:var(--gold);
   font-weight:900;
   font-size:9.5px;
-  letter-spacing:.35px;
-  text-transform:uppercase;
 }
 
 .group-start{
   border-left:1px solid var(--gridStrong);
 }
 
-.incoming-section{
-  background:var(--incomingBlock);
-}
-
-.notes-section{
-  background:var(--notesBlock);
-}
-
-.inspection-section{
-  background:var(--inspectionBlock);
-}
+.incoming-section{background:var(--incomingBlock)}
+.notes-section{background:var(--notesBlock)}
+.inspection-section{background:var(--inspectionBlock)}
 
 .left{
   justify-content:flex-start;
-  padding-left:5px;
+  padding-left:6px;
 }
 
-.inner{
-  white-space:nowrap;
-}
-
-.long .inner{
-  position:absolute;
-  animation:scrollCell 16s linear infinite;
-}
-
-@keyframes scrollCell{
-  0%{transform:translateX(100%)}
-  100%{transform:translateX(-100%)}
-}
-
+/* STATUS */
 .delay{
-  color:#fff!important;
-  animation:flashRedClear 2s infinite!important;
+  animation:delayFlash 2.2s infinite;
+  color:#fff;
 }
 
-@keyframes flashRedClear{
-  0%{background:#ff0000;color:#fff}
-  50%{background:transparent;color:#fff}
-  100%{background:#ff0000;color:#fff}
+@keyframes delayFlash{
+  0%{background:#ff0000}
+  50%{background:transparent}
+  100%{background:#ff0000}
 }
 
 .p1{
-  background:#ff0000!important;
-  color:#fff!important;
+  background:#ff0000;
+  color:#fff;
 }
 
 .ontime,.ready{
-  background:#00a83a!important;
-  color:#fff!important;
+  background:#00a83a;
 }
 
 .p2{
-  background:#ffae00!important;
-  color:#000!important;
+  background:#ffae00;
+  color:#000;
 }
 
 .pull{
-  background:#ffff00!important;
-  color:#000!important;
+  background:#ffff00;
+  color:#000;
 }
 
 .pulling{
-  background:#00b0f0!important;
-  color:#000!important;
+  background:#00b0f0;
+  color:#000;
 }
 
 .waiting{
-  color:#cfcfcf!important;
+  color:#ccc;
 }
 
 .error{
   color:red;
   font-size:22px;
-  font-weight:900;
   padding:20px;
 }
 </style>
@@ -254,27 +223,27 @@ html,body{
 
 <div class="screen">
 
-  <div class="top">
-    <div class="logo">
-      <img src="Picsart_24-07-23_20-35-10-625.png">
-    </div>
+<div class="top">
+  <div class="logo">
+    <img src="Picsart_24-07-23_20-35-10-625.png">
+  </div>
 
-    <div class="announcement">
-      <div class="announcement-label" id="announceLabel">ANNOUNCEMENTS</div>
-      <div class="marquee">
-        <div class="marquee-track" id="announceTrack">
-          <span></span><span></span>
-        </div>
+  <div class="announcement">
+    <div class="announcement-label">ANNOUNCEMENTS</div>
+    <div class="marquee">
+      <div class="marquee-track" id="announceTrack">
+        <span></span><span></span>
       </div>
-    </div>
-
-    <div class="clock">
-      <div class="clock-cell" id="dateBox"></div>
-      <div class="clock-cell" id="timeBox"></div>
     </div>
   </div>
 
-  <div class="board" id="board"></div>
+  <div class="clock">
+    <div class="clock-cell" id="dateBox"></div>
+    <div class="clock-cell" id="timeBox"></div>
+  </div>
+</div>
+
+<div class="board" id="board"></div>
 
 </div>
 
@@ -282,318 +251,107 @@ html,body{
 const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
 const REFRESH_MS=3000;
 
-const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const MAIN_ROWS=18;
 const BOTTOM_START_ROW=20;
 const BOTTOM_ROWS=42;
 
-let lastCsvText="";
-let firstLoad=true;
-let soundUnlocked=false;
-let audioCtx=null;
+let last="";
+let first=true;
 
-function unlockSound(){
-  if(soundUnlocked)return;
-  try{
-    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-    if(audioCtx.state==="suspended")audioCtx.resume();
-    soundUnlocked=true;
-  }catch(e){}
-}
+/* CLOCK */
+setInterval(()=>{
+  const d=new Date();
+  dateBox.textContent=d.toLocaleDateString();
+  timeBox.textContent=d.toLocaleTimeString();
+},1000);
 
-document.body.addEventListener("click",unlockSound,{once:true});
-document.body.addEventListener("touchstart",unlockSound,{once:true});
-
-function playUpdateSound(){
-  if(!soundUnlocked||!audioCtx)return;
-  try{
-    const osc=audioCtx.createOscillator();
-    const gain=audioCtx.createGain();
-
-    osc.type="sine";
-    osc.frequency.setValueAtTime(880,audioCtx.currentTime);
-
-    gain.gain.setValueAtTime(0.0001,audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.16,audioCtx.currentTime+0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+0.22);
-
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    osc.start();
-    osc.stop(audioCtx.currentTime+0.24);
-  }catch(e){}
-}
-
-function parseCSV(text){
+/* CSV PARSER */
+function parseCSV(t){
   const rows=[];
-  let row=[],cell="",q=false;
+  let r=[],c="",q=false;
 
-  for(let i=0;i<text.length;i++){
-    const ch=text[i],nx=text[i+1];
+  for(let i=0;i<t.length;i++){
+    const ch=t[i],nx=t[i+1];
 
     if(ch==='"'){
-      if(q&&nx==='"'){
-        cell+='"';
-        i++;
-      }else{
-        q=!q;
-      }
-    }else if(ch===","&&!q){
-      row.push(cell);
-      cell="";
-    }else if((ch==="\n"||ch==="\r")&&!q){
-      if(ch==="\r"&&nx==="\n")i++;
-      row.push(cell);
-      rows.push(row);
-      row=[];
-      cell="";
-    }else{
-      cell+=ch;
+      if(q&&nx==='"'){c+='"';i++} else q=!q;
     }
+    else if(ch===","&&!q){r.push(c);c="";}
+    else if((ch==="\n"||ch==="\r")&&!q){
+      if(ch==="\r"&&nx==="\n")i++;
+      r.push(c);rows.push(r);r=[];c="";
+    } else c+=ch;
   }
 
-  if(cell.length||row.length){
-    row.push(cell);
-    rows.push(row);
-  }
-
+  if(c||r.length){r.push(c);rows.push(r);}
   return rows;
 }
 
-function clean(v){
-  if(v==null)return "";
-  const s=String(v).trim();
-  const m=s.match(/^Date\((\d+),(\d+),(\d+)/);
-  if(m)return `${m[3]}-${MONTHS[+m[2]]}`;
-  return s;
-}
+function clean(v){return (v||"").trim()}
 
-function norm(v){
-  return clean(v).toUpperCase().replace(/[\s\-]+/g,"");
-}
-
-function findRow(data,terms){
-  return data.findIndex(r=>r.some(c=>{
-    const v=clean(c).toUpperCase();
-    return terms.some(t=>v.includes(t));
-  }));
-}
-
-function statusClass(text){
-  const s=norm(text);
-  if(s.includes("DELAY"))return"delay";
-  if(s==="P1")return"p1";
-  if(s==="P2")return"p2";
-  if(s==="PULL")return"pull";
-  if(s==="PULLING")return"pulling";
-  if(s==="READY")return"ready";
-  if(s.includes("ONTIME"))return"ontime";
-  if(s==="WAITING")return"waiting";
+function status(v){
+  v=clean(v).toUpperCase();
+  if(v.includes("DELAY"))return"delay";
+  if(v==="P1")return"p1";
+  if(v==="P2")return"p2";
+  if(v==="READY")return"ready";
+  if(v.includes("ON TIME"))return"ontime";
+  if(v==="PULL")return"pull";
   return"";
 }
 
-function updateClock(){
-  const now=new Date();
-
-  document.getElementById("dateBox").textContent =
-    now.toLocaleDateString("en-US",{
-      month:"short",
-      day:"numeric",
-      year:"numeric"
-    });
-
-  document.getElementById("timeBox").textContent =
-    now.toLocaleTimeString("en-US",{
-      hour:"numeric",
-      minute:"2-digit",
-      second:"2-digit"
-    });
-}
-
-setInterval(updateClock,1000);
-updateClock();
-
-function setAnnouncement(text){
-  document.getElementById("announceLabel").textContent="ANNOUNCEMENTS";
-
-  const finalText=text&&text.trim()?text:" ";
-  const spans=document.querySelectorAll("#announceTrack span");
-
-  spans[0].textContent=finalText;
-  spans[1].textContent=finalText;
-}
-
-function makeCell(text,options={}){
-  const div=document.createElement("div");
-  div.className="cell";
-
-  if(options.header)div.classList.add("header");
-  if(options.left)div.classList.add("left");
-  if(options.groupStart)div.classList.add("group-start");
-  if(options.extraClass)div.classList.add(options.extraClass);
-
-  const cls=statusClass(text);
-  if(cls)div.classList.add(cls);
-
-  const inner=document.createElement("span");
-  inner.className="inner";
-  inner.textContent=clean(text);
-  div.appendChild(inner);
-
-  if(options.colStart)div.style.gridColumnStart=options.colStart;
-  if(options.colEnd)div.style.gridColumnEnd=options.colEnd;
-  if(options.rowStart)div.style.gridRowStart=options.rowStart;
-
-  requestAnimationFrame(()=>{
-    if(inner.scrollWidth>div.clientWidth){
-      div.classList.add("long");
-    }
-  });
-
-  return div;
-}
-
-function render(data){
-  const board=document.getElementById("board");
-  board.innerHTML="";
-
-  const annRow=findRow(data,["ANNOUNCEMENT","ANNOUNCEMENTS","ANOUNCEMENT","ANNOUNCMENTS"]);
-  const headerRow=findRow(data,["SALES ORDER"]);
-  const notesRow=findRow(data,["NOTES"]);
-
-  if(annRow>=0){
-    setAnnouncement(clean(data[annRow][1]));
-  }
-
-  if(headerRow<0){
-    board.innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
-    return;
-  }
-
-  const header=data[headerRow];
-
-  board.appendChild(makeCell(header[0],{header:true,rowStart:1,colStart:1}));
-  board.appendChild(makeCell(header[1],{header:true,rowStart:1,colStart:2}));
-  board.appendChild(makeCell(header[2],{header:true,rowStart:1,colStart:3}));
-
-  board.appendChild(makeCell(header[3],{header:true,rowStart:1,colStart:4,colEnd:6,groupStart:true}));
-  board.appendChild(makeCell(header[5],{header:true,rowStart:1,colStart:6,colEnd:8,groupStart:true}));
-  board.appendChild(makeCell(header[7],{header:true,rowStart:1,colStart:8,colEnd:10,groupStart:true}));
-
-  board.appendChild(makeCell(header[9],{header:true,rowStart:1,colStart:10,groupStart:true,extraClass:"incoming-section"}));
-  board.appendChild(makeCell(header[10],{header:true,rowStart:1,colStart:11,extraClass:"incoming-section"}));
-  board.appendChild(makeCell(header[11],{header:true,rowStart:1,colStart:12,extraClass:"incoming-section"}));
-
-  const tableEnd=notesRow>headerRow?notesRow:data.length;
-  const mainRows=data.slice(headerRow+1,tableEnd);
-
-  for(let r=0;r<MAIN_ROWS;r++){
-    const row=mainRows[r]||[];
-    const gridRow=2+r;
-
-    for(let c=0;c<12;c++){
-      const opt={
-        rowStart:gridRow,
-        colStart:c+1,
-        groupStart:[4,6,8,10].includes(c+1)
-      };
-
-      if(c+1>=10&&c+1<=12){
-        opt.extraClass="incoming-section";
-      }
-
-      board.appendChild(makeCell(row[c],opt));
-    }
-  }
-
-  const notesTitle=notesRow>=0?clean(data[notesRow][0]):"NOTES / IMPORTANT REMARKS";
-
-  board.appendChild(makeCell(notesTitle,{
-    header:true,
-    left:true,
-    rowStart:BOTTOM_START_ROW,
-    colStart:1,
-    colEnd:9,
-    extraClass:"notes-section"
-  }));
-
-  board.appendChild(makeCell("INSPECTION",{
-    header:true,
-    rowStart:BOTTOM_START_ROW,
-    colStart:9,
-    colEnd:11,
-    groupStart:true,
-    extraClass:"inspection-section"
-  }));
-
-  board.appendChild(makeCell("REQ DATE",{
-    header:true,
-    rowStart:BOTTOM_START_ROW,
-    colStart:11,
-    extraClass:"inspection-section"
-  }));
-
-  board.appendChild(makeCell("STATUS",{
-    header:true,
-    rowStart:BOTTOM_START_ROW,
-    colStart:12,
-    extraClass:"inspection-section"
-  }));
-
-  const bottomRows=notesRow>=0?data.slice(notesRow+1):[];
-
-  for(let r=0;r<BOTTOM_ROWS;r++){
-    const row=bottomRows[r]||[];
-    const gridRow=BOTTOM_START_ROW+1+r;
-
-    board.appendChild(makeCell(row[0],{
-      left:true,
-      rowStart:gridRow,
-      colStart:1,
-      colEnd:9,
-      extraClass:"notes-section"
-    }));
-
-    board.appendChild(makeCell(row[8],{
-      left:true,
-      rowStart:gridRow,
-      colStart:9,
-      colEnd:11,
-      groupStart:true,
-      extraClass:"inspection-section"
-    }));
-
-    board.appendChild(makeCell(row[10],{
-      rowStart:gridRow,
-      colStart:11,
-      extraClass:"inspection-section"
-    }));
-
-    board.appendChild(makeCell(row[11],{
-      rowStart:gridRow,
-      colStart:12,
-      extraClass:"inspection-section"
-    }));
-  }
+function cell(txt,cls=""){
+  const d=document.createElement("div");
+  d.className="cell "+cls+" "+status(txt);
+  d.textContent=txt||"";
+  return d;
 }
 
 async function load(){
-  try{
-    const res=await fetch(CSV_URL+"&t="+Date.now()+"&rand="+Math.random(),{cache:"no-store"});
-    const text=await res.text();
+  const res=await fetch(CSV_URL+"?t="+Date.now());
+  const txt=await res.text();
 
-    if(!firstLoad&&text!==lastCsvText){
-      playUpdateSound();
+  const data=parseCSV(txt);
+  const b=document.getElementById("board");
+  b.innerHTML="";
+
+  const header=data[1]||[];
+
+  header.forEach(h=>b.appendChild(cell(h,"header")));
+
+  for(let i=2;i<20;i++){
+    const row=data[i]||[];
+    for(let j=0;j<12;j++){
+      b.appendChild(cell(row[j]));
     }
-
-    render(parseCSV(text));
-
-    lastCsvText=text;
-    firstLoad=false;
-  }catch(e){
-    document.body.innerHTML='<div class="error">LOAD ERROR: '+e.message+'</div>';
   }
+
+  /* NOTES */
+  b.appendChild(cell("NOTES / IMPORTANT REMARKS","header left"));
+
+  for(let i=0;i<8;i++) b.appendChild(cell(""));
+
+  for(let i=14;i<56;i++){
+    const row=data[i]||[];
+
+    b.appendChild(cell(row[0],"left"));
+
+    for(let j=1;j<9;j++) b.appendChild(cell(""));
+
+    b.appendChild(cell(row[8],"left"));
+    b.appendChild(cell(row[10]));
+    b.appendChild(cell(row[11]));
+  }
+
+  /* ANNOUNCEMENTS */
+  const txtAnn=(data[0]&&data[0][1])||"";
+  const spans=document.querySelectorAll("#announceTrack span");
+  spans[0].textContent=txtAnn;
+  spans[1].textContent=txtAnn;
+
+  if(!first && txt!==last){}
+  first=false;
+  last=txt;
 }
 
 load();
