@@ -38,7 +38,6 @@ html,body{
   background:#000;
 }
 
-/* TOP BAR */
 .top{
   display:grid;
   grid-template-columns:150px 1fr 250px;
@@ -116,7 +115,6 @@ html,body{
   border-left:1px solid var(--grid);
 }
 
-/* BOARD */
 .board{
   display:grid;
   grid-template-columns:
@@ -203,10 +201,11 @@ html,body{
   100%{transform:translateX(-100%)}
 }
 
-/* NEW / CHANGED ENTRY */
+/* NEW / CHANGED ENTRY = YELLOW FONT ONLY */
 .new-entry{
-  background:#ffff00!important;
-  color:#000!important;
+  background:inherit!important;
+  color:#ffff00!important;
+  text-shadow:0 0 6px rgba(255,255,0,.75);
 }
 
 /* STATUS COLORS */
@@ -299,8 +298,16 @@ const BOTTOM_ROWS=42;
 
 let lastCsvText="";
 let firstLoad=true;
+let initializedNewTracker=false;
 let soundUnlocked=false;
 let audioCtx=null;
+
+/* Use ?resetNew=1 one time if you need to clear old yellow tracking */
+if(new URLSearchParams(window.location.search).get("resetNew")==="1"){
+  Object.keys(localStorage).forEach(k=>{
+    if(k.startsWith("factory_cell_")) localStorage.removeItem(k);
+  });
+}
 
 function unlockSound(){
   if(soundUnlocked)return;
@@ -417,10 +424,10 @@ function isNewEntry(row,col,value){
 
   if(!firstSeen){
     localStorage.setItem(key,String(now));
-    return !firstLoad;
+    return initializedNewTracker;
   }
 
-  return now-Number(firstSeen)<NEW_ENTRY_MS;
+  return initializedNewTracker && now-Number(firstSeen)<NEW_ENTRY_MS;
 }
 
 function updateClock(){
@@ -630,6 +637,7 @@ async function load(){
 
     lastCsvText=text;
     firstLoad=false;
+    initializedNewTracker=true;
   }catch(e){
     document.body.innerHTML='<div class="error">LOAD ERROR: '+e.message+'</div>';
   }
