@@ -192,13 +192,13 @@ html,body{
 
 .delay{
   color:#fff!important;
-  animation:flashRedSimple 1s infinite!important;
+  animation:flashRedClear 1s infinite;
 }
 
-@keyframes flashRedSimple{
-  0%{background:#ff0000;color:#fff}
-  50%{background:#000;color:#fff}
-  100%{background:#ff0000;color:#fff}
+@keyframes flashRedClear{
+  0%{background:#ff0000;color:#fff;}
+  50%{background:transparent;color:#fff;}
+  100%{background:#ff0000;color:#fff;}
 }
 
 .p1{
