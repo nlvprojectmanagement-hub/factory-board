@@ -1,16 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Factory Board</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box}
 
-body{
+:root{
+  --grid:rgba(255,255,255,.24);
+  --gridStrong:rgba(255,255,255,.42);
+  --gold:#ffae00;
+  --white:#f5f5f5;
+  --header:linear-gradient(180deg,#6b3b00 0%,#1b0d00 70%,#050200 100%);
+  --incomingBlock:#101820;
+  --notesBlock:#111111;
+  --inspectionBlock:#1a1622;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
   background:#000;
-  font-family:Arial,Helvetica,sans-serif;
   overflow:hidden;
+  font-family:Arial,Helvetica,sans-serif;
 }
 
 .screen{
@@ -18,12 +33,21 @@ body{
   height:100vh;
   display:grid;
   grid-template-rows:40px 1fr;
+  gap:4px;
+  padding:4px;
+  background:#000;
 }
 
-/* TOP */
 .top{
   display:grid;
   grid-template-columns:150px 1fr 250px;
+  gap:4px;
+}
+
+.logo,.announcement,.clock{
+  border:1px solid var(--grid);
+  background:#000;
+  overflow:hidden;
 }
 
 .logo{
@@ -34,21 +58,24 @@ body{
 
 .logo img{
   max-height:34px;
+  max-width:100%;
+  object-fit:contain;
 }
 
 .announcement{
   display:grid;
-  grid-template-columns:150px 1fr;
+  grid-template-columns:145px 1fr;
 }
 
 .announcement-label{
-  background:#111;
-  color:#ffae00;
+  background:var(--header);
+  color:var(--gold);
   font-weight:900;
-  font-size:12px;
+  font-size:11px;
   display:flex;
   align-items:center;
   justify-content:center;
+  border-right:1px solid var(--gridStrong);
 }
 
 .marquee{
@@ -58,15 +85,16 @@ body{
 }
 
 .marquee-track{
-  display:flex;
-  gap:80px;
+  display:inline-flex;
+  gap:90px;
   white-space:nowrap;
   color:#fff;
-  font-size:12px;
-  animation:scroll 35s linear infinite;
+  font-weight:800;
+  font-size:11px;
+  animation:move 38s linear infinite;
 }
 
-@keyframes scroll{
+@keyframes move{
   0%{transform:translateX(0)}
   100%{transform:translateX(-50%)}
 }
@@ -76,83 +104,138 @@ body{
   grid-template-columns:1fr 1fr;
 }
 
-.clock div{
+.clock-cell{
   display:flex;
   align-items:center;
   justify-content:center;
-  color:#ffae00;
+  color:var(--gold);
   font-weight:900;
-  font-size:12px;
+  font-size:11px;
+  border-left:1px solid var(--grid);
 }
 
-/* BOARD */
 .board{
   display:grid;
   grid-template-columns:
-  7fr 7fr 8fr
-  11fr 10fr
-  11fr 10fr
-  11fr 10fr
-  14fr 8fr 9fr;
+    7fr 7fr 8fr
+    11fr 10fr
+    11fr 10fr
+    11fr 10fr
+    14fr 8fr 9fr;
 
   grid-template-rows:
-  22px
-  repeat(16, 28px)
-  22px
-  repeat(30, 22px);
+    18px
+    repeat(18, 18px)
+    18px
+    repeat(42, 16px);
 
-  height:100%;
+  align-content:start;
+  border:1px solid var(--grid);
+  background:#000;
+  overflow:hidden;
+  min-height:0;
 }
 
-/* CELL */
 .cell{
-  border:1px solid rgba(255,255,255,.2);
+  height:100%;
+  min-height:0;
+  border-right:1px solid var(--grid);
+  border-bottom:1px solid var(--grid);
+  background:#000;
+  color:var(--white);
+  font-weight:800;
+  font-size:10px;
+  line-height:1;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:12px;
-  color:#fff;
-  font-weight:700;
+  padding:0 3px;
+  white-space:nowrap;
   overflow:hidden;
+  position:relative;
+  min-width:0;
+}
+
+.header{
+  background:var(--header);
+  color:var(--gold);
+  font-weight:900;
+  font-size:9.5px;
+}
+
+.group-start{
+  border-left:1px solid rgba(255,174,0,.55);
+}
+
+.incoming-section{background:var(--incomingBlock)}
+.notes-section{background:var(--notesBlock)}
+.inspection-section{background:var(--inspectionBlock)}
+
+.left{
+  justify-content:flex-start;
+  padding-left:5px;
+}
+
+.inner{
   white-space:nowrap;
 }
 
-/* HEADER */
-.header{
-  background:#111;
-  color:#ffae00;
-  font-weight:900;
+.long .inner{
+  position:absolute;
+  animation:scrollCell 16s linear infinite;
 }
 
-/* LEFT ALIGN */
-.left{
-  justify-content:flex-start;
-  padding-left:6px;
+@keyframes scrollCell{
+  0%{transform:translateX(100%)}
+  100%{transform:translateX(-100%)}
 }
 
-/* STATUS */
-.ontime{background:#00a83a}
-.ready{background:#00a83a}
-.p2{background:#ffae00;color:#000}
-.pull{background:#ffff00;color:#000}
-
-/* P1 solid */
-.p1{
-  background:#ff0000;
-  color:#fff;
-}
-
-/* DELAY FLASH SIMPLE */
 .delay{
-  animation:flash 1s infinite;
+  color:#fff!important;
+  animation:flashRedSimple 1s infinite!important;
 }
 
-@keyframes flash{
-  0%{background:#ff0000}
-  50%{background:#000}
-  100%{background:#ff0000}
+@keyframes flashRedSimple{
+  0%{background:#ff0000;color:#fff}
+  50%{background:#000;color:#fff}
+  100%{background:#ff0000;color:#fff}
 }
 
+.p1{
+  background:#ff0000!important;
+  color:#fff!important;
+}
+
+.ontime,.ready{
+  background:#00a83a!important;
+  color:#fff!important;
+}
+
+.p2{
+  background:#ffae00!important;
+  color:#000!important;
+}
+
+.pull{
+  background:#ffff00!important;
+  color:#000!important;
+}
+
+.pulling{
+  background:#00b0f0!important;
+  color:#000!important;
+}
+
+.waiting{
+  color:#cfcfcf!important;
+}
+
+.error{
+  color:red;
+  font-size:22px;
+  font-weight:900;
+  padding:20px;
+}
 </style>
 </head>
 
@@ -160,144 +243,335 @@ body{
 
 <div class="screen">
 
-<div class="top">
-  <div class="logo">
-    <img src="Picsart_24-07-23_20-35-10-625.png">
-  </div>
+  <div class="top">
+    <div class="logo">
+      <img src="Picsart_24-07-23_20-35-10-625.png">
+    </div>
 
-  <div class="announcement">
-    <div class="announcement-label" id="label">ANNOUNCMENTS</div>
-    <div class="marquee">
-      <div class="marquee-track" id="announce">
-        <span></span><span></span>
+    <div class="announcement">
+      <div class="announcement-label" id="announceLabel">ANNOUNCEMENTS</div>
+      <div class="marquee">
+        <div class="marquee-track" id="announceTrack">
+          <span></span><span></span>
+        </div>
       </div>
+    </div>
+
+    <div class="clock">
+      <div class="clock-cell" id="dateBox"></div>
+      <div class="clock-cell" id="timeBox"></div>
     </div>
   </div>
 
-  <div class="clock">
-    <div id="date"></div>
-    <div id="time"></div>
-  </div>
-</div>
-
-<div class="board" id="board"></div>
+  <div class="board" id="board"></div>
 
 </div>
 
 <script>
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
+const REFRESH_MS=8000;
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-const CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
+const MAIN_ROWS = 18;
+const BOTTOM_START_ROW = 20;
+const BOTTOM_ROWS = 42;
 
-let last="";
-let first=true;
+let lastCsvText="";
+let firstLoad=true;
+let soundUnlocked=false;
+let audioCtx=null;
 
-/* SOUND */
-let ctx=null, unlocked=false;
+function unlockSound(){
+  if(soundUnlocked)return;
+  try{
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==="suspended")audioCtx.resume();
+    soundUnlocked=true;
+  }catch(e){}
+}
 
-document.body.onclick=()=>{
-  if(!unlocked){
-    ctx=new (window.AudioContext||window.webkitAudioContext)();
-    unlocked=true;
+document.body.addEventListener("click",unlockSound,{once:true});
+document.body.addEventListener("touchstart",unlockSound,{once:true});
+
+function playUpdateSound(){
+  if(!soundUnlocked||!audioCtx)return;
+  try{
+    const osc=audioCtx.createOscillator();
+    const gain=audioCtx.createGain();
+    osc.type="sine";
+    osc.frequency.setValueAtTime(880,audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.0001,audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.18,audioCtx.currentTime+0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+0.22);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime+0.24);
+  }catch(e){}
+}
+
+function parseCSV(text){
+  const rows=[];
+  let row=[],cell="",q=false;
+
+  for(let i=0;i<text.length;i++){
+    const ch=text[i],nx=text[i+1];
+
+    if(ch==='"'){
+      if(q&&nx==='"'){
+        cell+='"';
+        i++;
+      }else{
+        q=!q;
+      }
+    }else if(ch===","&&!q){
+      row.push(cell);
+      cell="";
+    }else if((ch==="\n"||ch==="\r")&&!q){
+      if(ch==="\r"&&nx==="\n")i++;
+      row.push(cell);
+      rows.push(row);
+      row=[];
+      cell="";
+    }else{
+      cell+=ch;
+    }
   }
-};
 
-function beep(){
-  if(!unlocked)return;
+  if(cell.length||row.length){
+    row.push(cell);
+    rows.push(row);
+  }
 
-  const o=ctx.createOscillator();
-  const g=ctx.createGain();
-
-  o.frequency.value=900;
-  g.gain.value=0.1;
-
-  o.connect(g);
-  g.connect(ctx.destination);
-
-  o.start();
-  o.stop(ctx.currentTime+0.2);
+  return rows;
 }
 
-/* CLOCK */
-setInterval(()=>{
-  const d=new Date();
-  document.getElementById("date").textContent=d.toLocaleDateString();
-  document.getElementById("time").textContent=d.toLocaleTimeString();
-},1000);
-
-/* CSV PARSE */
-function parse(t){
-  return t.split("\n").map(r=>r.split(","));
+function clean(v){
+  if(v==null)return "";
+  const s=String(v).trim();
+  const m=s.match(/^Date\((\d+),(\d+),(\d+)/);
+  if(m)return `${m[3]}-${MONTHS[+m[2]]}`;
+  return s;
 }
 
-function cls(v){
-  v=(v||"").toUpperCase();
-  if(v.includes("DELAY"))return"delay";
-  if(v==="P1")return"p1";
-  if(v==="P2")return"p2";
-  if(v==="READY")return"ready";
-  if(v.includes("ON TIME"))return"ontime";
-  if(v==="PULL")return"pull";
+function norm(v){
+  return clean(v).toUpperCase().replace(/[\s\-]+/g,"");
+}
+
+function findRow(data,terms){
+  return data.findIndex(r=>r.some(c=>{
+    const v=clean(c).toUpperCase();
+    return terms.some(t=>v.includes(t));
+  }));
+}
+
+function statusClass(text){
+  const s=norm(text);
+  if(s.includes("DELAY"))return"delay";
+  if(s==="P1")return"p1";
+  if(s==="P2")return"p2";
+  if(s==="PULL")return"pull";
+  if(s==="PULLING")return"pulling";
+  if(s==="READY")return"ready";
+  if(s.includes("ONTIME"))return"ontime";
+  if(s==="WAITING")return"waiting";
   return"";
 }
 
-function cell(t,c=""){
-  const d=document.createElement("div");
-  d.className="cell "+c+" "+cls(t);
-  d.textContent=t||"";
-  return d;
+function updateClock(){
+  const now=new Date();
+  document.getElementById("dateBox").textContent =
+    now.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
+  document.getElementById("timeBox").textContent =
+    now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",second:"2-digit"});
+}
+
+setInterval(updateClock,1000);
+updateClock();
+
+function setAnnouncement(label,text){
+  document.getElementById("announceLabel").textContent="ANNOUNCEMENTS";
+  const finalText=text&&text.trim()?text:" ";
+  const spans=document.querySelectorAll("#announceTrack span");
+  spans[0].textContent=finalText;
+  spans[1].textContent=finalText;
+}
+
+function makeCell(text,options={}){
+  const div=document.createElement("div");
+  div.className="cell";
+
+  if(options.header)div.classList.add("header");
+  if(options.left)div.classList.add("left");
+  if(options.groupStart)div.classList.add("group-start");
+  if(options.extraClass)div.classList.add(options.extraClass);
+
+  const cls=statusClass(text);
+  if(cls)div.classList.add(cls);
+
+  const inner=document.createElement("span");
+  inner.className="inner";
+  inner.textContent=clean(text);
+  div.appendChild(inner);
+
+  if(options.colStart)div.style.gridColumnStart=options.colStart;
+  if(options.colEnd)div.style.gridColumnEnd=options.colEnd;
+  if(options.rowStart)div.style.gridRowStart=options.rowStart;
+
+  requestAnimationFrame(()=>{
+    if(inner.scrollWidth>div.clientWidth){
+      div.classList.add("long");
+    }
+  });
+
+  return div;
+}
+
+function render(data){
+  const board=document.getElementById("board");
+  board.innerHTML="";
+
+  const annRow=findRow(data,["ANNOUNCEMENT","ANNOUNCEMENTS","ANOUNCEMENT","ANNOUNCMENTS"]);
+  const headerRow=findRow(data,["SALES ORDER"]);
+  const notesRow=findRow(data,["NOTES"]);
+
+  if(annRow>=0){
+    const text=clean(data[annRow][1]);
+    setAnnouncement("ANNOUNCEMENTS",text);
+  }
+
+  if(headerRow<0){
+    board.innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
+    return;
+  }
+
+  const header=data[headerRow];
+
+  board.appendChild(makeCell(header[0],{header:true,rowStart:1,colStart:1}));
+  board.appendChild(makeCell(header[1],{header:true,rowStart:1,colStart:2}));
+  board.appendChild(makeCell(header[2],{header:true,rowStart:1,colStart:3}));
+
+  board.appendChild(makeCell(header[3],{header:true,rowStart:1,colStart:4,colEnd:6,groupStart:true}));
+  board.appendChild(makeCell(header[5],{header:true,rowStart:1,colStart:6,colEnd:8,groupStart:true}));
+  board.appendChild(makeCell(header[7],{header:true,rowStart:1,colStart:8,colEnd:10,groupStart:true}));
+
+  board.appendChild(makeCell(header[9],{header:true,rowStart:1,colStart:10,groupStart:true,extraClass:"incoming-section"}));
+  board.appendChild(makeCell(header[10],{header:true,rowStart:1,colStart:11,extraClass:"incoming-section"}));
+  board.appendChild(makeCell(header[11],{header:true,rowStart:1,colStart:12,extraClass:"incoming-section"}));
+
+  const tableEnd=notesRow>headerRow?notesRow:data.length;
+  const mainRows=data.slice(headerRow+1,tableEnd);
+
+  for(let r=0;r<MAIN_ROWS;r++){
+    const row=mainRows[r]||[];
+    const gridRow=2+r;
+
+    for(let c=0;c<12;c++){
+      const opt={
+        rowStart:gridRow,
+        colStart:c+1,
+        groupStart:[4,6,8,10].includes(c+1)
+      };
+
+      if(c+1>=10&&c+1<=12){
+        opt.extraClass="incoming-section";
+      }
+
+      board.appendChild(makeCell(row[c],opt));
+    }
+  }
+
+  const notesTitle=notesRow>=0?clean(data[notesRow][0]):"NOTES / IMPORTANT REMARKS";
+
+  board.appendChild(makeCell(notesTitle,{
+    header:true,
+    left:true,
+    rowStart:BOTTOM_START_ROW,
+    colStart:1,
+    colEnd:9,
+    extraClass:"notes-section"
+  }));
+
+  board.appendChild(makeCell("INSPECTION",{
+    header:true,
+    rowStart:BOTTOM_START_ROW,
+    colStart:9,
+    colEnd:11,
+    groupStart:true,
+    extraClass:"inspection-section"
+  }));
+
+  board.appendChild(makeCell("REQ DATE",{
+    header:true,
+    rowStart:BOTTOM_START_ROW,
+    colStart:11,
+    extraClass:"inspection-section"
+  }));
+
+  board.appendChild(makeCell("STATUS",{
+    header:true,
+    rowStart:BOTTOM_START_ROW,
+    colStart:12,
+    extraClass:"inspection-section"
+  }));
+
+  const bottomRows=notesRow>=0?data.slice(notesRow+1):[];
+
+  for(let r=0;r<BOTTOM_ROWS;r++){
+    const row=bottomRows[r]||[];
+    const gridRow=BOTTOM_START_ROW+1+r;
+
+    board.appendChild(makeCell(row[0],{
+      left:true,
+      rowStart:gridRow,
+      colStart:1,
+      colEnd:9,
+      extraClass:"notes-section"
+    }));
+
+    board.appendChild(makeCell(row[8],{
+      left:true,
+      rowStart:gridRow,
+      colStart:9,
+      colEnd:11,
+      groupStart:true,
+      extraClass:"inspection-section"
+    }));
+
+    board.appendChild(makeCell(row[10],{
+      rowStart:gridRow,
+      colStart:11,
+      extraClass:"inspection-section"
+    }));
+
+    board.appendChild(makeCell(row[11],{
+      rowStart:gridRow,
+      colStart:12,
+      extraClass:"inspection-section"
+    }));
+  }
 }
 
 async function load(){
-  const r=await fetch(CSV+"?t="+Date.now());
-  const t=await r.text();
+  try{
+    const res=await fetch(CSV_URL+"&t="+Date.now(),{cache:"no-store"});
+    const text=await res.text();
 
-  if(!first && t!==last) beep();
-  first=false;
-  last=t;
-
-  const data=parse(t);
-  const b=document.getElementById("board");
-  b.innerHTML="";
-
-  const header=data[1];
-
-  header.forEach(h=>{
-    b.appendChild(cell(h,"header"));
-  });
-
-  for(let i=2;i<18;i++){
-    const row=data[i]||[];
-    for(let j=0;j<12;j++){
-      b.appendChild(cell(row[j]));
+    if(!firstLoad&&text!==lastCsvText){
+      playUpdateSound();
     }
-  }
 
-  /* NOTES */
-  b.appendChild(cell("NOTES / IMPORTANT REMARKS","header left"));
-  for(let i=0;i<8;i++){
-    b.appendChild(cell(""));
-  }
+    lastCsvText=text;
+    firstLoad=false;
 
-  for(let i=14;i<44;i++){
-    const row=data[i]||[];
-    b.appendChild(cell(row[0],"left"));
-    for(let j=1;j<9;j++){
-      b.appendChild(cell(""));
-    }
-    b.appendChild(cell(row[8],"left"));
-    b.appendChild(cell(row[10]));
-    b.appendChild(cell(row[11]));
+    render(parseCSV(text));
+  }catch(e){
+    document.body.innerHTML='<div class="error">LOAD ERROR: '+e.message+'</div>';
   }
-
-  /* ANNOUNCEMENT TEXT */
-  const txt=data[0][1]||"";
-  document.getElementById("announce").children[0].textContent=txt;
-  document.getElementById("announce").children[1].textContent=txt;
 }
 
 load();
-setInterval(load,8000);
-
+setInterval(load,REFRESH_MS);
 </script>
 
 </body>
