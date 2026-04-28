@@ -9,7 +9,7 @@
 *{box-sizing:border-box}
 
 :root{
-  --grid:rgba(255,255,255,.34);
+  --grid:rgba(255,255,255,.36);
   --gridStrong:rgba(255,122,0,.65);
   --orange:#ff7a00;
   --white:#f5f5f5;
@@ -117,11 +117,11 @@ html,body{
 .board{
   display:grid;
   grid-template-columns:
-    7fr 7fr 8fr
-    11fr 10fr
-    11fr 10fr
-    11fr 10fr
-    14fr 8fr 9fr;
+    7fr 7fr 7fr 7fr
+    10fr 9fr
+    10fr 9fr
+    9fr 9fr
+    12fr 7fr 16fr;
 
   grid-template-rows:
     18px
@@ -192,15 +192,14 @@ html,body{
   100%{transform:translateX(-100%)}
 }
 
-.delay{
-  color:#fff!important;
-  animation:flashDelay 2.2s infinite!important;
+.struck{
+  text-decoration:line-through;
+  color:#8a8a8a!important;
 }
 
-@keyframes flashDelay{
-  0%{background:#ff0000;color:#fff}
-  50%{background:transparent;color:#fff}
-  100%{background:#ff0000;color:#fff}
+.delay{
+  background:#ff0000!important;
+  color:#fff!important;
 }
 
 .p1{
@@ -230,6 +229,22 @@ html,body{
 
 .waiting{
   color:#cfcfcf!important;
+}
+
+.released{
+  color:#00ff88!important;
+}
+
+.partial{
+  color:#ffff00!important;
+}
+
+.hold,.notreleased{
+  color:#ff3333!important;
+}
+
+.review,.revision,.clarification{
+  color:#00b0f0!important;
 }
 
 .error{
@@ -356,8 +371,16 @@ function clean(v){
   return s;
 }
 
+function displayText(v){
+  return clean(v).replace(/^\*\*/,"").trim();
+}
+
+function isStruck(v){
+  return clean(v).startsWith("**");
+}
+
 function norm(v){
-  return clean(v).toUpperCase().replace(/[\s\-]+/g,"");
+  return displayText(v).toUpperCase().replace(/[\s\-\/]+/g,"");
 }
 
 function findRow(data,terms){
@@ -368,7 +391,10 @@ function findRow(data,terms){
 }
 
 function statusClass(text){
+  if(isStruck(text))return"struck";
+
   const s=norm(text);
+
   if(s.includes("DELAY"))return"delay";
   if(s==="P1")return"p1";
   if(s==="P2")return"p2";
@@ -377,6 +403,15 @@ function statusClass(text){
   if(s==="READY")return"ready";
   if(s.includes("ONTIME"))return"ontime";
   if(s==="WAITING")return"waiting";
+
+  if(s==="RELEASED")return"released";
+  if(s==="PARTIAL")return"partial";
+  if(s==="HOLD")return"hold";
+  if(s==="NOTRELEASED")return"notreleased";
+  if(s==="INREVIEW")return"review";
+  if(s==="REVISION")return"revision";
+  if(s==="CLARIFICATION")return"clarification";
+
   return"";
 }
 
@@ -391,7 +426,7 @@ setInterval(updateClock,1000);
 updateClock();
 
 function setAnnouncement(text){
-  const finalText=text&&text.trim()?text:" ";
+  const finalText=displayText(text)&&displayText(text).trim()?displayText(text):" ";
   const spans=document.querySelectorAll("#announceTrack span");
   spans[0].textContent=finalText;
   spans[1].textContent=finalText;
@@ -411,7 +446,7 @@ function makeCell(text,options={}){
 
   const inner=document.createElement("span");
   inner.className="inner";
-  inner.textContent=clean(text);
+  inner.textContent=displayText(text);
   div.appendChild(inner);
 
   if(options.colStart)div.style.gridColumnStart=options.colStart;
@@ -436,7 +471,7 @@ function render(data){
   const notesRow=findRow(data,["NOTES"]);
 
   if(annRow>=0){
-    setAnnouncement(clean(data[annRow][1]));
+    setAnnouncement(data[annRow][1]);
   }
 
   if(headerRow<0){
@@ -449,14 +484,15 @@ function render(data){
   board.appendChild(makeCell(header[0],{header:true,rowStart:1,colStart:1}));
   board.appendChild(makeCell(header[1],{header:true,rowStart:1,colStart:2}));
   board.appendChild(makeCell(header[2],{header:true,rowStart:1,colStart:3}));
+  board.appendChild(makeCell(header[3],{header:true,rowStart:1,colStart:4}));
 
-  board.appendChild(makeCell(header[3],{header:true,rowStart:1,colStart:4,colEnd:6,groupStart:true}));
-  board.appendChild(makeCell(header[5],{header:true,rowStart:1,colStart:6,colEnd:8,groupStart:true}));
-  board.appendChild(makeCell(header[7],{header:true,rowStart:1,colStart:8,colEnd:10,groupStart:true}));
+  board.appendChild(makeCell(header[4],{header:true,rowStart:1,colStart:5,colEnd:7,groupStart:true}));
+  board.appendChild(makeCell(header[6],{header:true,rowStart:1,colStart:7,colEnd:9,groupStart:true}));
+  board.appendChild(makeCell(header[8],{header:true,rowStart:1,colStart:9,colEnd:11,groupStart:true}));
 
-  board.appendChild(makeCell(header[9],{header:true,rowStart:1,colStart:10,groupStart:true,extraClass:"incoming-section"}));
-  board.appendChild(makeCell(header[10],{header:true,rowStart:1,colStart:11,extraClass:"incoming-section"}));
+  board.appendChild(makeCell(header[10],{header:true,rowStart:1,colStart:11,groupStart:true,extraClass:"incoming-section"}));
   board.appendChild(makeCell(header[11],{header:true,rowStart:1,colStart:12,extraClass:"incoming-section"}));
+  board.appendChild(makeCell(header[12],{header:true,rowStart:1,colStart:13,extraClass:"incoming-section"}));
 
   const tableEnd=notesRow>headerRow?notesRow:data.length;
   const mainRows=data.slice(headerRow+1,tableEnd);
@@ -465,14 +501,14 @@ function render(data){
     const row=mainRows[r]||[];
     const gridRow=2+r;
 
-    for(let c=0;c<12;c++){
+    for(let c=0;c<13;c++){
       const opt={
         rowStart:gridRow,
         colStart:c+1,
-        groupStart:[4,6,8,10].includes(c+1)
+        groupStart:[5,7,9,11].includes(c+1)
       };
 
-      if(c+1>=10&&c+1<=12){
+      if(c+1>=11&&c+1<=13){
         opt.extraClass="incoming-section";
       }
 
@@ -487,15 +523,15 @@ function render(data){
     left:true,
     rowStart:BOTTOM_START_ROW,
     colStart:1,
-    colEnd:9,
+    colEnd:10,
     extraClass:"notes-section"
   }));
 
   board.appendChild(makeCell("INSPECTION",{
     header:true,
     rowStart:BOTTOM_START_ROW,
-    colStart:9,
-    colEnd:11,
+    colStart:10,
+    colEnd:12,
     groupStart:true,
     extraClass:"inspection-section"
   }));
@@ -503,14 +539,14 @@ function render(data){
   board.appendChild(makeCell("REQ DATE",{
     header:true,
     rowStart:BOTTOM_START_ROW,
-    colStart:11,
+    colStart:12,
     extraClass:"inspection-section"
   }));
 
   board.appendChild(makeCell("STATUS",{
     header:true,
     rowStart:BOTTOM_START_ROW,
-    colStart:12,
+    colStart:13,
     extraClass:"inspection-section"
   }));
 
@@ -524,28 +560,28 @@ function render(data){
       left:true,
       rowStart:gridRow,
       colStart:1,
-      colEnd:9,
+      colEnd:10,
       extraClass:"notes-section"
     }));
 
-    board.appendChild(makeCell(row[8],{
+    board.appendChild(makeCell(row[9],{
       left:true,
       rowStart:gridRow,
-      colStart:9,
-      colEnd:11,
+      colStart:10,
+      colEnd:12,
       groupStart:true,
-      extraClass:"inspection-section"
-    }));
-
-    board.appendChild(makeCell(row[10],{
-      rowStart:gridRow,
-      colStart:11,
       extraClass:"inspection-section"
     }));
 
     board.appendChild(makeCell(row[11],{
       rowStart:gridRow,
       colStart:12,
+      extraClass:"inspection-section"
+    }));
+
+    board.appendChild(makeCell(row[12],{
+      rowStart:gridRow,
+      colStart:13,
       extraClass:"inspection-section"
     }));
   }
