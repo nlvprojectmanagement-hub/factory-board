@@ -9,13 +9,10 @@
 *{box-sizing:border-box}
 
 :root{
-  --grid:rgba(255,255,255,.36);
-  --gridStrong:rgba(255,122,0,.65);
-  --orange:#ff7a00;
-  --white:#f5f5f5;
-  --incomingBlock:#071016;
-  --notesBlock:#0b0b0b;
-  --inspectionBlock:#120f16;
+  --grid:rgba(255,255,255,.12);
+  --gridStrong:rgba(255,122,0,.35);
+  --orange:#ff6a00;
+  --white:#e8e8e8;
 }
 
 html,body{
@@ -34,19 +31,17 @@ html,body{
   grid-template-rows:40px 1fr;
   gap:4px;
   padding:4px;
-  background:#000;
 }
 
 .top{
   display:grid;
-  grid-template-columns:150px 1fr 250px;
+  grid-template-columns:160px 1fr 260px;
   gap:4px;
 }
 
 .logo,.announcement,.clock{
   border:1px solid var(--grid);
   background:#000;
-  overflow:hidden;
 }
 
 .logo{
@@ -63,11 +58,10 @@ html,body{
 
 .announcement{
   display:grid;
-  grid-template-columns:145px 1fr;
+  grid-template-columns:160px 1fr;
 }
 
 .announcement-label{
-  background:#000;
   color:var(--orange);
   font-weight:900;
   font-size:11px;
@@ -88,15 +82,14 @@ html,body{
   gap:120px;
   white-space:nowrap;
   color:#fff;
-  font-weight:800;
+  font-weight:700;
   font-size:11px;
   animation:move 60s linear infinite;
-  will-change:transform;
 }
 
 @keyframes move{
-  from{transform:translate3d(100%,0,0)}
-  to{transform:translate3d(-100%,0,0)}
+  from{transform:translateX(100%)}
+  to{transform:translateX(-100%)}
 }
 
 .clock{
@@ -109,7 +102,7 @@ html,body{
   align-items:center;
   justify-content:center;
   color:var(--orange);
-  font-weight:900;
+  font-weight:800;
   font-size:11px;
   border-left:1px solid var(--grid);
 }
@@ -129,36 +122,25 @@ html,body{
     18px
     repeat(42, 16px);
 
-  align-content:start;
   border-top:1px solid var(--grid);
   border-left:1px solid var(--grid);
-  background:#000;
-  overflow:hidden;
-  min-height:0;
 }
 
 .cell{
-  height:100%;
-  min-height:0;
   border-right:1px solid var(--grid);
   border-bottom:1px solid var(--grid);
-  background:#000;
   color:var(--white);
-  font-weight:800;
+  font-weight:700;
   font-size:10px;
-  line-height:1;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:0 3px;
+  padding:0 4px;
   white-space:nowrap;
   overflow:hidden;
-  position:relative;
-  min-width:0;
 }
 
 .header{
-  background:#000!important;
   color:var(--orange);
   font-weight:900;
   font-size:9.5px;
@@ -169,89 +151,27 @@ html,body{
   border-left:1px solid var(--gridStrong);
 }
 
-.incoming-section{background:var(--incomingBlock)}
-.notes-section{background:var(--notesBlock)}
-.inspection-section{background:var(--inspectionBlock)}
-
 .left{
   justify-content:flex-start;
-  padding-left:5px;
+  padding-left:6px;
 }
 
-.inner{
-  white-space:nowrap;
+.sales{
+  font-size:11.5px;
+  font-weight:900;
 }
 
-.long .inner{
-  position:absolute;
-  animation:scrollCell 16s linear infinite;
-}
-
-@keyframes scrollCell{
-  0%{transform:translateX(100%)}
-  100%{transform:translateX(-100%)}
-}
+.delay{background:#ff0000;color:#fff}
+.p1{background:#ff0000;color:#fff}
+.ontime,.ready{background:#00a83a;color:#fff}
+.p2{background:#ff7a00;color:#000}
+.pull{background:#ffff00;color:#000}
+.pulling{background:#00b0f0;color:#000}
+.waiting{color:#aaa}
 
 .struck{
   text-decoration:line-through;
-  color:#8a8a8a!important;
-}
-
-.delay{
-  background:#ff0000!important;
-  color:#fff!important;
-}
-
-.p1{
-  background:#ff0000!important;
-  color:#fff!important;
-}
-
-.ontime,.ready{
-  background:#00a83a!important;
-  color:#fff!important;
-}
-
-.p2{
-  background:#ff7a00!important;
-  color:#000!important;
-}
-
-.pull{
-  background:#ffff00!important;
-  color:#000!important;
-}
-
-.pulling{
-  background:#00b0f0!important;
-  color:#000!important;
-}
-
-.waiting{
-  color:#cfcfcf!important;
-}
-
-.released{
-  color:#00ff88!important;
-}
-
-.partial{
-  color:#ffff00!important;
-}
-
-.hold,.notreleased{
-  color:#ff3333!important;
-}
-
-.review,.revision,.clarification{
-  color:#00b0f0!important;
-}
-
-.error{
-  color:red;
-  font-size:22px;
-  font-weight:900;
-  padding:20px;
+  color:#777!important;
 }
 </style>
 </head>
@@ -261,7 +181,7 @@ html,body{
 <div class="screen">
   <div class="top">
     <div class="logo">
-      <img src="Picsart_24-07-23_20-35-10-625.png">
+      <img src="Github Logo.png">
     </div>
 
     <div class="announcement">
@@ -283,330 +203,64 @@ html,body{
 </div>
 
 <script>
-const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
-const REFRESH_MS=3000;
-
-const MAIN_ROWS=18;
-const BOTTOM_START_ROW=20;
-const BOTTOM_ROWS=42;
-const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-
-let lastCsvText="";
-let firstLoad=true;
-let soundUnlocked=false;
-let audioCtx=null;
-
-function unlockSound(){
-  if(soundUnlocked)return;
-  try{
-    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-    if(audioCtx.state==="suspended")audioCtx.resume();
-    soundUnlocked=true;
-  }catch(e){}
-}
-
-document.body.addEventListener("click",unlockSound,{once:true});
-document.body.addEventListener("touchstart",unlockSound,{once:true});
-
-function playUpdateSound(){
-  if(!soundUnlocked||!audioCtx)return;
-  try{
-    const osc=audioCtx.createOscillator();
-    const gain=audioCtx.createGain();
-
-    osc.type="sine";
-    osc.frequency.setValueAtTime(880,audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.0001,audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.16,audioCtx.currentTime+0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+0.22);
-
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime+0.24);
-  }catch(e){}
-}
-
-function parseCSV(text){
-  const rows=[];
-  let row=[],cell="",q=false;
-
-  for(let i=0;i<text.length;i++){
-    const ch=text[i],nx=text[i+1];
-
-    if(ch==='"'){
-      if(q&&nx==='"'){
-        cell+='"';
-        i++;
-      }else{
-        q=!q;
-      }
-    }else if(ch===","&&!q){
-      row.push(cell);
-      cell="";
-    }else if((ch==="\n"||ch==="\r")&&!q){
-      if(ch==="\r"&&nx==="\n")i++;
-      row.push(cell);
-      rows.push(row);
-      row=[];
-      cell="";
-    }else{
-      cell+=ch;
-    }
-  }
-
-  if(cell.length||row.length){
-    row.push(cell);
-    rows.push(row);
-  }
-
-  return rows;
-}
+const CSV_URL="YOUR CSV LINK HERE";
 
 function clean(v){
-  if(v==null)return "";
-  const s=String(v).trim();
-  const m=s.match(/^Date\((\d+),(\d+),(\d+)/);
-  if(m)return `${m[3]}-${MONTHS[+m[2]]}`;
-  return s;
-}
-
-function displayText(v){
-  return clean(v).replace(/^\*\*/,"").trim();
+  return (v||"").toString().trim();
 }
 
 function isStruck(v){
   return clean(v).startsWith("**");
 }
 
-function norm(v){
-  return displayText(v).toUpperCase().replace(/[\s\-\/]+/g,"");
+function display(v){
+  return clean(v).replace("**","");
 }
 
-function findRow(data,terms){
-  return data.findIndex(r=>r.some(c=>{
-    const v=norm(c);
-    return terms.some(t=>v.includes(norm(t)));
-  }));
-}
-
-function statusClass(text){
-  if(isStruck(text))return"struck";
-
-  const s=norm(text);
-
+function statusClass(t){
+  const s=display(t).toUpperCase();
+  if(isStruck(t))return"struck";
   if(s.includes("DELAY"))return"delay";
   if(s==="P1")return"p1";
   if(s==="P2")return"p2";
-  if(s==="PULL")return"pull";
-  if(s==="PULLING")return"pulling";
   if(s==="READY")return"ready";
-  if(s.includes("ONTIME"))return"ontime";
-  if(s==="WAITING")return"waiting";
-
-  if(s==="RELEASED")return"released";
-  if(s==="PARTIAL")return"partial";
-  if(s==="HOLD")return"hold";
-  if(s==="NOTRELEASED")return"notreleased";
-  if(s==="INREVIEW")return"review";
-  if(s==="REVISION")return"revision";
-  if(s==="CLARIFICATION")return"clarification";
-
+  if(s.includes("ON TIME"))return"ontime";
   return"";
 }
 
-function updateClock(){
-  const now=new Date();
-  document.getElementById("dateBox").textContent =
-    now.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
-  document.getElementById("timeBox").textContent =
-    now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",second:"2-digit"});
-}
-setInterval(updateClock,1000);
-updateClock();
+function cell(text,row,col,extra=""){
+  const d=document.createElement("div");
+  d.className="cell "+extra;
 
-function setAnnouncement(text){
-  const finalText=displayText(text)&&displayText(text).trim()?displayText(text):" ";
-  const spans=document.querySelectorAll("#announceTrack span");
-  spans[0].textContent=finalText;
-  spans[1].textContent=finalText;
-}
-
-function makeCell(text,options={}){
-  const div=document.createElement("div");
-  div.className="cell";
-
-  if(options.header)div.classList.add("header");
-  if(options.left)div.classList.add("left");
-  if(options.groupStart)div.classList.add("group-start");
-  if(options.extraClass)div.classList.add(options.extraClass);
+  if(col===1)d.classList.add("sales");
 
   const cls=statusClass(text);
-  if(cls)div.classList.add(cls);
+  if(cls)d.classList.add(cls);
 
-  const inner=document.createElement("span");
-  inner.className="inner";
-  inner.textContent=displayText(text);
-  div.appendChild(inner);
+  d.style.gridRowStart=row;
+  d.style.gridColumnStart=col;
 
-  if(options.colStart)div.style.gridColumnStart=options.colStart;
-  if(options.colEnd)div.style.gridColumnEnd=options.colEnd;
-  if(options.rowStart)div.style.gridRowStart=options.rowStart;
-
-  requestAnimationFrame(()=>{
-    if(inner.scrollWidth>div.clientWidth){
-      div.classList.add("long");
-    }
-  });
-
-  return div;
-}
-
-function render(data){
-  const board=document.getElementById("board");
-  board.innerHTML="";
-
-  const annRow=findRow(data,["ANNOUNCEMENT","ANNOUNCEMENTS","ANNOUNCMENTS"]);
-  const headerRow=findRow(data,["SALES ORDER"]);
-  const notesRow=findRow(data,["NOTES"]);
-
-  if(annRow>=0){
-    setAnnouncement(data[annRow][1]);
-  }
-
-  if(headerRow<0){
-    board.innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
-    return;
-  }
-
-  const header=data[headerRow];
-
-  board.appendChild(makeCell(header[0],{header:true,rowStart:1,colStart:1}));
-  board.appendChild(makeCell(header[1],{header:true,rowStart:1,colStart:2}));
-  board.appendChild(makeCell(header[2],{header:true,rowStart:1,colStart:3}));
-  board.appendChild(makeCell(header[3],{header:true,rowStart:1,colStart:4}));
-
-  board.appendChild(makeCell(header[4],{header:true,rowStart:1,colStart:5,colEnd:7,groupStart:true}));
-  board.appendChild(makeCell(header[6],{header:true,rowStart:1,colStart:7,colEnd:9,groupStart:true}));
-  board.appendChild(makeCell(header[8],{header:true,rowStart:1,colStart:9,colEnd:11,groupStart:true}));
-
-  board.appendChild(makeCell(header[10],{header:true,rowStart:1,colStart:11,groupStart:true,extraClass:"incoming-section"}));
-  board.appendChild(makeCell(header[11],{header:true,rowStart:1,colStart:12,extraClass:"incoming-section"}));
-  board.appendChild(makeCell(header[12],{header:true,rowStart:1,colStart:13,extraClass:"incoming-section"}));
-
-  const tableEnd=notesRow>headerRow?notesRow:data.length;
-  const mainRows=data.slice(headerRow+1,tableEnd);
-
-  for(let r=0;r<MAIN_ROWS;r++){
-    const row=mainRows[r]||[];
-    const gridRow=2+r;
-
-    for(let c=0;c<13;c++){
-      const opt={
-        rowStart:gridRow,
-        colStart:c+1,
-        groupStart:[5,7,9,11].includes(c+1)
-      };
-
-      if(c+1>=11&&c+1<=13){
-        opt.extraClass="incoming-section";
-      }
-
-      board.appendChild(makeCell(row[c],opt));
-    }
-  }
-
-  const notesTitle=notesRow>=0?clean(data[notesRow][0]):"NOTES / IMPORTANT REMARKS";
-
-  board.appendChild(makeCell(notesTitle,{
-    header:true,
-    left:true,
-    rowStart:BOTTOM_START_ROW,
-    colStart:1,
-    colEnd:10,
-    extraClass:"notes-section"
-  }));
-
-  board.appendChild(makeCell("INSPECTION",{
-    header:true,
-    rowStart:BOTTOM_START_ROW,
-    colStart:10,
-    colEnd:12,
-    groupStart:true,
-    extraClass:"inspection-section"
-  }));
-
-  board.appendChild(makeCell("REQ DATE",{
-    header:true,
-    rowStart:BOTTOM_START_ROW,
-    colStart:12,
-    extraClass:"inspection-section"
-  }));
-
-  board.appendChild(makeCell("STATUS",{
-    header:true,
-    rowStart:BOTTOM_START_ROW,
-    colStart:13,
-    extraClass:"inspection-section"
-  }));
-
-  const bottomRows=notesRow>=0?data.slice(notesRow+1):[];
-
-  for(let r=0;r<BOTTOM_ROWS;r++){
-    const row=bottomRows[r]||[];
-    const gridRow=BOTTOM_START_ROW+1+r;
-
-    board.appendChild(makeCell(row[0],{
-      left:true,
-      rowStart:gridRow,
-      colStart:1,
-      colEnd:10,
-      extraClass:"notes-section"
-    }));
-
-    board.appendChild(makeCell(row[9],{
-      left:true,
-      rowStart:gridRow,
-      colStart:10,
-      colEnd:12,
-      groupStart:true,
-      extraClass:"inspection-section"
-    }));
-
-    board.appendChild(makeCell(row[11],{
-      rowStart:gridRow,
-      colStart:12,
-      extraClass:"inspection-section"
-    }));
-
-    board.appendChild(makeCell(row[12],{
-      rowStart:gridRow,
-      colStart:13,
-      extraClass:"inspection-section"
-    }));
-  }
+  d.textContent=display(text);
+  return d;
 }
 
 async function load(){
-  try{
-    const res=await fetch(CSV_URL+"&t="+Date.now()+"&rand="+Math.random(),{cache:"no-store"});
-    const text=await res.text();
+  const res=await fetch(CSV_URL+"&t="+Date.now());
+  const txt=await res.text();
 
-    if(!firstLoad&&text!==lastCsvText){
-      playUpdateSound();
+  const rows=txt.split("\n").map(r=>r.split(","));
+  const board=document.getElementById("board");
+  board.innerHTML="";
+
+  for(let r=1;r<20;r++){
+    for(let c=1;c<=13;c++){
+      board.appendChild(cell(rows[r]?.[c-1]||"",r+1,c));
     }
-
-    render(parseCSV(text));
-
-    lastCsvText=text;
-    firstLoad=false;
-  }catch(e){
-    document.body.innerHTML='<div class="error">LOAD ERROR: '+e.message+'</div>';
   }
 }
 
+setInterval(load,3000);
 load();
-setInterval(load,REFRESH_MS);
 </script>
 
 </body>
