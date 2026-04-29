@@ -20,7 +20,7 @@
   --inspectionBlock:#130f18;
   --salesBlock:#1e1e1e;
 
-  --topHeight:40px;
+  --topHeight:44px;
   --mainRow:clamp(13px,1.55vh,18px);
   --noteRow:clamp(11px,1.25vh,14px);
 }
@@ -44,9 +44,10 @@ html,body{
   background:#000;
 }
 
+/* TOP BAR */
 .top{
   display:grid;
-  grid-template-columns:190px 1fr 520px;
+  grid-template-columns:190px minmax(700px,1fr) 430px;
   gap:3px;
   min-height:0;
 }
@@ -64,20 +65,20 @@ html,body{
 }
 
 .logo img{
-  max-height:34px;
+  max-height:38px;
   max-width:180px;
   object-fit:contain;
 }
 
 .announcement{
   display:grid;
-  grid-template-columns:155px 1fr;
+  grid-template-columns:170px 1fr;
 }
 
 .announcement-label{
   color:var(--orange);
   font-weight:900;
-  font-size:11px;
+  font-size:12px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -92,11 +93,11 @@ html,body{
 
 .marquee-track{
   display:inline-flex;
-  gap:140px;
+  gap:160px;
   white-space:nowrap;
   color:#111;
-  font-weight:800;
-  font-size:11px;
+  font-weight:900;
+  font-size:13px;
   animation:move 70s linear infinite;
   will-change:transform;
 }
@@ -108,7 +109,7 @@ html,body{
 
 .right-panel{
   display:grid;
-  grid-template-columns:135px 130px 255px;
+  grid-template-columns:105px 105px 220px;
 }
 
 .date-box,.time-box,.weather-box{
@@ -117,19 +118,20 @@ html,body{
   justify-content:center;
   color:#000;
   font-weight:900;
-  font-size:11px;
   border-left:1px solid rgba(0,0,0,.18);
 }
 
 .date-box,.time-box{
   color:var(--orange);
+  font-size:11px;
 }
 
 .weather-box{
   flex-direction:column;
   align-items:flex-start;
-  padding-left:10px;
-  line-height:1.1;
+  justify-content:center;
+  padding-left:8px;
+  line-height:1.15;
 }
 
 .weather-top{
@@ -139,11 +141,12 @@ html,body{
 }
 
 .weather-bottom{
-  font-size:10px;
+  font-size:9.5px;
   font-weight:800;
   color:#000;
 }
 
+/* BOARD */
 .board{
   display:grid;
   grid-template-columns:
@@ -296,9 +299,6 @@ const BOTTOM_START_ROW=20;
 const BOTTOM_ROWS=26;
 const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-let lastCsvText="";
-let firstLoad=true;
-
 function parseCSV(text){
   const rows=[];
   let row=[],cell="",q=false;
@@ -384,15 +384,44 @@ function weatherIcon(code){
   return"🌫️";
 }
 
+function nextRainText(hourly){
+  if(!hourly || !hourly.time)return "Rain: unavailable";
+
+  const now=Date.now();
+
+  for(let i=0;i<hourly.time.length;i++){
+    const t=new Date(hourly.time[i]).getTime();
+    const precip=Number(hourly.precipitation_probability?.[i] || 0);
+    const rain=Number(hourly.precipitation?.[i] || 0);
+
+    if(t>now && (precip>=35 || rain>0)){
+      const dt=new Date(hourly.time[i]);
+      const day=dt.toLocaleDateString("en-US",{weekday:"short"});
+      const time=dt.toLocaleTimeString("en-US",{hour:"numeric"});
+      return `Next rain ${day} ${time}`;
+    }
+  }
+
+  return "Next rain: none 7d";
+}
+
 async function loadWeather(){
   try{
-    const url=`https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&temperature_unit=fahrenheit&wind_speed_unit=mph`;
+    const url =
+      `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}`+
+      `&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code`+
+      `&hourly=precipitation_probability,precipitation`+
+      `&forecast_days=7&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch`;
+
     const res=await fetch(url,{cache:"no-store"});
     const data=await res.json();
     const c=data.current;
 
-    weatherTop.textContent=`${weatherIcon(c.weather_code)} Stafford ${Math.round(c.temperature_2m)}°F`;
-    weatherBottom.textContent=`Humidity ${c.relative_humidity_2m}%  Wind ${Math.round(c.wind_speed_10m)} mph`;
+    weatherTop.textContent =
+      `${weatherIcon(c.weather_code)} Stafford ${Math.round(c.temperature_2m)}°F`;
+
+    weatherBottom.textContent =
+      `Humidity ${c.relative_humidity_2m}% Wind ${Math.round(c.wind_speed_10m)}mph | ${nextRainText(data.hourly)}`;
   }catch(e){
     weatherTop.textContent="Weather unavailable";
     weatherBottom.textContent="";
@@ -538,8 +567,6 @@ async function load(){
     const res=await fetch(CSV_URL+"&t="+Date.now()+"&rand="+Math.random(),{cache:"no-store"});
     const text=await res.text();
     render(parseCSV(text));
-    lastCsvText=text;
-    firstLoad=false;
   }catch(e){
     document.body.innerHTML='<div class="error">LOAD ERROR: '+e.message+'</div>';
   }
