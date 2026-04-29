@@ -15,7 +15,6 @@
   --white:#f4f7fb;
   --mainBlock:#020202;
   --shipBlock:#07131b;
-  --outgoingBlock:#151007;
   --notesBlock:#050505;
   --inspectionBlock:#130f18;
   --salesBlock:#1e1e1e;
@@ -43,7 +42,6 @@ html,body{
   background:#000;
 }
 
-/* TOP BAR */
 .top{
   display:grid;
   grid-template-columns:150px 1fr auto;
@@ -110,7 +108,6 @@ html,body{
   to{transform:translate3d(-100%,0,0)}
 }
 
-/* RIGHT PANEL */
 .right-panel{
   display:flex;
   justify-content:flex-end;
@@ -156,7 +153,6 @@ html,body{
   white-space:nowrap;
 }
 
-/* BOARD */
 .board{
   display:grid;
   grid-template-columns:
@@ -208,7 +204,7 @@ html,body{
 }
 
 .sub-header{
-  background:#111!important;
+  background:var(--shipBlock)!important;
   color:var(--orange)!important;
   font-weight:900!important;
   text-transform:uppercase;
@@ -219,7 +215,6 @@ html,body{
 }
 
 .ship-section{background:var(--shipBlock)}
-.outgoing-section{background:var(--outgoingBlock)}
 .notes-section{background:var(--notesBlock)}
 .inspect-section{background:var(--inspectionBlock)}
 
@@ -551,7 +546,7 @@ function render(data){
       if(c+1===1)opt.extraClass="sales-order";
 
       if(c+1>=11&&c+1<=13){
-        opt.extraClass=outgoing ? "outgoing-section" : "ship-section";
+        opt.extraClass="ship-section";
       }
 
       if(outgoing && c+1>=11&&c+1<=13){
