@@ -1,175 +1,97 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Factory Board</title>
-
 <style>
 *{box-sizing:border-box}
+body{margin:0;background:#000;font-family:Arial}
 
-:root{
-  --grid:rgba(180,205,230,.25);
-  --gridStrong:rgba(255,122,0,.5);
-  --orange:#ff7a00;
-  --white:#f4f7fb;
-}
-
-html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  background:#000;
-  overflow:hidden;
-  font-family:Arial,Helvetica,sans-serif;
-}
-
-/* ===== LAYOUT ===== */
 .screen{
-  width:100vw;
-  height:100vh;
+  width:100vw;height:100vh;
   display:grid;
-  grid-template-rows:44px 1fr;
-  gap:3px;
-  padding:3px;
+  grid-template-rows:48px 1fr;
+  gap:3px;padding:3px;
 }
 
-/* ===== TOP BAR ===== */
+/* ===== TOP ===== */
 .top{
   display:grid;
-  grid-template-columns:180px 1fr 280px;
+  grid-template-columns:180px 1fr 260px;
   gap:3px;
 }
 
-/* LOGO */
 .logo{
   background:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:1px solid var(--grid);
+  display:flex;align-items:center;justify-content:center;
 }
-.logo img{
-  max-height:36px;
-}
+.logo img{max-height:36px}
 
-/* ANNOUNCEMENTS */
-.announcement{
+.ann{
   display:grid;
-  grid-template-columns:150px 1fr;
+  grid-template-columns:140px 1fr;
   background:#fff;
-  border:1px solid var(--grid);
 }
 
-.announcement-label{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:var(--orange);
-  font-weight:900;
-  font-size:11px;
+.ann-label{
+  display:flex;align-items:center;justify-content:center;
+  color:#ff7a00;font-weight:900;font-size:11px;
   border-right:1px solid #ddd;
 }
 
 .marquee{
-  overflow:hidden;
-  display:flex;
-  align-items:center;
+  overflow:hidden;display:flex;align-items:center;
 }
-
-.marquee-track{
-  display:flex;
-  gap:120px;
+.track{
+  display:flex;gap:120px;
   white-space:nowrap;
   animation:scroll 60s linear infinite;
-  font-weight:900;
-  font-size:12px;
+  font-weight:900;font-size:12px;
 }
-
 @keyframes scroll{
   from{transform:translateX(100%)}
   to{transform:translateX(-100%)}
 }
 
-/* RIGHT SIDE */
-.right-panel{
+.right{
   display:grid;
-  grid-template-columns:100px 180px;
+  grid-template-columns:90px 170px;
   background:#fff;
-  border:1px solid var(--grid);
 }
 
-/* DATE + TIME (STACKED) */
 .clock{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  font-weight:900;
-  color:var(--orange);
-  font-size:10px;
-  border-right:1px solid #ddd;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  color:#ff7a00;font-weight:900;font-size:10px;
 }
 
-/* WEATHER */
 .weather{
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  padding-left:6px;
-  font-size:9px;
-  font-weight:800;
+  display:flex;flex-direction:column;
+  justify-content:center;padding-left:6px;
+  font-size:9px;font-weight:800;
 }
-
-.weather-top{font-size:10px}
-.weather-mid{font-size:9px}
-.weather-bottom{font-size:8px}
 
 /* ===== BOARD ===== */
 .board{
   display:grid;
   grid-template-columns:repeat(13,1fr);
   grid-auto-rows:18px;
-  border-top:1px solid var(--grid);
-  border-left:1px solid var(--grid);
 }
 
-/* CELL */
 .cell{
-  border-right:1px solid var(--grid);
-  border-bottom:1px solid var(--grid);
+  border:1px solid rgba(255,255,255,.15);
   color:#e6f0ff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:10px;
-  font-weight:800;
-  overflow:hidden;
-  white-space:nowrap;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:800;
 }
 
-/* HEADER */
-.header{
-  color:var(--orange);
-  font-size:9px;
-  font-weight:900;
-  background:#000;
-}
+.header{color:#ff7a00}
+.sales{background:#1c1c1c}
+.delay{background:red;color:#fff}
+.ontime{background:green;color:#fff}
 
-/* STATUS COLORS */
-.delay{background:#ff0000;color:#fff}
-.ontime{background:#00a83a;color:#fff}
-
-/* SALES ORDER GREY */
-.sales{
-  background:#1c1c1c;
-  color:#ddd;
-}
-
-/* ERROR */
 .error{
   color:red;
-  font-size:22px;
+  font-size:20px;
   padding:20px;
 }
 </style>
@@ -179,45 +101,106 @@ html,body{
 
 <div class="screen">
 
-<!-- TOP -->
 <div class="top">
   <div class="logo">
     <img src="GITHUB LOGO.png">
   </div>
 
-  <div class="announcement">
-    <div class="announcement-label">ANNOUNCEMENTS</div>
+  <div class="ann">
+    <div class="ann-label">ANNOUNCEMENTS</div>
     <div class="marquee">
-      <div class="marquee-track" id="announceTrack">
+      <div class="track" id="track">
         <span></span><span></span>
       </div>
     </div>
   </div>
 
-  <div class="right-panel">
+  <div class="right">
     <div class="clock">
-      <div id="dateBox"></div>
-      <div id="timeBox"></div>
+      <div id="date"></div>
+      <div id="time"></div>
     </div>
-
     <div class="weather">
-      <div class="weather-top" id="wTop">Loading...</div>
-      <div class="weather-mid" id="wMid"></div>
-      <div class="weather-bottom" id="wBot"></div>
+      <div id="w1">Loading...</div>
+      <div id="w2"></div>
+      <div id="w3"></div>
     </div>
   </div>
 </div>
 
-<!-- BOARD -->
 <div class="board" id="board"></div>
 
 </div>
 
 <script>
-const CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
+const URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
 
 /* CLOCK */
 function clock(){
   const d=new Date();
-  dateBox.textContent=d.toLocaleDateString("en-US",{month:"short",day:"numeric"});
-  timeBox.textContent=d.toLocaleTimeString("en
+  date.textContent=d.toLocaleDateString("en-US",{month:"short",day:"numeric"});
+  time.textContent=d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+}
+setInterval(clock,1000);clock();
+
+/* WEATHER */
+async function weather(){
+  try{
+    const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=29.6&longitude=-95.55&current=temperature_2m,relative_humidity_2m,wind_speed_10m&hourly=precipitation_probability");
+    const j=await r.json();
+
+    const c=j.current;
+    const nextRain=j.hourly.precipitation_probability.findIndex(v=>v>30);
+
+    w1.textContent=`Stafford ${Math.round(c.temperature_2m)}°F`;
+    w2.textContent=`Humidity ${c.relative_humidity_2m}%  Wind ${Math.round(c.wind_speed_10m)} mph`;
+    w3.textContent=nextRain>0 ? `Rain in ~${nextRain} hrs` : "No rain soon";
+
+  }catch{
+    w1.textContent="Weather error";
+  }
+}
+weather();
+
+/* CSV LOAD */
+async function load(){
+  try{
+    const res=await fetch(URL+"&t="+Date.now());
+    const text=await res.text();
+
+    if(!text || text.length<20){
+      throw "CSV EMPTY";
+    }
+
+    const rows=text.split("\n").map(r=>r.split(","));
+    render(rows);
+
+  }catch(e){
+    board.innerHTML='<div class="error">DATA ERROR</div>';
+  }
+}
+
+/* RENDER */
+function render(data){
+  board.innerHTML="";
+
+  /* ANNOUNCEMENTS */
+  const ann=data.find(r=>r[0]?.toUpperCase().includes("ANNOUNC"));
+  if(ann){
+    document.querySelectorAll("#track span")
+      .forEach(s=>s.textContent=ann[1]||"");
+  }
+
+  /* FIND HEADER */
+  const start=data.findIndex(r=>r[0]?.toUpperCase().includes("SALES"));
+
+  if(start<0){
+    board.innerHTML='<div class="error">NO TABLE FOUND</div>';
+    return;
+  }
+
+  const table=data.slice(start,start+25);
+
+  table.forEach((r,i)=>{
+    for(let j=0;j<13;j++){
+      const
