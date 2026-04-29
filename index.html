@@ -381,7 +381,11 @@ function statusClass(text){
 function updateClock(){
   const now=new Date();
   dateBox.textContent=now.toLocaleDateString("en-US",{month:"short",day:"numeric"});
-  timeBox.textContent=now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+  timeBox.textContent = now.toLocaleTimeString("en-US",{
+  hour:"numeric",
+  minute:"2-digit",
+  second:"2-digit"
+});
 }
 setInterval(updateClock,1000);
 updateClock();
