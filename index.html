@@ -13,16 +13,14 @@
   --gridStrong:rgba(255,122,0,.45);
   --orange:#ff7a00;
   --white:#f4f7fb;
-
   --mainBlock:#020202;
   --shipBlock:#07131b;
   --notesBlock:#050505;
   --inspectionBlock:#130f18;
   --salesBlock:#1e1e1e;
-
-  --topHeight:44px;
-  --mainRow:clamp(13px,1.55vh,18px);
-  --noteRow:clamp(11px,1.25vh,14px);
+  --topHeight:42px;
+  --mainRow:clamp(13px,1.5vh,18px);
+  --noteRow:clamp(11px,1.2vh,14px);
 }
 
 html,body{
@@ -44,18 +42,20 @@ html,body{
   background:#000;
 }
 
-/* TOP BAR */
+/* TOP BAR - FIXED SO RIGHT SIDE DOES NOT RUN OFF SCREEN */
 .top{
   display:grid;
-  grid-template-columns:190px minmax(700px,1fr) 430px;
+  grid-template-columns:180px minmax(0,1fr) 380px;
   gap:3px;
-  min-height:0;
+  min-width:0;
+  overflow:hidden;
 }
 
 .logo,.announcement,.right-panel{
   border:1px solid var(--grid);
   background:#fff;
   overflow:hidden;
+  min-width:0;
 }
 
 .logo{
@@ -65,20 +65,21 @@ html,body{
 }
 
 .logo img{
-  max-height:38px;
-  max-width:180px;
+  max-height:36px;
+  max-width:170px;
   object-fit:contain;
 }
 
 .announcement{
   display:grid;
-  grid-template-columns:170px 1fr;
+  grid-template-columns:155px minmax(0,1fr);
+  min-width:0;
 }
 
 .announcement-label{
   color:var(--orange);
   font-weight:900;
-  font-size:12px;
+  font-size:11px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -89,15 +90,16 @@ html,body{
   overflow:hidden;
   display:flex;
   align-items:center;
+  min-width:0;
 }
 
 .marquee-track{
   display:inline-flex;
-  gap:160px;
+  gap:120px;
   white-space:nowrap;
   color:#111;
   font-weight:900;
-  font-size:13px;
+  font-size:12px;
   animation:move 70s linear infinite;
   will-change:transform;
 }
@@ -109,7 +111,8 @@ html,body{
 
 .right-panel{
   display:grid;
-  grid-template-columns:105px 105px 220px;
+  grid-template-columns:90px 95px 195px;
+  min-width:0;
 }
 
 .date-box,.time-box,.weather-box{
@@ -119,31 +122,35 @@ html,body{
   color:#000;
   font-weight:900;
   border-left:1px solid rgba(0,0,0,.18);
+  overflow:hidden;
+  min-width:0;
 }
 
 .date-box,.time-box{
   color:var(--orange);
-  font-size:11px;
+  font-size:10px;
 }
 
 .weather-box{
   flex-direction:column;
   align-items:flex-start;
   justify-content:center;
-  padding-left:8px;
-  line-height:1.15;
+  padding-left:6px;
+  line-height:1.08;
 }
 
 .weather-top{
-  font-size:11px;
+  font-size:10px;
   font-weight:900;
   color:#000;
+  white-space:nowrap;
 }
 
 .weather-bottom{
-  font-size:9.5px;
+  font-size:8.5px;
   font-weight:800;
   color:#000;
+  white-space:nowrap;
 }
 
 /* BOARD */
@@ -368,8 +375,8 @@ function statusClass(text){
 
 function updateClock(){
   const now=new Date();
-  dateBox.textContent=now.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
-  timeBox.textContent=now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",second:"2-digit"});
+  dateBox.textContent=now.toLocaleDateString("en-US",{month:"short",day:"numeric"});
+  timeBox.textContent=now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
 }
 setInterval(updateClock,1000);
 updateClock();
@@ -385,7 +392,7 @@ function weatherIcon(code){
 }
 
 function nextRainText(hourly){
-  if(!hourly || !hourly.time)return "Rain: unavailable";
+  if(!hourly || !hourly.time)return "Rain unavailable";
 
   const now=Date.now();
 
@@ -398,11 +405,11 @@ function nextRainText(hourly){
       const dt=new Date(hourly.time[i]);
       const day=dt.toLocaleDateString("en-US",{weekday:"short"});
       const time=dt.toLocaleTimeString("en-US",{hour:"numeric"});
-      return `Next rain ${day} ${time}`;
+      return `Rain ${day} ${time}`;
     }
   }
 
-  return "Next rain: none 7d";
+  return "Rain none 7d";
 }
 
 async function loadWeather(){
