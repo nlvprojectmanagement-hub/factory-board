@@ -1,51 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#000;font-family:Arial}
+body{margin:0;background:#000;overflow:hidden;font-family:Arial}
 
 .screen{
   width:100vw;height:100vh;
   display:grid;
-  grid-template-rows:48px 1fr;
+  grid-template-rows:42px 1fr;
   gap:3px;padding:3px;
 }
 
-/* ===== TOP ===== */
+/* TOP */
 .top{
   display:grid;
-  grid-template-columns:180px 1fr 260px;
+  grid-template-columns:180px minmax(0,1fr) 300px;
   gap:3px;
 }
 
-.logo{
+.logo,.announcement,.right{
   background:#fff;
-  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(0,0,0,.25);
+  overflow:hidden;
 }
+
+.logo{display:flex;align-items:center;justify-content:center}
 .logo img{max-height:36px}
 
-.ann{
+.announcement{
   display:grid;
-  grid-template-columns:140px 1fr;
-  background:#fff;
+  grid-template-columns:150px 1fr;
 }
 
 .ann-label{
-  display:flex;align-items:center;justify-content:center;
-  color:#ff7a00;font-weight:900;font-size:11px;
-  border-right:1px solid #ddd;
+  color:#ff7a00;
+  font-weight:900;
+  font-size:11px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-right:1px solid #ccc;
 }
 
-.marquee{
-  overflow:hidden;display:flex;align-items:center;
-}
+.marquee{overflow:hidden;display:flex;align-items:center}
 .track{
-  display:flex;gap:120px;
+  display:flex;
+  gap:160px;
   white-space:nowrap;
-  animation:scroll 60s linear infinite;
-  font-weight:900;font-size:12px;
+  font-weight:900;
+  animation:scroll 65s linear infinite;
 }
 @keyframes scroll{
   from{transform:translateX(100%)}
@@ -54,46 +61,55 @@ body{margin:0;background:#000;font-family:Arial}
 
 .right{
   display:grid;
-  grid-template-columns:90px 170px;
-  background:#fff;
+  grid-template-columns:95px 205px;
 }
 
 .clock{
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  color:#ff7a00;font-weight:900;font-size:10px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  color:#ff7a00;
+  font-size:10px;
+  font-weight:900;
+  border-right:1px solid #ccc;
 }
 
 .weather{
-  display:flex;flex-direction:column;
-  justify-content:center;padding-left:6px;
-  font-size:9px;font-weight:800;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding-left:6px;
+  font-size:9px;
+  font-weight:900;
+  line-height:1.1;
 }
 
-/* ===== BOARD ===== */
+/* BOARD */
 .board{
   display:grid;
   grid-template-columns:repeat(13,1fr);
-  grid-auto-rows:18px;
+  grid-auto-rows:minmax(14px,1.6vh);
+  border-top:1px solid rgba(255,255,255,.2);
+  border-left:1px solid rgba(255,255,255,.2);
 }
 
 .cell{
-  border:1px solid rgba(255,255,255,.15);
+  border-right:1px solid rgba(255,255,255,.2);
+  border-bottom:1px solid rgba(255,255,255,.2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
   color:#e6f0ff;
-  display:flex;align-items:center;justify-content:center;
-  font-size:10px;font-weight:800;
+  font-size:10px;
+  font-weight:800;
+  white-space:nowrap;
 }
 
 .header{color:#ff7a00}
-.sales{background:#1c1c1c}
+.sales{background:#1e1e1e}
 .delay{background:red;color:#fff}
 .ontime{background:green;color:#fff}
-
-.error{
-  color:red;
-  font-size:20px;
-  padding:20px;
-}
 </style>
 </head>
 
@@ -106,7 +122,7 @@ body{margin:0;background:#000;font-family:Arial}
     <img src="GITHUB LOGO.png">
   </div>
 
-  <div class="ann">
+  <div class="announcement">
     <div class="ann-label">ANNOUNCEMENTS</div>
     <div class="marquee">
       <div class="track" id="track">
@@ -120,6 +136,7 @@ body{margin:0;background:#000;font-family:Arial}
       <div id="date"></div>
       <div id="time"></div>
     </div>
+
     <div class="weather">
       <div id="w1">Loading...</div>
       <div id="w2"></div>
@@ -133,7 +150,7 @@ body{margin:0;background:#000;font-family:Arial}
 </div>
 
 <script>
-const URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
 
 /* CLOCK */
 function clock(){
@@ -146,56 +163,53 @@ setInterval(clock,1000);clock();
 /* WEATHER */
 async function weather(){
   try{
-    const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=29.6&longitude=-95.55&current=temperature_2m,relative_humidity_2m,wind_speed_10m&hourly=precipitation_probability");
+    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=29.6&longitude=-95.55&current=temperature_2m,relative_humidity_2m,wind_speed_10m&hourly=precipitation_probability`,{cache:"no-store"});
     const j=await r.json();
 
     const c=j.current;
-    const nextRain=j.hourly.precipitation_probability.findIndex(v=>v>30);
+    const next=j.hourly.precipitation_probability.findIndex(v=>v>40);
 
     w1.textContent=`Stafford ${Math.round(c.temperature_2m)}°F`;
     w2.textContent=`Humidity ${c.relative_humidity_2m}%  Wind ${Math.round(c.wind_speed_10m)} mph`;
-    w3.textContent=nextRain>0 ? `Rain in ~${nextRain} hrs` : "No rain soon";
-
+    w3.textContent=next>0 ? `Rain ~${next}h` : "No rain soon";
   }catch{
     w1.textContent="Weather error";
   }
 }
 weather();
 
-/* CSV LOAD */
+/* DATA LOAD (NO URL PARAM NEEDED) */
 async function load(){
   try{
-    const res=await fetch(URL+"&t="+Date.now());
+    const res=await fetch(CSV_URL+"&_="+Date.now(),{cache:"no-store"});
     const text=await res.text();
 
     if(!text || text.length<20){
-      throw "CSV EMPTY";
+      board.innerHTML='<div style="color:red">DATA ERROR</div>';
+      return;
     }
 
     const rows=text.split("\n").map(r=>r.split(","));
     render(rows);
 
-  }catch(e){
-    board.innerHTML='<div class="error">DATA ERROR</div>';
+  }catch{
+    board.innerHTML='<div style="color:red">LOAD ERROR</div>';
   }
 }
 
-/* RENDER */
 function render(data){
   board.innerHTML="";
 
-  /* ANNOUNCEMENTS */
   const ann=data.find(r=>r[0]?.toUpperCase().includes("ANNOUNC"));
   if(ann){
     document.querySelectorAll("#track span")
       .forEach(s=>s.textContent=ann[1]||"");
   }
 
-  /* FIND HEADER */
   const start=data.findIndex(r=>r[0]?.toUpperCase().includes("SALES"));
 
   if(start<0){
-    board.innerHTML='<div class="error">NO TABLE FOUND</div>';
+    board.innerHTML='<div style="color:red">NO TABLE</div>';
     return;
   }
 
@@ -203,4 +217,26 @@ function render(data){
 
   table.forEach((r,i)=>{
     for(let j=0;j<13;j++){
-      const
+      const d=document.createElement("div");
+      d.className="cell";
+
+      const val=(r[j]||"").trim();
+
+      if(i===0)d.classList.add("header");
+      if(j===0)d.classList.add("sales");
+
+      if(val.toUpperCase().includes("DELAY"))d.classList.add("delay");
+      if(val.toUpperCase().includes("ON TIME"))d.classList.add("ontime");
+
+      d.textContent=val;
+      board.appendChild(d);
+    }
+  });
+}
+
+load();
+setInterval(load,4000);
+</script>
+
+</body>
+</html>
