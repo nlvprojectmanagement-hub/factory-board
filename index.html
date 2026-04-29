@@ -42,10 +42,9 @@ html,body{
   background:#000;
 }
 
-/* TOP BAR - FIXED SO RIGHT SIDE DOES NOT RUN OFF SCREEN */
 .top{
   display:grid;
-  grid-template-columns:180px minmax(0,1fr) 380px;
+  grid-template-columns:180px minmax(0,1fr) 300px;
   gap:3px;
   min-width:0;
   overflow:hidden;
@@ -111,11 +110,11 @@ html,body{
 
 .right-panel{
   display:grid;
-  grid-template-columns:90px 95px 195px;
+  grid-template-columns:95px 205px;
   min-width:0;
 }
 
-.date-box,.time-box,.weather-box{
+.clock-box,.weather-box{
   display:flex;
   align-items:center;
   justify-content:center;
@@ -126,9 +125,11 @@ html,body{
   min-width:0;
 }
 
-.date-box,.time-box{
+.clock-box{
+  flex-direction:column;
   color:var(--orange);
   font-size:10px;
+  line-height:1.15;
 }
 
 .weather-box{
@@ -146,6 +147,7 @@ html,body{
   white-space:nowrap;
 }
 
+.weather-mid,
 .weather-bottom{
   font-size:8.5px;
   font-weight:800;
@@ -153,7 +155,6 @@ html,body{
   white-space:nowrap;
 }
 
-/* BOARD */
 .board{
   display:grid;
   grid-template-columns:
@@ -282,10 +283,14 @@ html,body{
     </div>
 
     <div class="right-panel">
-      <div class="date-box" id="dateBox"></div>
-      <div class="time-box" id="timeBox"></div>
+      <div class="clock-box">
+        <div id="dateBox"></div>
+        <div id="timeBox"></div>
+      </div>
+
       <div class="weather-box">
         <div class="weather-top" id="weatherTop">Weather loading</div>
+        <div class="weather-mid" id="weatherMid"></div>
         <div class="weather-bottom" id="weatherBottom"></div>
       </div>
     </div>
@@ -312,276 +317,3 @@ function parseCSV(text){
 
   for(let i=0;i<text.length;i++){
     const ch=text[i],nx=text[i+1];
-
-    if(ch==='"'){
-      if(q&&nx==='"'){cell+='"';i++}
-      else q=!q;
-    }else if(ch===","&&!q){
-      row.push(cell); cell="";
-    }else if((ch==="\n"||ch==="\r")&&!q){
-      if(ch==="\r"&&nx==="\n")i++;
-      row.push(cell); rows.push(row); row=[]; cell="";
-    }else{
-      cell+=ch;
-    }
-  }
-
-  if(cell.length||row.length){row.push(cell); rows.push(row)}
-  return rows;
-}
-
-function clean(v){
-  if(v==null)return "";
-  const s=String(v).trim();
-  const m=s.match(/^Date\((\d+),(\d+),(\d+)/);
-  if(m)return `${m[3]}-${MONTHS[+m[2]]}`;
-  return s;
-}
-
-function displayText(v){return clean(v).replace(/^\*\*/,"").trim()}
-function isStruck(v){return clean(v).startsWith("**")}
-function norm(v){return displayText(v).toUpperCase().replace(/[\s\-\/]+/g,"")}
-
-function findRow(data,terms){
-  return data.findIndex(r=>r.some(c=>{
-    const v=norm(c);
-    return terms.some(t=>v.includes(norm(t)));
-  }));
-}
-
-function statusClass(text){
-  if(isStruck(text))return"struck";
-  const s=norm(text);
-
-  if(s.includes("DELAY"))return"delay";
-  if(s==="P1")return"p1";
-  if(s==="P2")return"p2";
-  if(s==="PULL")return"pull";
-  if(s==="PULLING")return"pulling";
-  if(s==="READY")return"ready";
-  if(s.includes("ONTIME"))return"ontime";
-  if(s==="WAITING")return"waiting";
-
-  if(s==="RELEASED")return"released";
-  if(s==="PARTIAL")return"partial";
-  if(s==="HOLD")return"hold";
-  if(s==="NOTRELEASED")return"notreleased";
-  if(s==="INREVIEW")return"review";
-  if(s==="REVISION")return"revision";
-  if(s==="CLARIFICATION")return"clarification";
-
-  return"";
-}
-
-function updateClock(){
-  const now=new Date();
-  dateBox.textContent=now.toLocaleDateString("en-US",{month:"short",day:"numeric"});
-  timeBox.textContent=now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
-}
-setInterval(updateClock,1000);
-updateClock();
-
-function weatherIcon(code){
-  if(code===0)return"☀️";
-  if(code<=2)return"🌤️";
-  if(code===3)return"☁️";
-  if(code<=67)return"🌧️";
-  if(code<=82)return"🌦️";
-  if(code<=99)return"⛈️";
-  return"🌫️";
-}
-
-function nextRainText(hourly){
-  if(!hourly || !hourly.time)return "Rain unavailable";
-
-  const now=Date.now();
-
-  for(let i=0;i<hourly.time.length;i++){
-    const t=new Date(hourly.time[i]).getTime();
-    const precip=Number(hourly.precipitation_probability?.[i] || 0);
-    const rain=Number(hourly.precipitation?.[i] || 0);
-
-    if(t>now && (precip>=35 || rain>0)){
-      const dt=new Date(hourly.time[i]);
-      const day=dt.toLocaleDateString("en-US",{weekday:"short"});
-      const time=dt.toLocaleTimeString("en-US",{hour:"numeric"});
-      return `Rain ${day} ${time}`;
-    }
-  }
-
-  return "Rain none 7d";
-}
-
-async function loadWeather(){
-  try{
-    const url =
-      `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}`+
-      `&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code`+
-      `&hourly=precipitation_probability,precipitation`+
-      `&forecast_days=7&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch`;
-
-    const res=await fetch(url,{cache:"no-store"});
-    const data=await res.json();
-    const c=data.current;
-
-    weatherTop.textContent =
-      `${weatherIcon(c.weather_code)} Stafford ${Math.round(c.temperature_2m)}°F`;
-
-    weatherBottom.textContent =
-      `Humidity ${c.relative_humidity_2m}% Wind ${Math.round(c.wind_speed_10m)}mph | ${nextRainText(data.hourly)}`;
-  }catch(e){
-    weatherTop.textContent="Weather unavailable";
-    weatherBottom.textContent="";
-  }
-}
-loadWeather();
-setInterval(loadWeather,600000);
-
-function setAnnouncement(text){
-  const finalText=displayText(text)&&displayText(text).trim()?displayText(text):" ";
-  const spans=document.querySelectorAll("#announceTrack span");
-  spans[0].textContent=finalText;
-  spans[1].textContent=finalText;
-}
-
-function makeCell(text,options={}){
-  const div=document.createElement("div");
-  div.className="cell";
-
-  if(options.header)div.classList.add("header");
-  if(options.left)div.classList.add("left");
-  if(options.groupStart)div.classList.add("group-start");
-  if(options.extraClass)div.classList.add(options.extraClass);
-  if(options.salesEntry)div.classList.add("sales-entry");
-
-  const cls=statusClass(text);
-  if(cls)div.classList.add(cls);
-
-  const inner=document.createElement("span");
-  inner.className="inner";
-  inner.textContent=displayText(text);
-  div.appendChild(inner);
-
-  if(options.colStart)div.style.gridColumnStart=options.colStart;
-  if(options.colEnd)div.style.gridColumnEnd=options.colEnd;
-  if(options.rowStart)div.style.gridRowStart=options.rowStart;
-
-  requestAnimationFrame(()=>{
-    if(inner.scrollWidth>div.clientWidth){
-      div.classList.add("long");
-    }
-  });
-
-  return div;
-}
-
-function render(data){
-  const board=document.getElementById("board");
-  board.innerHTML="";
-
-  const annRow=findRow(data,["ANNOUNCEMENT","ANNOUNCEMENTS","ANNOUNCMENTS"]);
-  const headerRow=findRow(data,["SALES ORDER"]);
-  const notesRow=findRow(data,["NOTES"]);
-
-  if(annRow>=0)setAnnouncement(data[annRow][1]);
-
-  if(headerRow<0){
-    board.innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
-    return;
-  }
-
-  const header=data[headerRow];
-
-  board.appendChild(makeCell(header[0],{header:true,rowStart:1,colStart:1,extraClass:"sales-order"}));
-  board.appendChild(makeCell(header[1],{header:true,rowStart:1,colStart:2}));
-  board.appendChild(makeCell(header[2],{header:true,rowStart:1,colStart:3}));
-  board.appendChild(makeCell(header[3],{header:true,rowStart:1,colStart:4}));
-
-  board.appendChild(makeCell(header[4],{header:true,rowStart:1,colStart:5,colEnd:7,groupStart:true}));
-  board.appendChild(makeCell(header[6],{header:true,rowStart:1,colStart:7,colEnd:9,groupStart:true}));
-  board.appendChild(makeCell(header[8],{header:true,rowStart:1,colStart:9,colEnd:11,groupStart:true}));
-
-  board.appendChild(makeCell(header[10],{header:true,rowStart:1,colStart:11,groupStart:true,extraClass:"ship-section"}));
-  board.appendChild(makeCell(header[11],{header:true,rowStart:1,colStart:12,extraClass:"ship-section"}));
-  board.appendChild(makeCell(header[12],{header:true,rowStart:1,colStart:13,extraClass:"ship-section"}));
-
-  const tableEnd=notesRow>headerRow?notesRow:data.length;
-  const mainRows=data.slice(headerRow+1,tableEnd);
-
-  for(let r=0;r<MAIN_ROWS;r++){
-    const row=mainRows[r]||[];
-    const gridRow=2+r;
-
-    for(let c=0;c<13;c++){
-      const opt={
-        rowStart:gridRow,
-        colStart:c+1,
-        groupStart:[5,7,9,11].includes(c+1),
-        salesEntry:c+1===1
-      };
-
-      if(c+1===1)opt.extraClass="sales-order";
-      if(c+1>=11&&c+1<=13)opt.extraClass="ship-section";
-
-      board.appendChild(makeCell(row[c],opt));
-    }
-  }
-
-  const notesTitle=notesRow>=0?clean(data[notesRow][0]):"NOTES / IMPORTANT REMARKS";
-
-  board.appendChild(makeCell(notesTitle,{
-    header:true,left:true,rowStart:BOTTOM_START_ROW,colStart:1,colEnd:10,extraClass:"notes-section"
-  }));
-
-  board.appendChild(makeCell("INSPECTION",{
-    header:true,rowStart:BOTTOM_START_ROW,colStart:10,colEnd:12,groupStart:true,extraClass:"inspect-section"
-  }));
-
-  board.appendChild(makeCell("REQ DATE",{
-    header:true,rowStart:BOTTOM_START_ROW,colStart:12,extraClass:"inspect-section"
-  }));
-
-  board.appendChild(makeCell("STATUS",{
-    header:true,rowStart:BOTTOM_START_ROW,colStart:13,extraClass:"inspect-section"
-  }));
-
-  const bottomRows=notesRow>=0?data.slice(notesRow+1):[];
-
-  for(let r=0;r<BOTTOM_ROWS;r++){
-    const row=bottomRows[r]||[];
-    const gridRow=BOTTOM_START_ROW+1+r;
-
-    board.appendChild(makeCell(row[0],{
-      left:true,rowStart:gridRow,colStart:1,colEnd:10,extraClass:"notes-section"
-    }));
-
-    board.appendChild(makeCell(row[9],{
-      left:true,rowStart:gridRow,colStart:10,colEnd:12,groupStart:true,extraClass:"inspect-section"
-    }));
-
-    board.appendChild(makeCell(row[11],{
-      rowStart:gridRow,colStart:12,extraClass:"inspect-section"
-    }));
-
-    board.appendChild(makeCell(row[12],{
-      rowStart:gridRow,colStart:13,extraClass:"inspect-section"
-    }));
-  }
-}
-
-async function load(){
-  try{
-    const res=await fetch(CSV_URL+"&t="+Date.now()+"&rand="+Math.random(),{cache:"no-store"});
-    const text=await res.text();
-    render(parseCSV(text));
-  }catch(e){
-    document.body.innerHTML='<div class="error">LOAD ERROR: '+e.message+'</div>';
-  }
-}
-
-load();
-setInterval(load,REFRESH_MS);
-</script>
-
-</body>
-</html>
