@@ -15,6 +15,7 @@
   --white:#f4f7fb;
   --mainBlock:#020202;
   --shipBlock:#07131b;
+  --outgoingBlock:#151007;
   --notesBlock:#050505;
   --inspectionBlock:#130f18;
   --salesBlock:#1e1e1e;
@@ -130,13 +131,9 @@ html,body{
   line-height:1.1;
   border-left:1px solid rgba(0,0,0,.18);
 }
-.clock-weather{
-  display:flex;
-  width:100%;
-}
+
 .weather-box{
-  flex:1;
-  min-width:0;
+  width:185px;
   display:flex;
   flex-direction:column;
   justify-content:center;
@@ -210,11 +207,19 @@ html,body{
   text-transform:uppercase;
 }
 
+.sub-header{
+  background:#111!important;
+  color:var(--orange)!important;
+  font-weight:900!important;
+  text-transform:uppercase;
+}
+
 .group-start{
   border-left:1px solid var(--gridStrong);
 }
 
 .ship-section{background:var(--shipBlock)}
+.outgoing-section{background:var(--outgoingBlock)}
 .notes-section{background:var(--notesBlock)}
 .inspect-section{background:var(--inspectionBlock)}
 
@@ -387,10 +392,10 @@ function updateClock(){
   const now=new Date();
   dateBox.textContent=now.toLocaleDateString("en-US",{month:"short",day:"numeric"});
   timeBox.textContent = now.toLocaleTimeString("en-US",{
-  hour:"numeric",
-  minute:"2-digit",
-  second:"2-digit"
-});
+    hour:"numeric",
+    minute:"2-digit",
+    second:"2-digit"
+  });
 }
 setInterval(updateClock,1000);
 updateClock();
@@ -466,6 +471,7 @@ function makeCell(text,options={}){
   div.className="cell";
 
   if(options.header)div.classList.add("header");
+  if(options.subHeader)div.classList.add("sub-header");
   if(options.left)div.classList.add("left");
   if(options.groupStart)div.classList.add("group-start");
   if(options.extraClass)div.classList.add(options.extraClass);
@@ -490,6 +496,10 @@ function makeCell(text,options={}){
   });
 
   return div;
+}
+
+function isOutgoingHeader(row){
+  return norm(row?.[10] || "").includes("OUTGOINGSHIPMENTS");
 }
 
 function render(data){
@@ -528,6 +538,7 @@ function render(data){
   for(let r=0;r<MAIN_ROWS;r++){
     const row=mainRows[r]||[];
     const gridRow=2+r;
+    const outgoing=isOutgoingHeader(row);
 
     for(let c=0;c<13;c++){
       const opt={
@@ -538,7 +549,14 @@ function render(data){
       };
 
       if(c+1===1)opt.extraClass="sales-order";
-      if(c+1>=11&&c+1<=13)opt.extraClass="ship-section";
+
+      if(c+1>=11&&c+1<=13){
+        opt.extraClass=outgoing ? "outgoing-section" : "ship-section";
+      }
+
+      if(outgoing && c+1>=11&&c+1<=13){
+        opt.subHeader=true;
+      }
 
       board.appendChild(makeCell(row[c],opt));
     }
