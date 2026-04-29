@@ -19,6 +19,10 @@
   --notesBlock:#050505;
   --inspectionBlock:#130f18;
   --salesBlock:#1e1e1e;
+
+  --topHeight:40px;
+  --mainRow:clamp(13px,1.55vh,18px);
+  --noteRow:clamp(11px,1.25vh,14px);
 }
 
 html,body{
@@ -34,17 +38,17 @@ html,body{
   width:100vw;
   height:100vh;
   display:grid;
-  grid-template-rows:44px 1fr;
-  gap:4px;
-  padding:4px;
+  grid-template-rows:var(--topHeight) 1fr;
+  gap:3px;
+  padding:3px;
   background:#000;
 }
 
-/* TOP BAR */
 .top{
   display:grid;
   grid-template-columns:190px 1fr 520px;
-  gap:4px;
+  gap:3px;
+  min-height:0;
 }
 
 .logo,.announcement,.right-panel{
@@ -60,20 +64,20 @@ html,body{
 }
 
 .logo img{
-  max-height:38px;
+  max-height:34px;
   max-width:180px;
   object-fit:contain;
 }
 
 .announcement{
   display:grid;
-  grid-template-columns:160px 1fr;
+  grid-template-columns:155px 1fr;
 }
 
 .announcement-label{
   color:var(--orange);
   font-weight:900;
-  font-size:12px;
+  font-size:11px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -92,7 +96,7 @@ html,body{
   white-space:nowrap;
   color:#111;
   font-weight:800;
-  font-size:12px;
+  font-size:11px;
   animation:move 70s linear infinite;
   will-change:transform;
 }
@@ -125,7 +129,7 @@ html,body{
   flex-direction:column;
   align-items:flex-start;
   padding-left:10px;
-  line-height:1.15;
+  line-height:1.1;
 }
 
 .weather-top{
@@ -140,7 +144,6 @@ html,body{
   color:#000;
 }
 
-/* BOARD */
 .board{
   display:grid;
   grid-template-columns:
@@ -151,16 +154,17 @@ html,body{
     12fr 7fr 16fr;
 
   grid-template-rows:
-    18px
-    repeat(18,18px)
-    18px
-    repeat(42,16px);
+    var(--mainRow)
+    repeat(18,var(--mainRow))
+    var(--mainRow)
+    repeat(26,var(--noteRow));
 
   align-content:start;
   border-top:1px solid var(--grid);
   border-left:1px solid var(--grid);
   background:#000;
   overflow:hidden;
+  min-height:0;
 }
 
 .cell{
@@ -171,7 +175,7 @@ html,body{
   background:var(--mainBlock);
   color:var(--white);
   font-weight:800;
-  font-size:10px;
+  font-size:clamp(8px,.7vw,10px);
   line-height:1;
   display:flex;
   align-items:center;
@@ -186,7 +190,7 @@ html,body{
   background:#000!important;
   color:var(--orange);
   font-weight:900;
-  font-size:9.5px;
+  font-size:clamp(8px,.65vw,9.5px);
   text-transform:uppercase;
 }
 
@@ -209,13 +213,11 @@ html,body{
 }
 
 .sales-entry{
-  font-size:11.5px;
+  font-size:clamp(9px,.8vw,11.5px);
   font-weight:900;
 }
 
-.inner{
-  white-space:nowrap;
-}
+.inner{white-space:nowrap}
 
 .long .inner{
   position:absolute;
@@ -232,50 +234,16 @@ html,body{
   color:#777!important;
 }
 
-.delay,.p1{
-  background:#ff0000!important;
-  color:#fff!important;
-}
-
-.ontime,.ready{
-  background:#00a83a!important;
-  color:#fff!important;
-}
-
-.p2{
-  background:#ff7a00!important;
-  color:#000!important;
-}
-
-.pull{
-  background:#ffff00!important;
-  color:#000!important;
-}
-
-.pulling{
-  background:#00b0f0!important;
-  color:#000!important;
-}
-
-.waiting{
-  color:#b8b8b8!important;
-}
-
-.released{
-  color:#00ff88!important;
-}
-
-.partial{
-  color:#ffff00!important;
-}
-
-.hold,.notreleased{
-  color:#ff3333!important;
-}
-
-.review,.revision,.clarification{
-  color:#00b0f0!important;
-}
+.delay,.p1{background:#ff0000!important;color:#fff!important}
+.ontime,.ready{background:#00a83a!important;color:#fff!important}
+.p2{background:#ff7a00!important;color:#000!important}
+.pull{background:#ffff00!important;color:#000!important}
+.pulling{background:#00b0f0!important;color:#000!important}
+.waiting{color:#b8b8b8!important}
+.released{color:#00ff88!important}
+.partial{color:#ffff00!important}
+.hold,.notreleased{color:#ff3333!important}
+.review,.revision,.clarification{color:#00b0f0!important}
 
 .error{
   color:red;
@@ -325,42 +293,11 @@ const LON=-95.5577;
 
 const MAIN_ROWS=18;
 const BOTTOM_START_ROW=20;
-const BOTTOM_ROWS=42;
+const BOTTOM_ROWS=26;
 const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 let lastCsvText="";
 let firstLoad=true;
-let soundUnlocked=false;
-let audioCtx=null;
-
-function unlockSound(){
-  if(soundUnlocked)return;
-  try{
-    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-    if(audioCtx.state==="suspended")audioCtx.resume();
-    soundUnlocked=true;
-  }catch(e){}
-}
-
-document.body.addEventListener("click",unlockSound,{once:true});
-document.body.addEventListener("touchstart",unlockSound,{once:true});
-
-function playUpdateSound(){
-  if(!soundUnlocked||!audioCtx)return;
-  try{
-    const osc=audioCtx.createOscillator();
-    const gain=audioCtx.createGain();
-    osc.type="sine";
-    osc.frequency.setValueAtTime(880,audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.0001,audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.16,audioCtx.currentTime+0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+0.22);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime+0.24);
-  }catch(e){}
-}
 
 function parseCSV(text){
   const rows=[];
@@ -370,31 +307,19 @@ function parseCSV(text){
     const ch=text[i],nx=text[i+1];
 
     if(ch==='"'){
-      if(q&&nx==='"'){
-        cell+='"';
-        i++;
-      }else{
-        q=!q;
-      }
+      if(q&&nx==='"'){cell+='"';i++}
+      else q=!q;
     }else if(ch===","&&!q){
-      row.push(cell);
-      cell="";
+      row.push(cell); cell="";
     }else if((ch==="\n"||ch==="\r")&&!q){
       if(ch==="\r"&&nx==="\n")i++;
-      row.push(cell);
-      rows.push(row);
-      row=[];
-      cell="";
+      row.push(cell); rows.push(row); row=[]; cell="";
     }else{
       cell+=ch;
     }
   }
 
-  if(cell.length||row.length){
-    row.push(cell);
-    rows.push(row);
-  }
-
+  if(cell.length||row.length){row.push(cell); rows.push(row)}
   return rows;
 }
 
@@ -406,17 +331,9 @@ function clean(v){
   return s;
 }
 
-function displayText(v){
-  return clean(v).replace(/^\*\*/,"").trim();
-}
-
-function isStruck(v){
-  return clean(v).startsWith("**");
-}
-
-function norm(v){
-  return displayText(v).toUpperCase().replace(/[\s\-\/]+/g,"");
-}
+function displayText(v){return clean(v).replace(/^\*\*/,"").trim()}
+function isStruck(v){return clean(v).startsWith("**")}
+function norm(v){return displayText(v).toUpperCase().replace(/[\s\-\/]+/g,"")}
 
 function findRow(data,terms){
   return data.findIndex(r=>r.some(c=>{
@@ -451,10 +368,8 @@ function statusClass(text){
 
 function updateClock(){
   const now=new Date();
-  document.getElementById("dateBox").textContent =
-    now.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
-  document.getElementById("timeBox").textContent =
-    now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",second:"2-digit"});
+  dateBox.textContent=now.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
+  timeBox.textContent=now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",second:"2-digit"});
 }
 setInterval(updateClock,1000);
 updateClock();
@@ -476,14 +391,11 @@ async function loadWeather(){
     const data=await res.json();
     const c=data.current;
 
-    document.getElementById("weatherTop").textContent =
-      `${weatherIcon(c.weather_code)} Stafford ${Math.round(c.temperature_2m)}°F`;
-
-    document.getElementById("weatherBottom").textContent =
-      `Humidity ${c.relative_humidity_2m}%  Wind ${Math.round(c.wind_speed_10m)} mph`;
+    weatherTop.textContent=`${weatherIcon(c.weather_code)} Stafford ${Math.round(c.temperature_2m)}°F`;
+    weatherBottom.textContent=`Humidity ${c.relative_humidity_2m}%  Wind ${Math.round(c.wind_speed_10m)} mph`;
   }catch(e){
-    document.getElementById("weatherTop").textContent="Weather unavailable";
-    document.getElementById("weatherBottom").textContent="";
+    weatherTop.textContent="Weather unavailable";
+    weatherBottom.textContent="";
   }
 }
 loadWeather();
@@ -535,9 +447,7 @@ function render(data){
   const headerRow=findRow(data,["SALES ORDER"]);
   const notesRow=findRow(data,["NOTES"]);
 
-  if(annRow>=0){
-    setAnnouncement(data[annRow][1]);
-  }
+  if(annRow>=0)setAnnouncement(data[annRow][1]);
 
   if(headerRow<0){
     board.innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
@@ -574,13 +484,8 @@ function render(data){
         salesEntry:c+1===1
       };
 
-      if(c+1===1){
-        opt.extraClass="sales-order";
-      }
-
-      if(c+1>=11&&c+1<=13){
-        opt.extraClass="ship-section";
-      }
+      if(c+1===1)opt.extraClass="sales-order";
+      if(c+1>=11&&c+1<=13)opt.extraClass="ship-section";
 
       board.appendChild(makeCell(row[c],opt));
     }
@@ -589,35 +494,19 @@ function render(data){
   const notesTitle=notesRow>=0?clean(data[notesRow][0]):"NOTES / IMPORTANT REMARKS";
 
   board.appendChild(makeCell(notesTitle,{
-    header:true,
-    left:true,
-    rowStart:BOTTOM_START_ROW,
-    colStart:1,
-    colEnd:10,
-    extraClass:"notes-section"
+    header:true,left:true,rowStart:BOTTOM_START_ROW,colStart:1,colEnd:10,extraClass:"notes-section"
   }));
 
   board.appendChild(makeCell("INSPECTION",{
-    header:true,
-    rowStart:BOTTOM_START_ROW,
-    colStart:10,
-    colEnd:12,
-    groupStart:true,
-    extraClass:"inspect-section"
+    header:true,rowStart:BOTTOM_START_ROW,colStart:10,colEnd:12,groupStart:true,extraClass:"inspect-section"
   }));
 
   board.appendChild(makeCell("REQ DATE",{
-    header:true,
-    rowStart:BOTTOM_START_ROW,
-    colStart:12,
-    extraClass:"inspect-section"
+    header:true,rowStart:BOTTOM_START_ROW,colStart:12,extraClass:"inspect-section"
   }));
 
   board.appendChild(makeCell("STATUS",{
-    header:true,
-    rowStart:BOTTOM_START_ROW,
-    colStart:13,
-    extraClass:"inspect-section"
+    header:true,rowStart:BOTTOM_START_ROW,colStart:13,extraClass:"inspect-section"
   }));
 
   const bottomRows=notesRow>=0?data.slice(notesRow+1):[];
@@ -627,32 +516,19 @@ function render(data){
     const gridRow=BOTTOM_START_ROW+1+r;
 
     board.appendChild(makeCell(row[0],{
-      left:true,
-      rowStart:gridRow,
-      colStart:1,
-      colEnd:10,
-      extraClass:"notes-section"
+      left:true,rowStart:gridRow,colStart:1,colEnd:10,extraClass:"notes-section"
     }));
 
     board.appendChild(makeCell(row[9],{
-      left:true,
-      rowStart:gridRow,
-      colStart:10,
-      colEnd:12,
-      groupStart:true,
-      extraClass:"inspect-section"
+      left:true,rowStart:gridRow,colStart:10,colEnd:12,groupStart:true,extraClass:"inspect-section"
     }));
 
     board.appendChild(makeCell(row[11],{
-      rowStart:gridRow,
-      colStart:12,
-      extraClass:"inspect-section"
+      rowStart:gridRow,colStart:12,extraClass:"inspect-section"
     }));
 
     board.appendChild(makeCell(row[12],{
-      rowStart:gridRow,
-      colStart:13,
-      extraClass:"inspect-section"
+      rowStart:gridRow,colStart:13,extraClass:"inspect-section"
     }));
   }
 }
@@ -661,13 +537,7 @@ async function load(){
   try{
     const res=await fetch(CSV_URL+"&t="+Date.now()+"&rand="+Math.random(),{cache:"no-store"});
     const text=await res.text();
-
-    if(!firstLoad&&text!==lastCsvText){
-      playUpdateSound();
-    }
-
     render(parseCSV(text));
-
     lastCsvText=text;
     firstLoad=false;
   }catch(e){
