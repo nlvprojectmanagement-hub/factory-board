@@ -19,10 +19,10 @@
   --inspectionBlock:#130f18;
   --salesBlock:#1e1e1e;
   --topHeight:26px;
-  --opsHeight:128px;
-  --bottomHeight:52px;
-  --mainRow:clamp(12px,1.35vh,16px);
-  --noteRow:clamp(10px,1.05vh,13px);
+  --opsHeight:116px;
+  --bottomHeight:46px;
+  --mainRow:clamp(11px,1.25vh,15px);
+  --noteRow:clamp(9px,.95vh,12px);
 }
 
 html,body{
@@ -70,7 +70,7 @@ html,body{
 .marquee-track{
   display:inline-flex;gap:80px;white-space:nowrap;
   color:#111;font-weight:900;font-size:11px;
-  animation:move 160s linear infinite;
+  animation:move 85s linear infinite;
   will-change:transform;
   transform:translateZ(0);
   backface-visibility:hidden;
@@ -104,7 +104,7 @@ html,body{
 /* OPS STRIP */
 .ops{
   display:grid;
-  grid-template-columns:21fr 31fr 28fr 20fr;
+  grid-template-columns:20fr 30fr 28fr 22fr;
   gap:4px;
   min-height:0;
 }
@@ -114,70 +114,78 @@ html,body{
   background:#050505;
   color:var(--white);
   overflow:hidden;
-  padding:5px 7px;
+  padding:4px 7px;
 }
 
 .card-title{
   color:var(--orange);
   font-weight:900;
-  font-size:11px;
+  font-size:10px;
   text-align:center;
-  margin-bottom:5px;
+  margin-bottom:4px;
 }
 
 .prior-row{
   display:grid;
   grid-template-columns:20px 1fr auto;
   align-items:center;
-  font-size:12px;
+  font-size:11px;
   font-weight:900;
-  line-height:1.35;
+  line-height:1.25;
 }
 
-.icon{color:var(--orange);font-size:14px}
-.biggreen{color:#28d428;font-size:25px;font-weight:900;text-align:center}
-.bigyellow{color:#ffe600;font-size:25px;font-weight:900;text-align:center}
+.icon{color:var(--orange);font-size:13px}
+.biggreen{color:#28d428;font-size:23px;font-weight:900;text-align:center}
+.bigyellow{color:#ffe600;font-size:23px;font-weight:900;text-align:center}
+
 .metric-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:4px;
 }
+
 .metric{
   border:1px solid var(--grid);
-  padding:6px 4px;
+  padding:5px 3px;
   text-align:center;
-  min-height:84px;
+  min-height:76px;
 }
+
 .metric-label{
-  font-size:10px;
+  font-size:9px;
   font-weight:900;
-  line-height:1.15;
-  min-height:28px;
+  line-height:1.1;
+  min-height:25px;
 }
+
 .date-row{
   display:grid;
-  grid-template-columns:60px 1fr 55px;
+  grid-template-columns:58px 1fr 48px;
   border-bottom:1px solid rgba(180,205,230,.18);
-  font-size:11px;
+  font-size:10px;
   font-weight:900;
-  padding:3px 0;
+  padding:2px 0;
 }
+
 .safety-card{
   display:grid;
-  grid-template-columns:55px 1fr;
+  grid-template-columns:45px 1fr;
   align-items:center;
-  height:85px;
+  height:76px;
 }
+
 .safety-icon{
   color:var(--orange);
-  font-size:45px;
+  font-size:38px;
   text-align:center;
 }
+
 .safety-text{
-  font-size:15px;
+  font-size:13px;
   font-weight:900;
-  line-height:1.3;
+  line-height:1.25;
 }
+
 .greenword{color:#28d428}
 
 /* BOARD */
@@ -211,7 +219,7 @@ html,body{
   background:var(--mainBlock);
   color:var(--white);
   font-weight:800;
-  font-size:clamp(8px,.7vw,10px);
+  font-size:clamp(7px,.65vw,9.5px);
   line-height:1;
   display:flex;
   align-items:center;
@@ -226,7 +234,7 @@ html,body{
   background:#000!important;
   color:var(--orange);
   font-weight:900;
-  font-size:clamp(8px,.65vw,9.5px);
+  font-size:clamp(7px,.6vw,9px);
   text-transform:uppercase;
 }
 
@@ -243,7 +251,7 @@ html,body{
 .inspect-section{background:var(--inspectionBlock)}
 .sales-order{background:var(--salesBlock)!important;color:#e6e6e6!important}
 .left{justify-content:flex-start;padding-left:6px}
-.sales-entry{font-size:clamp(9px,.8vw,11.5px);font-weight:900}
+.sales-entry{font-size:clamp(8px,.75vw,10.5px);font-weight:900}
 .inner{white-space:nowrap}
 .long .inner{position:absolute;animation:scrollCell 16s linear infinite}
 
@@ -267,7 +275,7 @@ html,body{
 /* BOTTOM STRIP */
 .bottom{
   display:grid;
-  grid-template-columns:15fr 20fr 25fr 40fr;
+  grid-template-columns:15fr 22fr 26fr 37fr;
   gap:3px;
 }
 
@@ -283,13 +291,13 @@ html,body{
 
 .bottom-title{
   color:var(--orange);
-  font-size:10px;
+  font-size:9px;
   font-weight:900;
 }
 
 .bottom-value{
   color:#28d428;
-  font-size:24px;
+  font-size:21px;
   font-weight:900;
 }
 
@@ -298,15 +306,17 @@ html,body{
   color:#000;
   display:flex;
   align-items:center;
-  gap:12px;
-  padding:0 10px;
+  justify-content:center;
+  gap:8px;
+  padding:0 6px;
   font-weight:900;
-  font-size:10px;
+  font-size:8.5px;
   overflow:hidden;
+  white-space:nowrap;
 }
 
 .swatch{
-  width:14px;height:14px;display:inline-block;margin-right:4px;vertical-align:middle;
+  width:11px;height:11px;display:inline-block;margin-right:3px;vertical-align:middle;
 }
 .sw-green{background:#00a83a}
 .sw-red{background:#ff0000}
@@ -319,16 +329,29 @@ html,body{
   color:#000;
   display:flex;
   align-items:center;
-  gap:18px;
-  padding:0 14px;
-  font-size:13px;
+  gap:14px;
+  padding:0 10px;
+  font-size:11px;
   font-weight:900;
   overflow:hidden;
   white-space:nowrap;
 }
-.win-label{color:var(--orange)}
-.dot{color:var(--orange)}
 
+.wins span{
+  white-space:nowrap;
+}
+
+.win-scroll{
+  display:inline-block;
+  animation:winsMove 35s linear infinite;
+}
+
+@keyframes winsMove{
+  from{transform:translateX(35%)}
+  to{transform:translateX(-100%)}
+}
+
+.win-label{color:var(--orange);flex-shrink:0}
 .error{
   color:red;
   font-size:22px;
@@ -396,7 +419,7 @@ html,body{
     <div class="card">
       <div class="card-title">SAFETY MESSAGE</div>
       <div class="safety-card">
-        <div class="safety-icon">👷</div>
+        <div class="safety-icon">⚠️</div>
         <div class="safety-text" id="safetyMessage">Don’t <span class="greenword">take shortcuts.</span><br>Safety is a core value.</div>
       </div>
     </div>
@@ -407,7 +430,7 @@ html,body{
   <div class="bottom">
     <div class="bottom-card">
       <div class="bottom-title">SAFETY</div>
-      <div style="font-size:11px;font-weight:800">Days Since Recordable Incident</div>
+      <div style="font-size:10px;font-weight:800">Days Since Recordable Incident</div>
       <div class="bottom-value" id="safetyDays">-</div>
     </div>
 
@@ -415,11 +438,11 @@ html,body{
       <div class="bottom-title">PRODUCTION YTD</div>
       <div style="display:grid;grid-template-columns:1fr 1fr">
         <div>
-          <div style="font-size:11px;font-weight:800">Valves Completed</div>
+          <div style="font-size:10px;font-weight:800">Valves Completed</div>
           <div class="bottom-value" id="valvesCompletedYTD">-</div>
         </div>
         <div>
-          <div style="font-size:11px;font-weight:800">Valves Shipped</div>
+          <div style="font-size:10px;font-weight:800">Valves Shipped</div>
           <div class="bottom-value" id="valvesShippedYTD">-</div>
         </div>
       </div>
@@ -436,7 +459,7 @@ html,body{
 
     <div class="wins">
       <span class="win-label">LATEST WINS:</span>
-      <span id="latestWins">-</span>
+      <span class="win-scroll" id="latestWins">-</span>
     </div>
   </div>
 </div>
