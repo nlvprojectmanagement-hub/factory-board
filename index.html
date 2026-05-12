@@ -20,7 +20,7 @@
   --salesBlock:#1e1e1e;
 
   --topHeight:25px;
-  --opsHeight:94px;
+  --opsHeight:74px;
   --bottomHeight:24px;
 
   --mainRow:clamp(9px,1.12vh,13px);
@@ -201,9 +201,9 @@ html,body{
 
 .metric{
   border:1px solid var(--grid);
-  padding:3px 2px;
+  padding:2px;
   text-align:center;
-  min-height:60px;
+  height:46px;
 }
 
 .metric-label{
@@ -241,21 +241,21 @@ html,body{
 
 .safety-card{
   display:grid;
-  grid-template-columns:39px 1fr;
+  grid-template-columns:34px 1fr;
   align-items:center;
-  height:58px;
+  height:43px;
 }
 
 .safety-icon{
   color:var(--orange);
-  font-size:30px;
+  font-size:24px;
   text-align:center;
 }
 
 .safety-text{
-  font-size:10.5px;
+  font-size:9px;
   font-weight:900;
-  line-height:1.16;
+  line-height:1.05;
 }
 
 .greenword{color:#fff}
@@ -422,12 +422,11 @@ html,body{
 .wins{
   background:#fff;
   color:#000;
-  display:grid;
-  grid-template-columns:58px 1fr;
+  display:flex;
   align-items:center;
-  gap:4px;
+  gap:6px;
   padding:0 4px;
-  font-size:7px;
+  font-size:6.8px;
   font-weight:900;
   overflow:hidden;
   white-space:nowrap;
@@ -443,20 +442,13 @@ html,body{
   overflow:hidden;
   white-space:nowrap;
   min-width:0;
-  width:100%;
+  flex:1;
 }
 
 .win-scroll{
-  display:inline-block;
+  display:inline;
   white-space:nowrap;
-  animation:winsMove 80s linear infinite;
-  will-change:transform;
-  transform:translateZ(0);
-}
-
-@keyframes winsMove{
-  from{transform:translateX(100%)}
-  to{transform:translateX(-100%)}
+  animation:none!important;
 }
 
 .error{
