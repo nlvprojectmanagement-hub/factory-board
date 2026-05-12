@@ -583,18 +583,13 @@ async function load(){
     const data=await res.json();
     const text=JSON.stringify(data);
 
-    if(!data || !data.length){
-      document.getElementById("board").innerHTML='<div class="error">NO DATA FROM APPS SCRIPT</div>';
-      return;
-    }
-
+    if(!data || !data.length) return;
     if(text === lastGoodText) return;
 
     lastGoodText=text;
     render(data);
   }catch(e){
-    document.getElementById("board").innerHTML='<div class="error">DATA LOAD ERROR - CHECK DATA_URL</div>';
-    console.warn("Sheet load skipped:", e.message);
+    console.warn("Temporary data load skipped:", e.message);
   }
 }
 
