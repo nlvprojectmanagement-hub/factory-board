@@ -92,19 +92,29 @@ html,body{
   min-width:0;
 }
 
+.marquee{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  min-width:0;
+  contain:paint;
+}
+
 .marquee-track{
   display:inline-flex;
-  gap:120px;
+  gap:80px;
   white-space:nowrap;
   color:#111;
   font-weight:900;
   font-size:11px;
-  animation:move 70s linear infinite;
+  animation:move 160s linear infinite;
   will-change:transform;
+  transform:translateZ(0);
+  backface-visibility:hidden;
 }
 
 @keyframes move{
-  from{transform:translate3d(100%,0,0)}
+  from{transform:translate3d(20%,0,0)}
   to{transform:translate3d(-100%,0,0)}
 }
 
