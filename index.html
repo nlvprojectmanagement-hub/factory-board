@@ -19,10 +19,10 @@
   --inspectionBlock:#130f18;
   --salesBlock:#1e1e1e;
   --topHeight:26px;
-  --opsHeight:116px;
-  --bottomHeight:34px;
-  --mainRow:clamp(11px,1.25vh,15px);
-  --noteRow:clamp(9px,.95vh,12px);
+  --opsHeight:104px;
+  --bottomHeight:28px;
+  --mainRow:clamp(10px,1.18vh,14px);
+  --noteRow:clamp(8px,.86vh,11px);
 }
 
 html,body{
@@ -35,13 +35,13 @@ html,body{
   width:100vw;height:100vh;
   display:grid;
   grid-template-rows:var(--topHeight) var(--opsHeight) 1fr var(--bottomHeight);
-  gap:3px;padding:3px;background:#000;
+  gap:2px;padding:2px;background:#000;
 }
 
 .top{
   display:grid;
   grid-template-columns:150px 1fr auto;
-  gap:3px;min-width:0;overflow:hidden;
+  gap:2px;min-width:0;overflow:hidden;
 }
 
 .logo,.announcement,.right-panel{
@@ -50,15 +50,15 @@ html,body{
 }
 
 .logo{display:flex;align-items:center;justify-content:center}
-.logo img{max-height:26px;max-width:150px;object-fit:contain}
+.logo img{max-height:25px;max-width:148px;object-fit:contain}
 
 .announcement{
   display:grid;
-  grid-template-columns:80px minmax(0,1fr);
+  grid-template-columns:78px minmax(0,1fr);
 }
 
 .announcement-label{
-  color:var(--orange);font-weight:900;font-size:10px;
+  color:var(--orange);font-weight:900;font-size:9px;
   display:flex;align-items:center;justify-content:center;
   border-right:1px solid rgba(0,0,0,.18);
 }
@@ -68,16 +68,16 @@ html,body{
 }
 
 .marquee-track{
-  display:inline-flex;gap:80px;white-space:nowrap;
-  color:#111;font-weight:900;font-size:11px;
-  animation:move 85s linear infinite;
+  display:inline-flex;gap:70px;white-space:nowrap;
+  color:#111;font-weight:900;font-size:10px;
+  animation:move 70s linear infinite;
   will-change:transform;
   transform:translateZ(0);
   backface-visibility:hidden;
 }
 
 @keyframes move{
-  from{transform:translate3d(20%,0,0)}
+  from{transform:translate3d(12%,0,0)}
   to{transform:translate3d(-100%,0,0)}
 }
 
@@ -86,26 +86,26 @@ html,body{
 }
 
 .clock-box{
-  width:80px;flex-shrink:0;
+  width:78px;flex-shrink:0;
   display:flex;flex-direction:column;justify-content:center;align-items:center;
-  color:#000;font-weight:900;font-size:12px;line-height:1.1;
+  color:#000;font-weight:900;font-size:11px;line-height:1.05;
   border-left:1px solid rgba(0,0,0,.18);
 }
 
 .weather-box{
-  width:185px;
+  width:180px;
   display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
-  padding-left:6px;line-height:1.05;color:#000;font-weight:900;overflow:hidden;
+  padding-left:5px;line-height:1.02;color:#000;font-weight:900;overflow:hidden;
 }
 
-.weather-top{font-size:9px;white-space:nowrap}
-.weather-mid,.weather-bottom{font-size:8px;white-space:nowrap}
+.weather-top{font-size:8.5px;white-space:nowrap}
+.weather-mid,.weather-bottom{font-size:7.4px;white-space:nowrap}
 
 /* OPS STRIP */
 .ops{
   display:grid;
   grid-template-columns:20fr 30fr 28fr 22fr;
-  gap:4px;
+  gap:3px;
   min-height:0;
 }
 
@@ -114,79 +114,79 @@ html,body{
   background:#050505;
   color:var(--white);
   overflow:hidden;
-  padding:4px 7px;
+  padding:3px 6px;
 }
 
 .card-title{
   color:var(--orange);
   font-weight:900;
-  font-size:10px;
+  font-size:9px;
   text-align:center;
-  margin-bottom:4px;
+  margin-bottom:3px;
 }
 
 .prior-row{
   display:grid;
-  grid-template-columns:20px 1fr auto;
+  grid-template-columns:18px 1fr auto;
   align-items:center;
-  font-size:11px;
+  font-size:10px;
   font-weight:900;
-  line-height:1.25;
+  line-height:1.18;
 }
 
-.icon{color:var(--orange);font-size:13px}
-.biggreen{color:#28d428;font-size:23px;font-weight:900;text-align:center}
-.bigyellow{color:#ffe600;font-size:23px;font-weight:900;text-align:center}
+.icon{color:var(--orange);font-size:12px}
+.biggreen{color:#28d428;font-size:20px;font-weight:900;text-align:center}
+.bigyellow{color:#ffe600;font-size:20px;font-weight:900;text-align:center}
 
 .metric-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:4px;
+  gap:3px;
 }
 
 .metric{
   border:1px solid var(--grid);
-  padding:5px 3px;
+  padding:4px 2px;
   text-align:center;
-  min-height:76px;
+  min-height:68px;
 }
 
 .metric-label{
-  font-size:9px;
+  font-size:8px;
   font-weight:900;
-  line-height:1.1;
-  min-height:25px;
+  line-height:1.05;
+  min-height:22px;
 }
 
 .date-row{
   display:grid;
-  grid-template-columns:58px 1fr 48px;
+  grid-template-columns:52px 1fr 42px;
   border-bottom:1px solid rgba(180,205,230,.18);
-  font-size:10px;
+  font-size:9px;
   font-weight:900;
-  padding:2px 0;
+  padding:1.5px 0;
 }
 
 .safety-card{
   display:grid;
-  grid-template-columns:45px 1fr;
+  grid-template-columns:42px 1fr;
   align-items:center;
-  height:76px;
+  height:68px;
 }
 
 .safety-icon{
   color:var(--orange);
-  font-size:38px;
+  font-size:34px;
   text-align:center;
 }
 
 .safety-text{
-  font-size:13px;
+  font-size:12px;
   font-weight:900;
-  line-height:1.25;
+  line-height:1.18;
 }
 
-.greenword{color:#28d428}
+.greenword{color:#fff}
 
 /* BOARD */
 .board{
@@ -219,12 +219,12 @@ html,body{
   background:var(--mainBlock);
   color:var(--white);
   font-weight:800;
-  font-size:clamp(7px,.65vw,9.5px);
+  font-size:clamp(6.5px,.58vw,8.8px);
   line-height:1;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:0 4px;
+  padding:0 3px;
   white-space:nowrap;
   overflow:hidden;
   position:relative;
@@ -234,7 +234,7 @@ html,body{
   background:#000!important;
   color:var(--orange);
   font-weight:900;
-  font-size:clamp(7px,.6vw,9px);
+  font-size:clamp(6.5px,.55vw,8.5px);
   text-transform:uppercase;
 }
 
@@ -250,8 +250,8 @@ html,body{
 .notes-section{background:var(--notesBlock)}
 .inspect-section{background:var(--inspectionBlock)}
 .sales-order{background:var(--salesBlock)!important;color:#e6e6e6!important}
-.left{justify-content:flex-start;padding-left:6px}
-.sales-entry{font-size:clamp(8px,.75vw,10.5px);font-weight:900}
+.left{justify-content:flex-start;padding-left:5px}
+.sales-entry{font-size:clamp(7px,.68vw,9.8px);font-weight:900}
 .inner{white-space:nowrap}
 .long .inner{position:absolute;animation:scrollCell 16s linear infinite}
 
@@ -275,8 +275,9 @@ html,body{
 /* BOTTOM STRIP */
 .bottom{
   display:grid;
-  grid-template-columns:13fr 18fr 28fr 41fr;
+  grid-template-columns:12fr 17fr 30fr 41fr;
   gap:2px;
+  min-height:0;
 }
 
 .bottom-card{
@@ -287,18 +288,21 @@ html,body{
   align-items:center;
   text-align:center;
   overflow:hidden;
+  padding:1px;
 }
 
 .bottom-title{
   color:var(--orange);
-  font-size:8px;
+  font-size:7px;
   font-weight:900;
+  line-height:1;
 }
 
 .bottom-value{
   color:#28d428;
-  font-size:18px;
+  font-size:15px;
   font-weight:900;
+  line-height:1;
 }
 
 .legend{
@@ -307,19 +311,19 @@ html,body{
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:5px;
-  padding:0 4px;
+  gap:4px;
+  padding:0 3px;
   font-weight:900;
-  font-size:7px;
+  font-size:6px;
   overflow:hidden;
   white-space:nowrap;
 }
 
 .swatch{
-  width:8px;
-  height:8px;
+  width:7px;
+  height:7px;
   display:inline-block;
-  margin-right:2px;
+  margin-right:1px;
   vertical-align:middle;
 }
 
@@ -334,29 +338,30 @@ html,body{
   color:#000;
   display:flex;
   align-items:center;
-  gap:8px;
-  padding:0 6px;
-  font-size:9px;
+  gap:6px;
+  padding:0 5px;
+  font-size:8px;
   font-weight:900;
   overflow:hidden;
   white-space:nowrap;
 }
 
-.wins span{
-  white-space:nowrap;
+.win-label{
+  color:var(--orange);
+  flex-shrink:0;
 }
 
 .win-scroll{
   display:inline-block;
-  animation:winsMove 55s linear infinite;
+  animation:winsMove 70s linear infinite;
+  white-space:nowrap;
 }
 
 @keyframes winsMove{
-  from{transform:translateX(10%)}
+  from{transform:translateX(5%)}
   to{transform:translateX(-100%)}
 }
 
-.win-label{color:var(--orange);flex-shrink:0}
 .error{
   color:red;
   font-size:22px;
@@ -425,7 +430,7 @@ html,body{
       <div class="card-title">SAFETY MESSAGE</div>
       <div class="safety-card">
         <div class="safety-icon">⚠️</div>
-        <div class="safety-text" id="safetyMessage">Don’t <span class="greenword">take shortcuts.</span><br>Safety is a core value.</div>
+        <div class="safety-text" id="safetyMessage">Don’t take shortcuts.<br>Safety is a core value.</div>
       </div>
     </div>
   </div>
@@ -435,7 +440,7 @@ html,body{
   <div class="bottom">
     <div class="bottom-card">
       <div class="bottom-title">SAFETY</div>
-      <div style="font-size:8px;font-weight:800">Days Since Recordable Incident</div>
+      <div style="font-size:6px;font-weight:800;line-height:1">Days Since Recordable Incident</div>
       <div class="bottom-value" id="safetyDays">-</div>
     </div>
 
@@ -443,11 +448,11 @@ html,body{
       <div class="bottom-title">PRODUCTION YTD</div>
       <div style="display:grid;grid-template-columns:1fr 1fr">
         <div>
-          <div style="font-size:8px;font-weight:800">Valves Completed</div>
+          <div style="font-size:6px;font-weight:800;line-height:1">Valves Completed</div>
           <div class="bottom-value" id="valvesCompletedYTD">-</div>
         </div>
         <div>
-          <div style="font-size:8px;font-weight:800">Valves Shipped</div>
+          <div style="font-size:6px;font-weight:800;line-height:1">Valves Shipped</div>
           <div class="bottom-value" id="valvesShippedYTD">-</div>
         </div>
       </div>
