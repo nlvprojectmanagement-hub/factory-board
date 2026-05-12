@@ -9,8 +9,8 @@
 *{box-sizing:border-box}
 
 :root{
-  --grid:rgba(180,205,230,.26);
-  --gridStrong:rgba(255,122,0,.45);
+  --grid:rgba(180,205,230,.24);
+  --gridStrong:rgba(255,122,0,.46);
   --orange:#ff7a00;
   --white:#f4f7fb;
   --mainBlock:#020202;
@@ -18,39 +18,61 @@
   --notesBlock:#050505;
   --inspectionBlock:#130f18;
   --salesBlock:#1e1e1e;
-  --topHeight:26px;
-  --opsHeight:104px;
-  --bottomHeight:28px;
-  --mainRow:clamp(10px,1.18vh,14px);
-  --noteRow:clamp(8px,.86vh,11px);
+
+  --topHeight:25px;
+  --opsHeight:94px;
+  --bottomHeight:24px;
+
+  --mainRow:clamp(9px,1.12vh,13px);
+  --noteRow:clamp(7px,.78vh,10px);
 }
 
 html,body{
-  margin:0;width:100%;height:100%;
-  background:#000;overflow:hidden;
+  margin:0;
+  width:100%;
+  height:100%;
+  background:#000;
+  overflow:hidden;
   font-family:Arial,Helvetica,sans-serif;
 }
 
 .screen{
-  width:100vw;height:100vh;
+  width:100vw;
+  height:100vh;
   display:grid;
   grid-template-rows:var(--topHeight) var(--opsHeight) 1fr var(--bottomHeight);
-  gap:2px;padding:2px;background:#000;
+  gap:2px;
+  padding:2px;
+  background:#000;
 }
 
+/* TOP */
 .top{
   display:grid;
   grid-template-columns:150px 1fr auto;
-  gap:2px;min-width:0;overflow:hidden;
+  gap:2px;
+  min-width:0;
+  overflow:hidden;
 }
 
 .logo,.announcement,.right-panel{
   border:1px solid var(--grid);
-  background:#fff;overflow:hidden;min-width:0;
+  background:#fff;
+  overflow:hidden;
+  min-width:0;
 }
 
-.logo{display:flex;align-items:center;justify-content:center}
-.logo img{max-height:25px;max-width:148px;object-fit:contain}
+.logo{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.logo img{
+  max-height:24px;
+  max-width:148px;
+  object-fit:contain;
+}
 
 .announcement{
   display:grid;
@@ -58,48 +80,77 @@ html,body{
 }
 
 .announcement-label{
-  color:var(--orange);font-weight:900;font-size:9px;
-  display:flex;align-items:center;justify-content:center;
+  color:var(--orange);
+  font-weight:900;
+  font-size:9px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   border-right:1px solid rgba(0,0,0,.18);
 }
 
 .marquee{
-  overflow:hidden;display:flex;align-items:center;min-width:0;contain:paint;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  min-width:0;
+  contain:paint;
 }
 
 .marquee-track{
-  display:inline-flex;gap:70px;white-space:nowrap;
-  color:#111;font-weight:900;font-size:10px;
-  animation:move 70s linear infinite;
+  display:inline-flex;
+  gap:90px;
+  white-space:nowrap;
+  color:#111;
+  font-weight:900;
+  font-size:10px;
+  animation:move 52s linear infinite;
   will-change:transform;
   transform:translateZ(0);
   backface-visibility:hidden;
 }
 
 @keyframes move{
-  from{transform:translate3d(12%,0,0)}
+  from{transform:translate3d(5%,0,0)}
   to{transform:translate3d(-100%,0,0)}
 }
 
 .right-panel{
-  display:flex;justify-content:flex-end;align-items:stretch;min-width:0;
+  display:flex;
+  justify-content:flex-end;
+  align-items:stretch;
+  min-width:0;
 }
 
 .clock-box{
-  width:78px;flex-shrink:0;
-  display:flex;flex-direction:column;justify-content:center;align-items:center;
-  color:#000;font-weight:900;font-size:11px;line-height:1.05;
+  width:78px;
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  color:#000;
+  font-weight:900;
+  font-size:11px;
+  line-height:1.03;
   border-left:1px solid rgba(0,0,0,.18);
 }
 
 .weather-box{
   width:180px;
-  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
-  padding-left:5px;line-height:1.02;color:#000;font-weight:900;overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  padding-left:5px;
+  line-height:1.02;
+  color:#000;
+  font-weight:900;
+  overflow:hidden;
 }
 
 .weather-top{font-size:8.5px;white-space:nowrap}
-.weather-mid,.weather-bottom{font-size:7.4px;white-space:nowrap}
+.weather-mid,.weather-bottom{font-size:7.3px;white-space:nowrap}
 
 /* OPS STRIP */
 .ops{
@@ -107,6 +158,7 @@ html,body{
   grid-template-columns:20fr 30fr 28fr 22fr;
   gap:3px;
   min-height:0;
+  overflow:hidden;
 }
 
 .card{
@@ -114,29 +166,32 @@ html,body{
   background:#050505;
   color:var(--white);
   overflow:hidden;
-  padding:3px 6px;
+  padding:2px 5px;
+  min-width:0;
 }
 
 .card-title{
   color:var(--orange);
   font-weight:900;
-  font-size:9px;
+  font-size:8.5px;
   text-align:center;
-  margin-bottom:3px;
+  margin-bottom:2px;
+  line-height:1;
 }
 
 .prior-row{
   display:grid;
-  grid-template-columns:18px 1fr auto;
+  grid-template-columns:17px 1fr auto;
   align-items:center;
-  font-size:10px;
+  font-size:9.4px;
   font-weight:900;
-  line-height:1.18;
+  line-height:1.12;
 }
 
-.icon{color:var(--orange);font-size:12px}
-.biggreen{color:#28d428;font-size:20px;font-weight:900;text-align:center}
-.bigyellow{color:#ffe600;font-size:20px;font-weight:900;text-align:center}
+.icon{
+  color:var(--orange);
+  font-size:11px;
+}
 
 .metric-grid{
   display:grid;
@@ -146,44 +201,61 @@ html,body{
 
 .metric{
   border:1px solid var(--grid);
-  padding:4px 2px;
+  padding:3px 2px;
   text-align:center;
-  min-height:68px;
+  min-height:60px;
 }
 
 .metric-label{
-  font-size:8px;
+  font-size:7.4px;
   font-weight:900;
   line-height:1.05;
-  min-height:22px;
+  min-height:19px;
+}
+
+.biggreen{
+  color:#28d428;
+  font-size:18px;
+  font-weight:900;
+  text-align:center;
+  line-height:1.05;
+}
+
+.bigyellow{
+  color:#ffe600;
+  font-size:18px;
+  font-weight:900;
+  text-align:center;
+  line-height:1.05;
 }
 
 .date-row{
   display:grid;
-  grid-template-columns:52px 1fr 42px;
+  grid-template-columns:48px 1fr 38px;
   border-bottom:1px solid rgba(180,205,230,.18);
-  font-size:9px;
+  font-size:8.4px;
   font-weight:900;
-  padding:1.5px 0;
+  padding:1px 0;
+  line-height:1.05;
 }
 
 .safety-card{
   display:grid;
-  grid-template-columns:42px 1fr;
+  grid-template-columns:39px 1fr;
   align-items:center;
-  height:68px;
+  height:58px;
 }
 
 .safety-icon{
   color:var(--orange);
-  font-size:34px;
+  font-size:30px;
   text-align:center;
 }
 
 .safety-text{
-  font-size:12px;
+  font-size:10.5px;
   font-weight:900;
-  line-height:1.18;
+  line-height:1.16;
 }
 
 .greenword{color:#fff}
@@ -213,18 +285,19 @@ html,body{
 }
 
 .cell{
-  height:100%;min-height:0;
+  height:100%;
+  min-height:0;
   border-right:1px solid var(--grid);
   border-bottom:1px solid var(--grid);
   background:var(--mainBlock);
   color:var(--white);
   font-weight:800;
-  font-size:clamp(6.5px,.58vw,8.8px);
+  font-size:clamp(6px,.54vw,8.2px);
   line-height:1;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:0 3px;
+  padding:0 2px;
   white-space:nowrap;
   overflow:hidden;
   position:relative;
@@ -234,7 +307,7 @@ html,body{
   background:#000!important;
   color:var(--orange);
   font-weight:900;
-  font-size:clamp(6.5px,.55vw,8.5px);
+  font-size:clamp(6px,.52vw,8px);
   text-transform:uppercase;
 }
 
@@ -250,8 +323,8 @@ html,body{
 .notes-section{background:var(--notesBlock)}
 .inspect-section{background:var(--inspectionBlock)}
 .sales-order{background:var(--salesBlock)!important;color:#e6e6e6!important}
-.left{justify-content:flex-start;padding-left:5px}
-.sales-entry{font-size:clamp(7px,.68vw,9.8px);font-weight:900}
+.left{justify-content:flex-start;padding-left:4px}
+.sales-entry{font-size:clamp(6.5px,.62vw,9px);font-weight:900}
 .inner{white-space:nowrap}
 .long .inner{position:absolute;animation:scrollCell 16s linear infinite}
 
@@ -272,12 +345,13 @@ html,body{
 .hold,.notreleased{color:#ff3333!important}
 .review,.revision,.clarification{color:#00b0f0!important}
 
-/* BOTTOM STRIP */
+/* BOTTOM */
 .bottom{
   display:grid;
-  grid-template-columns:12fr 17fr 30fr 41fr;
+  grid-template-columns:12fr 17fr 35fr 36fr;
   gap:2px;
   min-height:0;
+  overflow:hidden;
 }
 
 .bottom-card{
@@ -288,20 +362,26 @@ html,body{
   align-items:center;
   text-align:center;
   overflow:hidden;
-  padding:1px;
+  padding:0;
 }
 
 .bottom-title{
   color:var(--orange);
-  font-size:7px;
+  font-size:6.2px;
   font-weight:900;
   line-height:1;
 }
 
 .bottom-value{
   color:#28d428;
-  font-size:15px;
+  font-size:13px;
   font-weight:900;
+  line-height:1;
+}
+
+.bottom-small{
+  font-size:5.4px;
+  font-weight:800;
   line-height:1;
 }
 
@@ -311,20 +391,26 @@ html,body{
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:4px;
-  padding:0 3px;
+  gap:3px;
+  padding:0 2px;
   font-weight:900;
-  font-size:6px;
+  font-size:5.4px;
   overflow:hidden;
   white-space:nowrap;
 }
 
+.legend span{
+  display:inline-flex;
+  align-items:center;
+  white-space:nowrap;
+}
+
 .swatch{
-  width:7px;
-  height:7px;
+  width:6px;
+  height:6px;
   display:inline-block;
   margin-right:1px;
-  vertical-align:middle;
+  flex-shrink:0;
 }
 
 .sw-green{background:#00a83a}
@@ -336,11 +422,12 @@ html,body{
 .wins{
   background:#fff;
   color:#000;
-  display:flex;
+  display:grid;
+  grid-template-columns:58px 1fr;
   align-items:center;
-  gap:6px;
-  padding:0 5px;
-  font-size:8px;
+  gap:4px;
+  padding:0 4px;
+  font-size:7px;
   font-weight:900;
   overflow:hidden;
   white-space:nowrap;
@@ -349,16 +436,26 @@ html,body{
 .win-label{
   color:var(--orange);
   flex-shrink:0;
+  white-space:nowrap;
+}
+
+.win-window{
+  overflow:hidden;
+  white-space:nowrap;
+  min-width:0;
+  width:100%;
 }
 
 .win-scroll{
   display:inline-block;
-  animation:winsMove 70s linear infinite;
   white-space:nowrap;
+  animation:winsMove 80s linear infinite;
+  will-change:transform;
+  transform:translateZ(0);
 }
 
 @keyframes winsMove{
-  from{transform:translateX(5%)}
+  from{transform:translateX(100%)}
   to{transform:translateX(-100%)}
 }
 
@@ -440,7 +537,7 @@ html,body{
   <div class="bottom">
     <div class="bottom-card">
       <div class="bottom-title">SAFETY</div>
-      <div style="font-size:6px;font-weight:800;line-height:1">Days Since Recordable Incident</div>
+      <div class="bottom-small">Days Since Recordable Incident</div>
       <div class="bottom-value" id="safetyDays">-</div>
     </div>
 
@@ -448,11 +545,11 @@ html,body{
       <div class="bottom-title">PRODUCTION YTD</div>
       <div style="display:grid;grid-template-columns:1fr 1fr">
         <div>
-          <div style="font-size:6px;font-weight:800;line-height:1">Valves Completed</div>
+          <div class="bottom-small">Valves Completed</div>
           <div class="bottom-value" id="valvesCompletedYTD">-</div>
         </div>
         <div>
-          <div style="font-size:6px;font-weight:800;line-height:1">Valves Shipped</div>
+          <div class="bottom-small">Valves Shipped</div>
           <div class="bottom-value" id="valvesShippedYTD">-</div>
         </div>
       </div>
@@ -469,7 +566,9 @@ html,body{
 
     <div class="wins">
       <span class="win-label">LATEST WINS:</span>
-      <span class="win-scroll" id="latestWins">-</span>
+      <div class="win-window">
+        <span class="win-scroll" id="latestWins">-</span>
+      </div>
     </div>
   </div>
 </div>
