@@ -579,16 +579,21 @@ function render(data){
 
 async function load(){
   try{
-    const res=await fetch(DATA_URL+"&t="+Date.now(),{cache:"no-store"});
+    const res=await fetch(DATA_URL+"?t="+Date.now(),{cache:"no-store"});
     const data=await res.json();
     const text=JSON.stringify(data);
 
-    if(!data || !data.length) return;
+    if(!data || !data.length){
+      document.getElementById("board").innerHTML='<div class="error">NO DATA FROM APPS SCRIPT</div>';
+      return;
+    }
+
     if(text === lastGoodText) return;
 
     lastGoodText=text;
     render(data);
   }catch(e){
+    document.getElementById("board").innerHTML='<div class="error">DATA LOAD ERROR - CHECK DATA_URL</div>';
     console.warn("Sheet load skipped:", e.message);
   }
 }
