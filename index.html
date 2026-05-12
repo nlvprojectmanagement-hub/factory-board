@@ -309,7 +309,7 @@ html,body{
 
 <script>
 const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8DPfkyHf5Muk48ka3C6VIbFhpq-2LdxCUia3YoafY0sv6AXzUj-n69J44goiWkQWpC8Nwm58eYNah/pub?output=csv";
-const REFRESH_MS=3000;
+const REFRESH_MS=10000;
 
 const LAT=29.6161;
 const LON=-95.5577;
@@ -318,6 +318,8 @@ const MAIN_ROWS=18;
 const BOTTOM_START_ROW=20;
 const BOTTOM_ROWS=26;
 const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+let lastGoodText="";
 
 function parseCSV(text){
   const rows=[];
@@ -606,9 +608,14 @@ async function load(){
   try{
     const res=await fetch(CSV_URL+"&t="+Date.now()+"&rand="+Math.random(),{cache:"no-store"});
     const text=await res.text();
+
+    if(!text || text.length < 50) return;
+    if(text === lastGoodText) return;
+
+    lastGoodText=text;
     render(parseCSV(text));
   }catch(e){
-    document.body.innerHTML='<div class="error">LOAD ERROR: '+e.message+'</div>';
+    console.warn("Sheet load skipped:", e.message);
   }
 }
 
