@@ -16,7 +16,7 @@
   --mainBlock:#020202;
   --shipBlock:#07131b;
   --notesBlock:#050505;
-  --focusBlock:#06110a;
+  --liveBlock:#020202;
   --inspectionBlock:#130f18;
   --salesBlock:#1e1e1e;
 
@@ -293,7 +293,7 @@ html,body{
 .group-start{border-left:1px solid var(--gridStrong)}
 .ship-section{background:var(--shipBlock)}
 .notes-section{background:var(--notesBlock)}
-.focus-section{background:var(--focusBlock)}
+.live-section{background:var(--liveBlock)}
 .inspect-section{background:var(--inspectionBlock)}
 .sales-order{background:var(--salesBlock)!important;color:#e6e6e6!important}
 .left{justify-content:flex-start;padding-left:4px}
@@ -318,11 +318,17 @@ html,body{
 .hold,.notreleased{color:#ff3333!important}
 .review,.revision,.clarification{color:#00b0f0!important}
 
-.focus-item{
-  color:#28d428!important;
-  font-weight:900!important;
-  justify-content:flex-start!important;
-  padding-left:5px!important;
+.live-panel{
+  padding:1px!important;
+  background:#000!important;
+}
+
+.live-panel iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+  background:#000;
 }
 
 .bottom{
@@ -543,6 +549,7 @@ html,body{
 
 <script>
 const DATA_URL="https://script.google.com/macros/s/AKfycbzFxHCEVrtag58ofvfDZzJHrstGD_5fNRKQ2o8Lt3WSLmBt8zywimjjVRB36ju2pU-2uA/exec";
+const LIVE_URL="https://www.fox26houston.com/live";
 const REFRESH_MS=5000;
 
 const LAT=29.6161;
@@ -694,20 +701,25 @@ function makeCell(text,options={}){
   const cls=statusClass(text);
   if(cls)div.classList.add(cls);
 
-  const inner=document.createElement("span");
-  inner.className="inner";
-  inner.textContent=displayText(text);
-  div.appendChild(inner);
+  if(options.html){
+    div.innerHTML=options.html;
+  }else{
+    const inner=document.createElement("span");
+    inner.className="inner";
+    inner.textContent=displayText(text);
+    div.appendChild(inner);
+
+    requestAnimationFrame(()=>{
+      if(inner.scrollWidth>div.clientWidth){
+        div.classList.add("long");
+      }
+    });
+  }
 
   if(options.colStart)div.style.gridColumnStart=options.colStart;
   if(options.colEnd)div.style.gridColumnEnd=options.colEnd;
   if(options.rowStart)div.style.gridRowStart=options.rowStart;
-
-  requestAnimationFrame(()=>{
-    if(inner.scrollWidth>div.clientWidth){
-      div.classList.add("long");
-    }
-  });
+  if(options.rowEnd)div.style.gridRowEnd=options.rowEnd;
 
   return div;
 }
@@ -754,17 +766,6 @@ function updateDashboardControls(data){
   });
 }
 
-function getFocusItems(data){
-  return [
-    getControl(data,"SHOP FOCUS 1",""),
-    getControl(data,"SHOP FOCUS 2",""),
-    getControl(data,"SHOP FOCUS 3",""),
-    getControl(data,"SHOP FOCUS 4",""),
-    getControl(data,"SHOP FOCUS 5",""),
-    getControl(data,"SHOP FOCUS 6","")
-  ].filter(Boolean);
-}
-
 function render(data){
   const board=document.getElementById("board");
   board.innerHTML="";
@@ -774,7 +775,6 @@ function render(data){
   const annRow=findRow(data,["ANNOUNCEMENT","ANNOUNCEMENTS","ANNOUNCMENTS"]);
   const headerRow=findRow(data,["SALES ORDER"]);
   const notesRow=findRow(data,["NOTES"]);
-  const focusItems=getFocusItems(data);
 
   if(annRow>=0)setAnnouncement(data[annRow][1]);
 
@@ -828,8 +828,8 @@ function render(data){
     header:true,left:true,rowStart:BOTTOM_START_ROW,colStart:1,colEnd:7,extraClass:"notes-section"
   }));
 
-  board.appendChild(makeCell("SHOP FOCUS",{
-    header:true,rowStart:BOTTOM_START_ROW,colStart:7,colEnd:10,extraClass:"focus-section"
+  board.appendChild(makeCell("LIVE HOUSTON WEATHER / NEWS",{
+    header:true,rowStart:BOTTOM_START_ROW,colStart:7,colEnd:10,extraClass:"live-section"
   }));
 
   board.appendChild(makeCell("INSPECTION",{
@@ -844,6 +844,15 @@ function render(data){
     header:true,rowStart:BOTTOM_START_ROW,colStart:13,extraClass:"inspect-section"
   }));
 
+  board.appendChild(makeCell("",{
+    rowStart:BOTTOM_START_ROW+1,
+    rowEnd:BOTTOM_START_ROW+1+BOTTOM_ROWS,
+    colStart:7,
+    colEnd:10,
+    extraClass:"live-panel",
+    html:`<iframe src="${LIVE_URL}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`
+  }));
+
   const bottomRows=notesRow>=0?data.slice(notesRow+1):[];
 
   for(let r=0;r<BOTTOM_ROWS;r++){
@@ -852,10 +861,6 @@ function render(data){
 
     board.appendChild(makeCell(row[0],{
       left:true,rowStart:gridRow,colStart:1,colEnd:7,extraClass:"notes-section"
-    }));
-
-    board.appendChild(makeCell(focusItems[r]||"",{
-      left:true,rowStart:gridRow,colStart:7,colEnd:10,extraClass:"focus-section focus-item"
     }));
 
     board.appendChild(makeCell(row[9],{
