@@ -22,7 +22,7 @@
 
   --topHeight:25px;
   --opsHeight:72px;
-  --bottomHeight:20px;
+  --bottomHeight:25px;
 }
 
 html,body{
@@ -390,21 +390,21 @@ html,body{
 
 .bottom-title{
   color:var(--orange);
-  font-size:6px;
+  font-size:9px;
   font-weight:900;
   line-height:1;
 }
 
 .bottom-value{
   color:#28d428;
-  font-size:12px;
+  font-size:16px;
   font-weight:900;
   line-height:1;
 }
 
 .bottom-small{
-  font-size:5px;
-  font-weight:800;
+  font-size:8px;
+  font-weight:900;
   line-height:1;
 }
 
@@ -417,7 +417,7 @@ html,body{
   gap:3px;
   padding:0 2px;
   font-weight:900;
-  font-size:5.2px;
+  font-size:8px;
   overflow:hidden;
   white-space:nowrap;
 }
@@ -449,7 +449,7 @@ html,body{
   align-items:center;
   gap:6px;
   padding:0 4px;
-  font-size:6.6px;
+  font-size:9px;
   font-weight:900;
   overflow:hidden;
   white-space:nowrap;
@@ -486,7 +486,7 @@ html,body{
   :root{
     --topHeight:25px;
     --opsHeight:70px;
-    --bottomHeight:20px;
+    --bottomHeight:24px;
   }
 
   .cell{
@@ -508,6 +508,26 @@ html,body{
   .biggreen,.bigyellow{
     font-size:16px;
   }
+
+  .bottom-title{
+    font-size:8px;
+  }
+
+  .bottom-value{
+    font-size:14px;
+  }
+
+  .bottom-small{
+    font-size:7px;
+  }
+
+  .legend{
+    font-size:7px;
+  }
+
+  .wins{
+    font-size:8px;
+  }
 }
 
 /* 4K / LARGE TV ADJUST */
@@ -515,7 +535,7 @@ html,body{
   :root{
     --topHeight:28px;
     --opsHeight:76px;
-    --bottomHeight:22px;
+    --bottomHeight:26px;
   }
 
   .cell{
@@ -536,6 +556,26 @@ html,body{
 
   .biggreen,.bigyellow{
     font-size:20px;
+  }
+
+  .bottom-title{
+    font-size:10px;
+  }
+
+  .bottom-value{
+    font-size:18px;
+  }
+
+  .bottom-small{
+    font-size:8.5px;
+  }
+
+  .legend{
+    font-size:8.5px;
+  }
+
+  .wins{
+    font-size:9.5px;
   }
 }
 </style>
@@ -647,7 +687,7 @@ html,body{
 const DATA_URL="https://script.google.com/macros/s/AKfycbzFxHCEVrtag58ofvfDZzJHrstGD_5fNRKQ2o8Lt3WSLmBt8zywimjjVRB36ju2pU-2uA/exec";
 const VIDEO_ID="pehIByVhAJY";
 const REFRESH_MS=5000;
-const VIDEO_RELOAD_MS=900000;
+const VIDEO_RELOAD_MS=0;
 
 const LAT=29.6161;
 const LON=-95.5577;
@@ -992,7 +1032,8 @@ function refreshLiveVideo(){
   const frame=document.getElementById("liveFrame");
   if(frame) frame.src=liveSrc();
 }
-setInterval(refreshLiveVideo,VIDEO_RELOAD_MS);
+
+if(VIDEO_RELOAD_MS>0) setInterval(refreshLiveVideo,VIDEO_RELOAD_MS);
 
 async function load(){
   try{
