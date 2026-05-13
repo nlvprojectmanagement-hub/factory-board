@@ -20,7 +20,7 @@
   --salesBlock:#1e1e1e;
 
   --topHeight:25px;
-  --opsHeight:74px;
+  --opsHeight:78px;
   --bottomHeight:24px;
 
   --mainRow:clamp(9px,1.12vh,13px);
@@ -28,31 +28,22 @@
 }
 
 html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  background:#000;
-  overflow:hidden;
+  margin:0;width:100%;height:100%;
+  background:#000;overflow:hidden;
   font-family:Arial,Helvetica,sans-serif;
 }
 
 .screen{
-  width:100vw;
-  height:100vh;
+  width:100vw;height:100vh;
   display:grid;
   grid-template-rows:var(--topHeight) var(--opsHeight) 1fr var(--bottomHeight);
-  gap:2px;
-  padding:2px;
-  background:#000;
+  gap:2px;padding:2px;background:#000;
 }
 
-/* TOP */
 .top{
   display:grid;
   grid-template-columns:150px 1fr auto;
-  gap:2px;
-  min-width:0;
-  overflow:hidden;
+  gap:2px;min-width:0;overflow:hidden;
 }
 
 .logo,.announcement,.right-panel{
@@ -62,17 +53,8 @@ html,body{
   min-width:0;
 }
 
-.logo{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.logo img{
-  max-height:24px;
-  max-width:148px;
-  object-fit:contain;
-}
+.logo{display:flex;align-items:center;justify-content:center}
+.logo img{max-height:24px;max-width:148px;object-fit:contain}
 
 .announcement{
   display:grid;
@@ -155,7 +137,7 @@ html,body{
 /* OPS STRIP */
 .ops{
   display:grid;
-  grid-template-columns:20fr 30fr 28fr 22fr;
+  grid-template-columns:20fr 42fr 28fr 22fr;
   gap:3px;
   min-height:0;
   overflow:hidden;
@@ -188,14 +170,11 @@ html,body{
   line-height:1.12;
 }
 
-.icon{
-  color:var(--orange);
-  font-size:11px;
-}
+.icon{color:var(--orange);font-size:11px}
 
 .metric-grid{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+  grid-template-columns:repeat(5,1fr);
   gap:3px;
 }
 
@@ -203,19 +182,19 @@ html,body{
   border:1px solid var(--grid);
   padding:2px;
   text-align:center;
-  height:46px;
+  height:50px;
 }
 
 .metric-label{
-  font-size:7.4px;
+  font-size:6.7px;
   font-weight:900;
-  line-height:1.05;
-  min-height:19px;
+  line-height:1.03;
+  min-height:20px;
 }
 
 .biggreen{
   color:#28d428;
-  font-size:18px;
+  font-size:17px;
   font-weight:900;
   text-align:center;
   line-height:1.05;
@@ -223,7 +202,7 @@ html,body{
 
 .bigyellow{
   color:#ffe600;
-  font-size:18px;
+  font-size:17px;
   font-weight:900;
   text-align:center;
   line-height:1.05;
@@ -344,6 +323,15 @@ html,body{
 .partial{color:#ffff00!important}
 .hold,.notreleased{color:#ff3333!important}
 .review,.revision,.clarification{color:#00b0f0!important}
+
+/* SHOP MESSAGE */
+.shop-message{
+  color:#28d428!important;
+  font-size:clamp(8px,.8vw,12px)!important;
+  font-weight:900!important;
+  justify-content:center!important;
+  text-align:center;
+}
 
 /* BOTTOM */
 .bottom{
@@ -503,7 +491,8 @@ html,body{
     <div class="card">
       <div class="card-title">LIVE PRODUCTION COUNTERS</div>
       <div class="metric-grid">
-        <div class="metric"><div class="metric-label">OPEN SALES<br>ORDERS</div><div class="biggreen" id="openOrders">-</div></div>
+        <div class="metric"><div class="metric-label">OPEN VALVE<br>SALES ORDERS</div><div class="biggreen" id="openValveOrders">-</div></div>
+        <div class="metric"><div class="metric-label">OPEN KIT<br>ORDERS</div><div class="biggreen" id="openKitOrders">-</div></div>
         <div class="metric"><div class="metric-label">VALVES IN<br>ASSEMBLY</div><div class="biggreen" id="valvesAssembly">-</div></div>
         <div class="metric"><div class="metric-label">WAITING ON<br>VENDOR</div><div class="bigyellow" id="waitingVendor">-</div></div>
         <div class="metric"><div class="metric-label">READY TO<br>SHIP</div><div class="biggreen" id="readyShip">-</div></div>
@@ -744,15 +733,16 @@ function isOutgoingHeader(row){
 }
 
 function updateDashboardControls(data){
+  openValveOrders.textContent=getControl(data,"OPEN VALVE SALES ORDERS","-");
+  openKitOrders.textContent=getControl(data,"OPEN KIT ORDERS","-");
+  valvesAssembly.textContent=getControl(data,"VALVES IN ASSEMBLY","-");
+  waitingVendor.textContent=getControl(data,"WAITING ON VENDOR","-");
+  readyShip.textContent=getControl(data,"READY TO SHIP","-");
+
   testToday.textContent=getControl(data,"TEST TODAY","2");
   shipToday.textContent=getControl(data,"SHIP TODAY","1");
   hotJobs.textContent=getControl(data,"HOT JOBS","3");
   customerVisits.textContent=getControl(data,"CUSTOMER VISITS","-");
-
-  openOrders.textContent=getControl(data,"OPEN SALES ORDERS","-");
-  valvesAssembly.textContent=getControl(data,"VALVES IN ASSEMBLY","-");
-  waitingVendor.textContent=getControl(data,"WAITING ON VENDOR","-");
-  readyShip.textContent=getControl(data,"READY TO SHIP","-");
 
   safetyDays.textContent=getControl(data,"DAYS SINCE INCIDENT","-");
   valvesCompletedYTD.textContent=getControl(data,"VALVES COMPLETED YTD","-");
@@ -837,9 +827,14 @@ function render(data){
   }
 
   const notesTitle=notesRow>=0?clean(data[notesRow][0]):"NOTES / IMPORTANT REMARKS";
+  const shopMessage=getControl(data,"SHOP MESSAGE","Quality today prevents problems tomorrow.");
 
   board.appendChild(makeCell(notesTitle,{
-    header:true,left:true,rowStart:BOTTOM_START_ROW,colStart:1,colEnd:10,extraClass:"notes-section"
+    header:true,left:true,rowStart:BOTTOM_START_ROW,colStart:1,colEnd:7,extraClass:"notes-section"
+  }));
+
+  board.appendChild(makeCell(shopMessage,{
+    header:true,rowStart:BOTTOM_START_ROW,colStart:7,colEnd:10,extraClass:"notes-section shop-message"
   }));
 
   board.appendChild(makeCell("INSPECTION",{
