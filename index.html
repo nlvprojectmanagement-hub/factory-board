@@ -134,7 +134,6 @@ html,body{
 .weather-top{font-size:8.5px;white-space:nowrap}
 .weather-mid,.weather-bottom{font-size:7.3px;white-space:nowrap}
 
-/* OPS STRIP */
 .ops{
   display:grid;
   grid-template-columns:20fr 42fr 28fr 22fr;
@@ -192,21 +191,15 @@ html,body{
   min-height:20px;
 }
 
-.biggreen{
-  color:#28d428;
+.biggreen,.bigyellow{
   font-size:17px;
   font-weight:900;
   text-align:center;
   line-height:1.05;
 }
 
-.bigyellow{
-  color:#ffe600;
-  font-size:17px;
-  font-weight:900;
-  text-align:center;
-  line-height:1.05;
-}
+.biggreen{color:#28d428}
+.bigyellow{color:#ffe600}
 
 .date-row{
   display:grid;
@@ -239,7 +232,6 @@ html,body{
 
 .greenword{color:#fff}
 
-/* BOARD */
 .board{
   display:grid;
   grid-template-columns:
@@ -324,7 +316,6 @@ html,body{
 .hold,.notreleased{color:#ff3333!important}
 .review,.revision,.clarification{color:#00b0f0!important}
 
-/* SHOP MESSAGE */
 .shop-message{
   color:#28d428!important;
   font-size:clamp(8px,.8vw,12px)!important;
@@ -333,7 +324,6 @@ html,body{
   text-align:center;
 }
 
-/* BOTTOM */
 .bottom{
   display:grid;
   grid-template-columns:12fr 17fr 35fr 36fr;
@@ -452,9 +442,7 @@ html,body{
 
 <div class="screen">
   <div class="top">
-    <div class="logo">
-      <img src="GITHUB LOGO 2.png">
-    </div>
+    <div class="logo"><img src="GITHUB LOGO 2.png"></div>
 
     <div class="announcement">
       <div class="announcement-label">ANNOUNCEMENTS</div>
@@ -547,9 +535,7 @@ html,body{
 
     <div class="wins">
       <span class="win-label">LATEST WINS:</span>
-      <div class="win-window">
-        <span class="win-scroll" id="latestWins">-</span>
-      </div>
+      <div class="win-window"><span class="win-scroll" id="latestWins">-</span></div>
     </div>
   </div>
 </div>
@@ -627,11 +613,7 @@ function statusClass(text){
 function updateClock(){
   const now=new Date();
   dateBox.textContent=now.toLocaleDateString("en-US",{month:"short",day:"numeric"});
-  timeBox.textContent = now.toLocaleTimeString("en-US",{
-    hour:"numeric",
-    minute:"2-digit",
-    second:"2-digit"
-  });
+  timeBox.textContent=now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",second:"2-digit"});
 }
 setInterval(updateClock,1000);
 updateClock();
@@ -667,19 +649,14 @@ function nextRainText(hourly){
 
 async function loadWeather(){
   try{
-    const url =
-      `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}`+
-      `&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code`+
-      `&hourly=precipitation_probability,precipitation`+
-      `&forecast_days=7&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch`;
-
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&hourly=precipitation_probability,precipitation&forecast_days=7&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch`;
     const res=await fetch(url,{cache:"no-store"});
     const data=await res.json();
     const c=data.current;
 
-    weatherTop.textContent = `${weatherIcon(c.weather_code)} Stafford ${Math.round(c.temperature_2m)}°F`;
-    weatherMid.textContent = `Humidity ${c.relative_humidity_2m}% Wind ${Math.round(c.wind_speed_10m)}mph`;
-    weatherBottom.textContent = nextRainText(data.hourly);
+    weatherTop.textContent=`${weatherIcon(c.weather_code)} Stafford ${Math.round(c.temperature_2m)}°F`;
+    weatherMid.textContent=`Humidity ${c.relative_humidity_2m}% Wind ${Math.round(c.wind_speed_10m)}mph`;
+    weatherBottom.textContent=nextRainText(data.hourly);
   }catch(e){
     weatherTop.textContent="Weather unavailable";
     weatherMid.textContent="";
@@ -704,7 +681,13 @@ function makeCell(text,options={}){
   if(options.subHeader)div.classList.add("sub-header");
   if(options.left)div.classList.add("left");
   if(options.groupStart)div.classList.add("group-start");
-  if(options.extraClass)div.classList.add(options.extraClass);
+
+  if(options.extraClass){
+    String(options.extraClass).split(/\s+/).forEach(cls=>{
+      if(cls)div.classList.add(cls);
+    });
+  }
+
   if(options.salesEntry)div.classList.add("sales-entry");
 
   const cls=statusClass(text);
@@ -880,12 +863,12 @@ async function load(){
     const text=JSON.stringify(data);
 
     if(!data || !data.length) return;
-    if(text === lastGoodText) return;
+    if(text===lastGoodText) return;
 
     lastGoodText=text;
     render(data);
   }catch(e){
-    console.warn("Temporary data load skipped:", e.message);
+    console.warn("Temporary data load skipped:",e.message);
   }
 }
 
