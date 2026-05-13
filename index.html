@@ -1,215 +1,262 @@
-:root{
-  --bg:#000;
-  --grid:#4e5a66;
-  --orange:#ff8c00;
-  --green:#00d941;
-  --red:#ff1d1d;
-  --yellow:#ffe600;
-  --blue:#7fb4ff;
-  --white:#f5f7fa;
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Factory Board</title>
 
-  --topHeight:82px;
+<style>
+*{box-sizing:border-box}
+
+:root{
+  --grid:rgba(180,205,230,.28);
+  --gridStrong:rgba(255,122,0,.52);
+  --orange:#ff7a00;
+  --white:#f4f7fb;
+  --mainBlock:#020202;
+  --shipBlock:#07131b;
+  --notesBlock:#050505;
+  --liveBlock:#020202;
+  --inspectionBlock:#130f18;
+  --salesBlock:#1e1e1e;
+
+  --topHeight:25px;
   --opsHeight:72px;
   --bottomHeight:20px;
-
-  --mainRow:minmax(10px,1fr);
-  --noteRow:minmax(8px,1fr);
 }
 
 html,body{
+  margin:0;
   width:100%;
   height:100%;
-  margin:0;
   background:#000;
   overflow:hidden;
-  font-family:Arial,sans-serif;
+  font-family:Arial,Helvetica,sans-serif;
 }
 
-body{
+.screen{
+  width:100vw;
+  height:100vh;
   display:grid;
-  grid-template-rows:
-    var(--topHeight)
-    var(--opsHeight)
-    1fr
-    var(--bottomHeight);
+  grid-template-rows:var(--topHeight) var(--opsHeight) minmax(0,1fr) var(--bottomHeight);
+  gap:2px;
+  padding:2px;
+  background:#000;
 }
 
-/* =========================
-   TOP BAR
-========================= */
-
+/* TOP */
 .top{
   display:grid;
-  grid-template-columns:
-    240px
-    minmax(0,1fr)
-    250px;
+  grid-template-columns:150px minmax(0,1fr) auto;
   gap:2px;
-  background:#000;
+  min-width:0;
   overflow:hidden;
 }
 
-.logo-box,
-.announce-box,
-.clock-weather{
-  background:#eef7fb;
-  border:1px solid #1f1f1f;
+.logo,.announcement,.right-panel{
+  border:1px solid var(--grid);
+  background:#fff;
+  overflow:hidden;
   min-width:0;
 }
 
-.logo-box{
+.logo{
   display:flex;
   align-items:center;
   justify-content:center;
-  overflow:hidden;
 }
 
-.logo-box img{
-  width:100%;
-  height:100%;
+.logo img{
+  max-height:24px;
+  max-width:148px;
   object-fit:contain;
 }
 
-.announce-box{
-  display:flex;
-  align-items:center;
-  overflow:hidden;
-  position:relative;
+.announcement{
+  display:grid;
+  grid-template-columns:78px minmax(0,1fr);
 }
 
-.announce-title{
+.announcement-label{
   color:var(--orange);
   font-weight:900;
-  font-size:14px;
-  padding:0 10px;
-  flex:none;
-}
-
-.announce-wrap{
-  flex:1;
-  overflow:hidden;
-  position:relative;
-  height:100%;
+  font-size:9px;
   display:flex;
   align-items:center;
+  justify-content:center;
+  border-right:1px solid rgba(0,0,0,.18);
 }
 
-.announce-text{
+.marquee{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  min-width:0;
+  contain:paint;
+}
+
+.marquee-track{
+  display:inline-flex;
+  gap:90px;
   white-space:nowrap;
   color:#111;
   font-weight:900;
-  font-size:clamp(12px,.8vw,18px);
-  display:inline-block;
-  padding-left:100%;
-  animation:ticker 28s linear infinite;
+  font-size:10px;
+  animation:move 42s linear infinite;
+  will-change:transform;
+  transform:translateZ(0);
+  backface-visibility:hidden;
 }
 
-@keyframes ticker{
-  0%{transform:translateX(0);}
-  100%{transform:translateX(-100%);}
+@keyframes move{
+  from{transform:translate3d(5%,0,0)}
+  to{transform:translate3d(-100%,0,0)}
 }
 
-.clock-weather{
-  display:grid;
-  grid-template-columns:95px 1fr;
+.right-panel{
+  display:flex;
+  justify-content:flex-end;
+  align-items:stretch;
+  min-width:0;
 }
 
 .clock-box{
+  width:78px;
+  flex-shrink:0;
   display:flex;
   flex-direction:column;
-  align-items:center;
   justify-content:center;
+  align-items:center;
   color:#000;
   font-weight:900;
-  border-right:1px solid rgba(0,0,0,.2);
-}
-
-.date-text{
-  font-size:clamp(10px,.72vw,15px);
-}
-
-.time-text{
-  font-size:clamp(14px,1vw,22px);
+  font-size:11px;
+  line-height:1.03;
+  border-left:1px solid rgba(0,0,0,.18);
 }
 
 .weather-box{
+  width:180px;
+  flex-shrink:0;
   display:flex;
   flex-direction:column;
   justify-content:center;
-  padding-left:6px;
-  overflow:hidden;
+  align-items:flex-start;
+  padding-left:5px;
+  line-height:1.02;
   color:#000;
   font-weight:900;
-  line-height:1.05;
-  font-size:clamp(8px,.58vw,12px);
-}
-
-/* =========================
-   OPS BAR
-========================= */
-
-.ops{
-  display:grid;
-  grid-template-columns:
-    300px
-    620px
-    1fr
-    320px;
-  gap:2px;
-  background:#000;
-}
-
-.panel{
-  border:1px solid var(--grid);
-  background:#050505;
   overflow:hidden;
 }
 
-.panel-title{
-  color:var(--orange);
-  font-size:clamp(8px,.62vw,13px);
-  font-weight:900;
-  text-align:center;
-  padding:3px 0;
+.weather-top{font-size:8.5px;white-space:nowrap}
+.weather-mid,.weather-bottom{font-size:7.3px;white-space:nowrap}
+
+/* OPS */
+.ops{
+  display:grid;
+  grid-template-columns:20fr 42fr 28fr 22fr;
+  gap:3px;
+  min-height:0;
+  overflow:hidden;
 }
 
-.counter-grid{
+.card{
+  border:1px solid var(--grid);
+  background:#050505;
+  color:var(--white);
+  overflow:hidden;
+  padding:2px 5px;
+  min-width:0;
+}
+
+.card-title{
+  color:var(--orange);
+  font-weight:900;
+  font-size:8.8px;
+  text-align:center;
+  margin-bottom:2px;
+  line-height:1;
+}
+
+.prior-row{
+  display:grid;
+  grid-template-columns:17px 1fr auto;
+  align-items:center;
+  font-size:9.6px;
+  font-weight:900;
+  line-height:1.1;
+}
+
+.icon{
+  color:var(--orange);
+  font-size:11px;
+}
+
+.metric-grid{
   display:grid;
   grid-template-columns:repeat(5,1fr);
-  gap:6px;
-  padding:4px;
+  gap:3px;
 }
 
-.counter{
-  border:1px solid #6f7c89;
+.metric{
+  border:1px solid var(--grid);
+  padding:2px;
+  text-align:center;
+  height:44px;
   display:flex;
   flex-direction:column;
   justify-content:center;
-  align-items:center;
-  min-height:58px;
 }
 
-.counter-label{
-  color:#fff;
-  font-size:clamp(7px,.52vw,11px);
-  font-weight:800;
+.metric-label{
+  font-size:6.9px;
+  font-weight:900;
+  line-height:1.02;
+  min-height:18px;
+}
+
+.biggreen,.bigyellow{
+  font-size:18px;
+  font-weight:900;
+  text-align:center;
+  line-height:1;
+}
+
+.biggreen{color:#28d428}
+.bigyellow{color:#ffe600}
+
+.date-row{
+  display:grid;
+  grid-template-columns:48px 1fr 38px;
+  border-bottom:1px solid rgba(180,205,230,.18);
+  font-size:8.6px;
+  font-weight:900;
+  padding:1px 0;
+  line-height:1.05;
+}
+
+.safety-card{
+  display:grid;
+  grid-template-columns:34px 1fr;
+  align-items:center;
+  height:41px;
+}
+
+.safety-icon{
+  color:var(--orange);
+  font-size:24px;
   text-align:center;
 }
 
-.counter-value{
-  color:#19ff47;
-  font-size:clamp(18px,1.5vw,34px);
+.safety-text{
+  font-size:9.2px;
   font-weight:900;
-  margin-top:2px;
+  line-height:1.05;
 }
 
-/* =========================
-   MAIN BOARD
-========================= */
-
+/* BOARD */
 .board{
   display:grid;
-
   grid-template-columns:
     7fr 7fr 7fr 7fr
     10fr 9fr
@@ -217,150 +264,258 @@ body{
     9fr 9fr
     12fr 7fr 16fr;
 
-  grid-template-rows:
-    repeat(46,minmax(0,1fr));
+  grid-template-rows:repeat(46,minmax(0,1fr));
 
-  background:#000;
+  align-content:stretch;
   border-top:1px solid var(--grid);
   border-left:1px solid var(--grid);
-
+  background:#000;
   overflow:hidden;
   min-height:0;
 }
 
 .cell{
+  height:100%;
+  min-height:0;
   border-right:1px solid var(--grid);
   border-bottom:1px solid var(--grid);
-
+  background:var(--mainBlock);
+  color:var(--white);
+  font-weight:800;
+  font-size:clamp(7px,.62vw,9.2px);
+  line-height:1;
   display:flex;
   align-items:center;
   justify-content:center;
-
-  color:#fff;
-  text-align:center;
-
-  font-size:clamp(7px,.62vw,9.2px);
-  font-weight:800;
-
+  padding:0 2px;
+  white-space:nowrap;
   overflow:hidden;
-  padding:1px 3px;
+  position:relative;
 }
 
 .header{
-  color:var(--orange);
+  background:#000!important;
+  color:var(--orange)!important;
+  font-weight:900!important;
   font-size:clamp(7px,.58vw,9px);
-  font-weight:900;
-  background:#050505;
+  text-transform:uppercase;
 }
 
-.green{
-  background:#00c93a;
-  color:#fff;
+.sub-header{
+  background:#000!important;
+  color:var(--orange)!important;
+  font-weight:900!important;
+  text-transform:uppercase;
 }
 
-.red{
-  background:#ff1d1d;
-  color:#fff;
+.group-start{border-left:1px solid var(--gridStrong)}
+.ship-section{background:var(--shipBlock)}
+.notes-section{background:var(--notesBlock)}
+.live-section{background:var(--liveBlock)}
+.inspect-section{background:var(--inspectionBlock)}
+.sales-order{background:var(--salesBlock)!important;color:#e6e6e6!important}
+.left{justify-content:flex-start;padding-left:4px}
+.sales-entry{font-size:clamp(7px,.66vw,9.8px);font-weight:900}
+
+.inner{white-space:nowrap}
+
+.long .inner{
+  position:absolute;
+  animation:scrollCell 16s linear infinite;
 }
 
-.yellow{
-  background:#ffe600;
-  color:#000;
+@keyframes scrollCell{
+  0%{transform:translateX(100%)}
+  100%{transform:translateX(-100%)}
 }
 
-/* =========================
-   LIVE RADAR / VIDEO
-========================= */
+.struck{text-decoration:line-through;color:#777!important}
+.delay,.p1{background:#ff0000!important;color:#fff!important}
+.ontime,.ready{background:#00a83a!important;color:#fff!important}
+.p2{background:#ff7a00!important;color:#000!important}
+.pull{background:#ffff00!important;color:#000!important}
+.pulling{background:#00b0f0!important;color:#000!important}
+.waiting{color:#b8b8b8!important}
+.released{color:#00ff88!important}
+.partial{color:#ffff00!important}
+.hold,.notreleased{color:#ff3333!important}
+.review,.revision,.clarification{color:#00b0f0!important}
 
-.live-wrap{
+/* LIVE VIDEO */
+.live-panel{
+  padding:0!important;
+  background:#000!important;
+  overflow:hidden!important;
+}
+
+.video-crop{
   width:100%;
   height:100%;
   overflow:hidden;
   background:#000;
+  position:relative;
 }
 
-.live-wrap iframe{
-  width:100%;
+.video-crop iframe{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:178%;
   height:100%;
-  border:none;
+  border:0;
+  background:#000;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
 }
 
-/* =========================
-   BOTTOM BAR
-========================= */
-
+/* BOTTOM */
 .bottom{
   display:grid;
-  grid-template-columns:
-    210px
-    270px
-    1fr
-    420px;
-
+  grid-template-columns:12fr 17fr 35fr 36fr;
   gap:2px;
-
-  background:#eef7fb;
-  border-top:1px solid #222;
+  min-height:0;
+  overflow:hidden;
 }
 
-.bottom-box{
-  overflow:hidden;
-  display:flex;
+.bottom-card{
+  border:1px solid var(--grid);
+  background:#050505;
+  color:#fff;
+  display:grid;
   align-items:center;
-  justify-content:center;
-  min-width:0;
+  text-align:center;
+  overflow:hidden;
+  padding:0;
+}
+
+.bottom-title{
+  color:var(--orange);
+  font-size:6px;
+  font-weight:900;
+  line-height:1;
+}
+
+.bottom-value{
+  color:#28d428;
+  font-size:12px;
+  font-weight:900;
+  line-height:1;
+}
+
+.bottom-small{
+  font-size:5px;
+  font-weight:800;
+  line-height:1;
 }
 
 .legend{
+  background:#fff;
+  color:#000;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:10px;
-  white-space:nowrap;
-  overflow:hidden;
-  font-size:clamp(7px,.52vw,11px);
+  gap:3px;
+  padding:0 2px;
   font-weight:900;
+  font-size:5.2px;
+  overflow:hidden;
+  white-space:nowrap;
 }
 
-.legend-item{
+.legend span{
+  display:inline-flex;
+  align-items:center;
+  white-space:nowrap;
+}
+
+.swatch{
+  width:6px;
+  height:6px;
+  display:inline-block;
+  margin-right:1px;
+  flex-shrink:0;
+}
+
+.sw-green{background:#00a83a}
+.sw-red{background:#ff0000}
+.sw-yellow{background:#ffff00}
+.sw-orange{background:#ff7a00}
+.sw-gray{background:#888}
+
+.wins{
+  background:#fff;
+  color:#000;
   display:flex;
   align-items:center;
-  gap:4px;
-}
-
-.legend-color{
-  width:14px;
-  height:14px;
-}
-
-.latest-wins{
+  gap:6px;
+  padding:0 4px;
+  font-size:6.6px;
+  font-weight:900;
   overflow:hidden;
   white-space:nowrap;
-  text-overflow:ellipsis;
-
-  color:#111;
-  font-weight:900;
-
-  font-size:clamp(7px,.56vw,12px);
-
-  padding:0 8px;
 }
 
-/* =========================
-   TV OVERRIDES
-========================= */
+.win-label{
+  color:var(--orange);
+  flex-shrink:0;
+  white-space:nowrap;
+}
 
-@media (min-width:1900px){
+.win-window{
+  overflow:hidden;
+  white-space:nowrap;
+  min-width:0;
+  flex:1;
+}
 
+.win-scroll{
+  display:inline;
+  white-space:nowrap;
+  animation:none!important;
+}
+
+.error{
+  color:red;
+  font-size:22px;
+  font-weight:900;
+  padding:20px;
+}
+
+/* PC / SMALLER SCREEN ADJUST */
+@media (max-width:1600px){
   :root{
-    --topHeight:90px;
-    --opsHeight:80px;
-    --bottomHeight:22px;
+    --topHeight:25px;
+    --opsHeight:70px;
+    --bottomHeight:20px;
   }
 
-  .board{
-    grid-template-rows:
-      repeat(48,minmax(0,1fr));
+  .cell{
+    font-size:clamp(6px,.58vw,8.4px);
+  }
+
+  .header{
+    font-size:clamp(6px,.54vw,8.2px);
+  }
+
+  .metric{
+    height:42px;
+  }
+
+  .metric-label{
+    font-size:6.3px;
+  }
+
+  .biggreen,.bigyellow{
+    font-size:16px;
+  }
+}
+
+/* 4K / LARGE TV ADJUST */
+@media (min-width:1900px){
+  :root{
+    --topHeight:28px;
+    --opsHeight:76px;
+    --bottomHeight:22px;
   }
 
   .cell{
@@ -368,15 +523,496 @@ body{
   }
 
   .header{
-    font-size:10px;
+    font-size:9.5px;
   }
 
-  .counter{
-    min-height:68px;
+  .metric{
+    height:49px;
   }
 
-  .counter-value{
-    font-size:38px;
+  .metric-label{
+    font-size:7.2px;
   }
 
+  .biggreen,.bigyellow{
+    font-size:20px;
+  }
 }
+</style>
+</head>
+
+<body>
+
+<div class="screen">
+  <div class="top">
+    <div class="logo"><img src="GITHUB LOGO 2.png"></div>
+
+    <div class="announcement">
+      <div class="announcement-label">ANNOUNCEMENTS</div>
+      <div class="marquee">
+        <div class="marquee-track" id="announceTrack">
+          <span></span><span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="clock-box">
+        <div id="dateBox"></div>
+        <div id="timeBox"></div>
+      </div>
+
+      <div class="weather-box">
+        <div class="weather-top" id="weatherTop">Weather loading</div>
+        <div class="weather-mid" id="weatherMid"></div>
+        <div class="weather-bottom" id="weatherBottom"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ops">
+    <div class="card">
+      <div class="card-title">TODAY'S PRIORITIES</div>
+      <div class="prior-row"><span class="icon">📋</span><span>TEST TODAY</span><span id="testToday">-</span></div>
+      <div class="prior-row"><span class="icon">🚚</span><span>SHIP TODAY</span><span id="shipToday">-</span></div>
+      <div class="prior-row"><span class="icon">🔥</span><span>HOT JOBS</span><span id="hotJobs">-</span></div>
+      <div class="prior-row"><span class="icon">👥</span><span>CUSTOMER VISITS</span><span id="customerVisits">-</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">LIVE PRODUCTION COUNTERS</div>
+      <div class="metric-grid">
+        <div class="metric"><div class="metric-label">OPEN VALVE<br>SALES ORDERS</div><div class="biggreen" id="openValveOrders">-</div></div>
+        <div class="metric"><div class="metric-label">OPEN KIT<br>ORDERS</div><div class="biggreen" id="openKitOrders">-</div></div>
+        <div class="metric"><div class="metric-label">VALVES IN<br>ASSEMBLY</div><div class="biggreen" id="valvesAssembly">-</div></div>
+        <div class="metric"><div class="metric-label">WAITING ON<br>VENDOR</div><div class="bigyellow" id="waitingVendor">-</div></div>
+        <div class="metric"><div class="metric-label">READY TO<br>SHIP</div><div class="biggreen" id="readyShip">-</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">UPCOMING CRITICAL DATES</div>
+      <div id="criticalDates"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">SAFETY MESSAGE</div>
+      <div class="safety-card">
+        <div class="safety-icon">⚠️</div>
+        <div class="safety-text" id="safetyMessage">Don’t take shortcuts.<br>Safety is a core value.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="board" id="board"></div>
+
+  <div class="bottom">
+    <div class="bottom-card">
+      <div class="bottom-title">SAFETY</div>
+      <div class="bottom-small">Days Since Recordable Incident</div>
+      <div class="bottom-value" id="safetyDays">-</div>
+    </div>
+
+    <div class="bottom-card">
+      <div class="bottom-title">PRODUCTION YTD</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr">
+        <div>
+          <div class="bottom-small">Valves Completed</div>
+          <div class="bottom-value" id="valvesCompletedYTD">-</div>
+        </div>
+        <div>
+          <div class="bottom-small">Valves Shipped</div>
+          <div class="bottom-value" id="valvesShippedYTD">-</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span style="color:var(--orange)">STATUS LEGEND:</span>
+      <span><i class="swatch sw-green"></i>ON TIME</span>
+      <span><i class="swatch sw-red"></i>DELAY</span>
+      <span><i class="swatch sw-yellow"></i>PARTIAL</span>
+      <span><i class="swatch sw-orange"></i>HOLD</span>
+      <span><i class="swatch sw-gray"></i>WAITING</span>
+    </div>
+
+    <div class="wins">
+      <span class="win-label">LATEST WINS:</span>
+      <div class="win-window"><span class="win-scroll" id="latestWins">-</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA_URL="https://script.google.com/macros/s/AKfycbzFxHCEVrtag58ofvfDZzJHrstGD_5fNRKQ2o8Lt3WSLmBt8zywimjjVRB36ju2pU-2uA/exec";
+const VIDEO_ID="pehIByVhAJY";
+const REFRESH_MS=5000;
+const VIDEO_RELOAD_MS=900000;
+
+const LAT=29.6161;
+const LON=-95.5577;
+
+const MAIN_ROWS=18;
+const BOTTOM_START_ROW=20;
+const BOTTOM_ROWS=26;
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+let lastGoodText="";
+
+function liveSrc(){
+  return `https://www.youtube-nocookie.com/embed/${VIDEO_ID}?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=${VIDEO_ID}&enablejsapi=0&t=${Date.now()}`;
+}
+
+function clean(v){
+  if(v==null)return "";
+  const s=String(v).trim();
+  const m=s.match(/^Date\((\d+),(\d+),(\d+)/);
+  if(m)return `${m[3]}-${MONTHS[+m[2]]}`;
+  return s;
+}
+
+function displayText(v){return clean(v).replace(/^\*\*/,"").trim()}
+function isStruck(v){return clean(v).startsWith("**")}
+function norm(v){return displayText(v).toUpperCase().replace(/[\s\-\/]+/g,"")}
+
+function findRow(data,terms){
+  return data.findIndex(r=>r.some(c=>{
+    const v=norm(c);
+    return terms.some(t=>v.includes(norm(t)));
+  }));
+}
+
+function getControl(data,key,fallback="-"){
+  const wanted=norm(key);
+  for(const row of data){
+    for(let i=13;i<row.length-1;i++){
+      if(norm(row[i])===wanted){
+        const val=displayText(row[i+1]);
+        return val || fallback;
+      }
+    }
+  }
+  return fallback;
+}
+
+function statusClass(text){
+  if(isStruck(text))return"struck";
+  const s=norm(text);
+
+  if(s.includes("DELAY"))return"delay";
+  if(s==="P1")return"p1";
+  if(s==="P2")return"p2";
+  if(s==="PULL")return"pull";
+  if(s==="PULLING")return"pulling";
+  if(s==="READY")return"ready";
+  if(s.includes("ONTIME"))return"ontime";
+  if(s==="WAITING")return"waiting";
+
+  if(s==="RELEASED")return"released";
+  if(s==="PARTIAL")return"partial";
+  if(s==="HOLD")return"hold";
+  if(s==="NOTRELEASED")return"notreleased";
+  if(s==="INREVIEW")return"review";
+  if(s==="REVISION")return"revision";
+  if(s==="CLARIFICATION")return"clarification";
+
+  return"";
+}
+
+function updateClock(){
+  const now=new Date();
+  dateBox.textContent=now.toLocaleDateString("en-US",{month:"short",day:"numeric"});
+  timeBox.textContent=now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",second:"2-digit"});
+}
+setInterval(updateClock,1000);
+updateClock();
+
+function weatherIcon(code){
+  if(code===0)return"☀️";
+  if(code<=2)return"🌤️";
+  if(code===3)return"☁️";
+  if(code<=67)return"🌧️";
+  if(code<=82)return"🌦️";
+  if(code<=99)return"⛈️";
+  return"🌫️";
+}
+
+function nextRainText(hourly){
+  if(!hourly || !hourly.time)return "Next rain unavailable";
+  const now=Date.now();
+
+  for(let i=0;i<hourly.time.length;i++){
+    const t=new Date(hourly.time[i]).getTime();
+    const precip=Number(hourly.precipitation_probability?.[i] || 0);
+    const rain=Number(hourly.precipitation?.[i] || 0);
+
+    if(t>now && (precip>=35 || rain>0)){
+      const dt=new Date(hourly.time[i]);
+      const day=dt.toLocaleDateString("en-US",{weekday:"short"});
+      const time=dt.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+      return `Next rain ${day} ${time}`;
+    }
+  }
+  return "Next rain none 7d";
+}
+
+async function loadWeather(){
+  try{
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&hourly=precipitation_probability,precipitation&forecast_days=7&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch`;
+    const res=await fetch(url,{cache:"no-store"});
+    const data=await res.json();
+    const c=data.current;
+
+    weatherTop.textContent=`${weatherIcon(c.weather_code)} Stafford ${Math.round(c.temperature_2m)}°F`;
+    weatherMid.textContent=`Humidity ${c.relative_humidity_2m}% Wind ${Math.round(c.wind_speed_10m)}mph`;
+    weatherBottom.textContent=nextRainText(data.hourly);
+  }catch(e){
+    weatherTop.textContent="Weather unavailable";
+    weatherMid.textContent="";
+    weatherBottom.textContent="";
+  }
+}
+loadWeather();
+setInterval(loadWeather,600000);
+
+function setAnnouncement(text){
+  const finalText=displayText(text)&&displayText(text).trim()?displayText(text):" ";
+  const spans=document.querySelectorAll("#announceTrack span");
+  spans[0].textContent=finalText;
+  spans[1].textContent=finalText;
+}
+
+function makeCell(text,options={}){
+  const div=document.createElement("div");
+  div.className="cell";
+
+  if(options.header)div.classList.add("header");
+  if(options.subHeader)div.classList.add("sub-header");
+  if(options.left)div.classList.add("left");
+  if(options.groupStart)div.classList.add("group-start");
+
+  if(options.extraClass){
+    String(options.extraClass).split(/\s+/).forEach(cls=>{
+      if(cls)div.classList.add(cls);
+    });
+  }
+
+  if(options.salesEntry)div.classList.add("sales-entry");
+
+  const cls=statusClass(text);
+  if(cls)div.classList.add(cls);
+
+  if(options.html){
+    div.innerHTML=options.html;
+  }else{
+    const inner=document.createElement("span");
+    inner.className="inner";
+    inner.textContent=displayText(text);
+    div.appendChild(inner);
+
+    requestAnimationFrame(()=>{
+      if(inner.scrollWidth>div.clientWidth){
+        div.classList.add("long");
+      }
+    });
+  }
+
+  if(options.colStart)div.style.gridColumnStart=options.colStart;
+  if(options.colEnd)div.style.gridColumnEnd=options.colEnd;
+  if(options.rowStart)div.style.gridRowStart=options.rowStart;
+  if(options.rowEnd)div.style.gridRowEnd=options.rowEnd;
+
+  return div;
+}
+
+function isOutgoingHeader(row){
+  return norm(row?.[10] || "").includes("OUTGOINGSHIPMENTS");
+}
+
+function updateDashboardControls(data){
+  openValveOrders.textContent=getControl(data,"OPEN VALVE SALES ORDERS","-");
+  openKitOrders.textContent=getControl(data,"OPEN KIT ORDERS","-");
+  valvesAssembly.textContent=getControl(data,"VALVES IN ASSEMBLY","-");
+  waitingVendor.textContent=getControl(data,"WAITING ON VENDOR","-");
+  readyShip.textContent=getControl(data,"READY TO SHIP","-");
+
+  testToday.textContent=getControl(data,"TEST TODAY","2");
+  shipToday.textContent=getControl(data,"SHIP TODAY","1");
+  hotJobs.textContent=getControl(data,"HOT JOBS","3");
+  customerVisits.textContent=getControl(data,"CUSTOMER VISITS","-");
+
+  safetyDays.textContent=getControl(data,"DAYS SINCE INCIDENT","-");
+  valvesCompletedYTD.textContent=getControl(data,"VALVES COMPLETED YTD","-");
+  valvesShippedYTD.textContent=getControl(data,"VALVES SHIPPED YTD","-");
+
+  const safety=getControl(data,"SAFETY MESSAGE","");
+  if(safety) safetyMessage.innerHTML=safety;
+
+  latestWins.textContent=getControl(data,"LATEST WINS","-");
+
+  const dates=[
+    getControl(data,"CRITICAL DATE 1",""),
+    getControl(data,"CRITICAL DATE 2",""),
+    getControl(data,"CRITICAL DATE 3",""),
+    getControl(data,"CRITICAL DATE 4","")
+  ].filter(Boolean);
+
+  criticalDates.innerHTML="";
+  dates.forEach(d=>{
+    const parts=d.split("|");
+    const div=document.createElement("div");
+    div.className="date-row";
+    div.innerHTML=`<span>${parts[0]||""}</span><span>${parts[1]||""}</span><span>${parts[2]||""}</span>`;
+    criticalDates.appendChild(div);
+  });
+}
+
+function render(data){
+  const board=document.getElementById("board");
+  board.innerHTML="";
+
+  updateDashboardControls(data);
+
+  const annRow=findRow(data,["ANNOUNCEMENT","ANNOUNCEMENTS","ANNOUNCMENTS"]);
+  const headerRow=findRow(data,["SALES ORDER"]);
+  const notesRow=findRow(data,["NOTES"]);
+
+  if(annRow>=0)setAnnouncement(data[annRow][1]);
+
+  if(headerRow<0){
+    board.innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
+    return;
+  }
+
+  const header=data[headerRow];
+
+  board.appendChild(makeCell(header[0],{header:true,rowStart:1,colStart:1,extraClass:"sales-order"}));
+  board.appendChild(makeCell(header[1],{header:true,rowStart:1,colStart:2}));
+  board.appendChild(makeCell(header[2],{header:true,rowStart:1,colStart:3}));
+  board.appendChild(makeCell(header[3],{header:true,rowStart:1,colStart:4}));
+
+  board.appendChild(makeCell(header[4],{header:true,rowStart:1,colStart:5,colEnd:7,groupStart:true}));
+  board.appendChild(makeCell(header[6],{header:true,rowStart:1,colStart:7,colEnd:9,groupStart:true}));
+  board.appendChild(makeCell(header[8],{header:true,rowStart:1,colStart:9,colEnd:11,groupStart:true}));
+
+  board.appendChild(makeCell(header[10],{header:true,rowStart:1,colStart:11,groupStart:true,extraClass:"ship-section"}));
+  board.appendChild(makeCell(header[11],{header:true,rowStart:1,colStart:12,extraClass:"ship-section"}));
+  board.appendChild(makeCell(header[12],{header:true,rowStart:1,colStart:13,extraClass:"ship-section"}));
+
+  const tableEnd=notesRow>headerRow?notesRow:data.length;
+  const mainRows=data.slice(headerRow+1,tableEnd);
+
+  for(let r=0;r<MAIN_ROWS;r++){
+    const row=mainRows[r]||[];
+    const gridRow=2+r;
+    const outgoing=isOutgoingHeader(row);
+
+    for(let c=0;c<13;c++){
+      const opt={
+        rowStart:gridRow,
+        colStart:c+1,
+        groupStart:[5,7,9,11].includes(c+1),
+        salesEntry:c+1===1
+      };
+
+      if(c+1===1)opt.extraClass="sales-order";
+      if(c+1>=11&&c+1<=13)opt.extraClass="ship-section";
+      if(outgoing && c+1>=11&&c+1<=13)opt.subHeader=true;
+
+      board.appendChild(makeCell(row[c],opt));
+    }
+  }
+
+  const notesTitle=notesRow>=0?clean(data[notesRow][0]):"NOTES / IMPORTANT REMARKS";
+
+  board.appendChild(makeCell(notesTitle,{
+    header:true,left:true,rowStart:BOTTOM_START_ROW,colStart:1,colEnd:6,extraClass:"notes-section"
+  }));
+
+  board.appendChild(makeCell("LIVE STREAM",{
+    header:true,rowStart:BOTTOM_START_ROW,colStart:6,colEnd:10,extraClass:"live-section"
+  }));
+
+  board.appendChild(makeCell("INSPECTION",{
+    header:true,rowStart:BOTTOM_START_ROW,colStart:10,colEnd:12,groupStart:true,extraClass:"inspect-section"
+  }));
+
+  board.appendChild(makeCell("REQ DATE",{
+    header:true,rowStart:BOTTOM_START_ROW,colStart:12,extraClass:"inspect-section"
+  }));
+
+  board.appendChild(makeCell("STATUS",{
+    header:true,rowStart:BOTTOM_START_ROW,colStart:13,extraClass:"inspect-section"
+  }));
+
+  board.appendChild(makeCell("",{
+    rowStart:BOTTOM_START_ROW+1,
+    rowEnd:BOTTOM_START_ROW+1+BOTTOM_ROWS,
+    colStart:6,
+    colEnd:10,
+    extraClass:"live-panel",
+    html:`
+      <div class="video-crop">
+        <iframe
+          id="liveFrame"
+          src="${liveSrc()}"
+          allow="autoplay; encrypted-media; fullscreen"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen>
+        </iframe>
+      </div>
+    `
+  }));
+
+  const bottomRows=notesRow>=0?data.slice(notesRow+1):[];
+
+  for(let r=0;r<BOTTOM_ROWS;r++){
+    const row=bottomRows[r]||[];
+    const gridRow=BOTTOM_START_ROW+1+r;
+
+    board.appendChild(makeCell(row[0],{
+      left:true,rowStart:gridRow,colStart:1,colEnd:6,extraClass:"notes-section"
+    }));
+
+    board.appendChild(makeCell(row[9],{
+      left:true,rowStart:gridRow,colStart:10,colEnd:12,groupStart:true,extraClass:"inspect-section"
+    }));
+
+    board.appendChild(makeCell(row[11],{
+      rowStart:gridRow,colStart:12,extraClass:"inspect-section"
+    }));
+
+    board.appendChild(makeCell(row[12],{
+      rowStart:gridRow,colStart:13,extraClass:"inspect-section"
+    }));
+  }
+}
+
+function refreshLiveVideo(){
+  const frame=document.getElementById("liveFrame");
+  if(frame) frame.src=liveSrc();
+}
+setInterval(refreshLiveVideo,VIDEO_RELOAD_MS);
+
+async function load(){
+  try{
+    const res=await fetch(DATA_URL+"?t="+Date.now(),{cache:"no-store"});
+    const data=await res.json();
+    const text=JSON.stringify(data);
+
+    if(!data || !data.length) return;
+    if(text===lastGoodText) return;
+
+    lastGoodText=text;
+    render(data);
+  }catch(e){
+    console.warn("Temporary data load skipped:",e.message);
+  }
+}
+
+load();
+setInterval(load,REFRESH_MS);
+</script>
+
+</body>
+</html>
