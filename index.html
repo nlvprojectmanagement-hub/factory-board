@@ -16,6 +16,7 @@
   --mainBlock:#020202;
   --shipBlock:#07131b;
   --notesBlock:#050505;
+  --focusBlock:#06110a;
   --inspectionBlock:#130f18;
   --salesBlock:#1e1e1e;
 
@@ -292,6 +293,7 @@ html,body{
 .group-start{border-left:1px solid var(--gridStrong)}
 .ship-section{background:var(--shipBlock)}
 .notes-section{background:var(--notesBlock)}
+.focus-section{background:var(--focusBlock)}
 .inspect-section{background:var(--inspectionBlock)}
 .sales-order{background:var(--salesBlock)!important;color:#e6e6e6!important}
 .left{justify-content:flex-start;padding-left:4px}
@@ -316,12 +318,11 @@ html,body{
 .hold,.notreleased{color:#ff3333!important}
 .review,.revision,.clarification{color:#00b0f0!important}
 
-.shop-message{
+.focus-item{
   color:#28d428!important;
-  font-size:clamp(8px,.8vw,12px)!important;
   font-weight:900!important;
-  justify-content:center!important;
-  text-align:center;
+  justify-content:flex-start!important;
+  padding-left:5px!important;
 }
 
 .bottom{
@@ -753,6 +754,17 @@ function updateDashboardControls(data){
   });
 }
 
+function getFocusItems(data){
+  return [
+    getControl(data,"SHOP FOCUS 1",""),
+    getControl(data,"SHOP FOCUS 2",""),
+    getControl(data,"SHOP FOCUS 3",""),
+    getControl(data,"SHOP FOCUS 4",""),
+    getControl(data,"SHOP FOCUS 5",""),
+    getControl(data,"SHOP FOCUS 6","")
+  ].filter(Boolean);
+}
+
 function render(data){
   const board=document.getElementById("board");
   board.innerHTML="";
@@ -762,6 +774,7 @@ function render(data){
   const annRow=findRow(data,["ANNOUNCEMENT","ANNOUNCEMENTS","ANNOUNCMENTS"]);
   const headerRow=findRow(data,["SALES ORDER"]);
   const notesRow=findRow(data,["NOTES"]);
+  const focusItems=getFocusItems(data);
 
   if(annRow>=0)setAnnouncement(data[annRow][1]);
 
@@ -810,14 +823,13 @@ function render(data){
   }
 
   const notesTitle=notesRow>=0?clean(data[notesRow][0]):"NOTES / IMPORTANT REMARKS";
-  const shopMessage=getControl(data,"SHOP MESSAGE","Quality today prevents problems tomorrow.");
 
   board.appendChild(makeCell(notesTitle,{
     header:true,left:true,rowStart:BOTTOM_START_ROW,colStart:1,colEnd:7,extraClass:"notes-section"
   }));
 
-  board.appendChild(makeCell(shopMessage,{
-    header:true,rowStart:BOTTOM_START_ROW,colStart:7,colEnd:10,extraClass:"notes-section shop-message"
+  board.appendChild(makeCell("SHOP FOCUS",{
+    header:true,rowStart:BOTTOM_START_ROW,colStart:7,colEnd:10,extraClass:"focus-section"
   }));
 
   board.appendChild(makeCell("INSPECTION",{
@@ -839,7 +851,11 @@ function render(data){
     const gridRow=BOTTOM_START_ROW+1+r;
 
     board.appendChild(makeCell(row[0],{
-      left:true,rowStart:gridRow,colStart:1,colEnd:10,extraClass:"notes-section"
+      left:true,rowStart:gridRow,colStart:1,colEnd:7,extraClass:"notes-section"
+    }));
+
+    board.appendChild(makeCell(focusItems[r]||"",{
+      left:true,rowStart:gridRow,colStart:7,colEnd:10,extraClass:"focus-section focus-item"
     }));
 
     board.appendChild(makeCell(row[9],{
