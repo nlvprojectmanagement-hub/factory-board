@@ -1,329 +1,478 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>N-Line Factory Board</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Factory Board</title>
 
 <style>
+*{box-sizing:border-box}
+
 :root{
   --grid:rgba(180,205,230,.28);
   --gridStrong:rgba(255,122,0,.52);
   --orange:#ff7a00;
   --white:#f4f7fb;
-
   --mainBlock:#020202;
   --shipBlock:#07131b;
   --notesBlock:#050505;
   --jobBlock:#061018;
   --inspectionBlock:#130f18;
   --salesBlock:#1e1e1e;
-
   --topHeight:25px;
   --opsHeight:72px;
-  --bottomHeight:40px;
-}
-
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+  --bottomHeight:38px;
 }
 
 html,body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  background:#000;
-  color:#fff;
+  margin:0;width:100%;height:100%;
+  background:#000;overflow:hidden;
   font-family:Arial,Helvetica,sans-serif;
 }
 
-body{
+.screen{
+  width:100vw;height:100vh;
   display:grid;
-  grid-template-rows:
-    var(--topHeight)
-    var(--opsHeight)
-    1fr
-    var(--bottomHeight);
+  grid-template-rows:var(--topHeight) var(--opsHeight) minmax(0,1fr) var(--bottomHeight);
+  gap:2px;padding:2px;background:#000;
 }
 
-.cell{
+.top{
+  display:grid;
+  grid-template-columns:150px minmax(0,1fr) auto;
+  gap:2px;overflow:hidden;
+}
+
+.logo,.announcement,.right-panel{
   border:1px solid var(--grid);
-  overflow:hidden;
-  font-size:clamp(7px,.68vw,10px);
-  font-weight:700;
-}
-
-.header{
-  color:var(--orange);
-  text-transform:uppercase;
-  font-weight:900;
-  text-align:center;
-  font-size:clamp(7px,.65vw,9px);
-  letter-spacing:.3px;
-}
-
-.topbar{
-  display:grid;
-  grid-template-columns:120px 260px 1fr 150px;
   background:#fff;
-  color:#000;
-  align-items:center;
+  overflow:hidden;
+  min-width:0;
 }
 
-.logo{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-right:1px solid #000;
-  font-weight:900;
-  font-size:18px;
-  white-space:nowrap;
-}
+.logo{display:flex;align-items:center;justify-content:center}
+.logo img{max-height:24px;max-width:148px;object-fit:contain}
 
 .announcement{
   display:grid;
-  grid-template-columns:105px minmax(0,1fr);
-  height:100%;
+  grid-template-columns:110px minmax(0,1fr);
 }
 
 .announcement-label{
-  background:#fff;
   color:var(--orange);
-  border-right:1px solid #000;
+  font-weight:900;
+  font-size:8.5px;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:8px;
-  font-weight:900;
+  border-right:1px solid rgba(0,0,0,.18);
   white-space:nowrap;
+  overflow:hidden;
 }
 
 .marquee{
   overflow:hidden;
-  position:relative;
+  display:flex;
+  align-items:center;
+}
+
+.marquee-track{
+  display:inline-flex;
+  gap:90px;
   white-space:nowrap;
+  color:#111;
+  font-weight:900;
+  font-size:10px;
+  animation:move 42s linear infinite;
 }
 
-.marquee span{
-  position:absolute;
-  white-space:nowrap;
-  will-change:transform;
-  animation:scroll-left 30s linear infinite;
-  top:50%;
-  transform:translateY(-50%);
-  font-size:14px;
-  font-weight:700;
+@keyframes move{
+  from{transform:translate3d(5%,0,0)}
+  to{transform:translate3d(-100%,0,0)}
 }
 
-@keyframes scroll-left{
-  from{transform:translate(100%, -50%)}
-  to{transform:translate(-100%, -50%)}
+.right-panel{
+  display:flex;
+  justify-content:flex-end;
+  align-items:stretch;
 }
 
-.datetime{
+.clock-box{
+  width:78px;
+  flex-shrink:0;
   display:flex;
   flex-direction:column;
   justify-content:center;
-  align-items:flex-end;
-  padding-right:8px;
-  font-size:11px;
+  align-items:center;
+  color:#000;
   font-weight:900;
-  line-height:1.1;
+  font-size:11px;
+  line-height:1.03;
+  border-left:1px solid rgba(0,0,0,.18);
 }
+
+.weather-box{
+  width:180px;
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  padding-left:5px;
+  line-height:1.02;
+  color:#000;
+  font-weight:900;
+  overflow:hidden;
+}
+
+.weather-top{font-size:8.5px;white-space:nowrap}
+.weather-mid,.weather-bottom{font-size:7.3px;white-space:nowrap}
 
 .ops{
   display:grid;
-  grid-template-columns:300px 830px 1fr;
+  grid-template-columns:26fr 44fr 18fr;
+  gap:3px;
+  min-height:0;
+  overflow:hidden;
 }
 
-.critical{
-  background:#000;
-  display:grid;
-  grid-template-rows:16px repeat(4,1fr);
+.card{
+  border:1px solid var(--grid);
+  background:#050505;
+  color:var(--white);
+  overflow:hidden;
+  padding:2px 5px;
+  min-width:0;
 }
 
-.critical-row{
-  display:grid;
-  grid-template-columns:1fr 52px;
-  align-items:center;
-  padding:0 6px;
-  border-top:1px solid var(--grid);
-  font-size:10px;
+.card-title{
+  color:var(--orange);
+  font-weight:900;
+  font-size:8.8px;
+  text-align:center;
+  margin-bottom:2px;
+  line-height:1;
 }
 
-.metrics{
-  display:grid;
-  grid-template-rows:16px 1fr;
-  background:#000;
-}
-
-.metric-wrap{
+.metric-grid{
   display:grid;
   grid-template-columns:repeat(5,1fr);
-  gap:2px;
-  padding:2px;
+  gap:3px;
 }
 
 .metric{
   border:1px solid var(--grid);
+  padding:2px;
+  text-align:center;
+  height:44px;
   display:flex;
   flex-direction:column;
-  align-items:center;
   justify-content:center;
-  background:#050505;
-  height:42px;
 }
 
 .metric-label{
-  font-size:6px;
-  line-height:1;
+  font-size:6.9px;
+  font-weight:900;
+  line-height:1.02;
+}
+
+.biggreen,.bigyellow{
+  font-size:18px;
+  font-weight:900;
   text-align:center;
-}
-
-.biggreen{
-  color:#2cff2c;
-  font-size:18px;
-  font-weight:900;
   line-height:1;
 }
 
-.bigyellow{
-  color:#ffe600;
-  font-size:18px;
-  font-weight:900;
-  line-height:1;
-}
+.biggreen{color:#28d428}
+.bigyellow{color:#ffe600}
 
-.right-top{
+.date-row{
   display:grid;
-  grid-template-columns:1fr 500px;
+  grid-template-columns:48px 1fr 38px;
+  border-bottom:1px solid rgba(180,205,230,.18);
+  font-size:8.6px;
+  font-weight:900;
+  padding:1px 0;
+  line-height:1.05;
 }
 
-.safety{
+.safety-card{
   display:flex;
   align-items:center;
   justify-content:center;
-  flex-direction:column;
-  text-align:center;
-  padding:4px;
-  background:#050505;
+  gap:8px;
+  height:41px;
+  padding:0 8px;
 }
 
-.safety-text{
-  font-size:14px;
-  font-weight:900;
-  line-height:1.1;
-}
+.safety-icon{font-size:22px;flex-shrink:0}
+.safety-text{font-size:9.2px;font-weight:900;line-height:1.1;text-align:left}
 
-.video{
+.board{
+  display:grid;
+  grid-template-columns:
+    7fr 7fr 7fr 8fr
+    10fr 9fr
+    10fr 9fr
+    9fr 9fr
+    12fr 7fr 16fr;
+  grid-template-rows:repeat(46,minmax(0,1fr));
+  border-top:1px solid var(--grid);
+  border-left:1px solid var(--grid);
   background:#000;
+  overflow:hidden;
+  min-height:0;
+}
+
+.cell{
+  border-right:1px solid var(--grid);
+  border-bottom:1px solid var(--grid);
+  background:var(--mainBlock);
+  color:var(--white);
+  font-weight:800;
+  font-size:clamp(7px,.62vw,9.2px);
+  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 2px;
+  white-space:nowrap;
+  overflow:hidden;
+  position:relative;
+}
+
+.header{
+  background:#000!important;
+  color:var(--orange)!important;
+  font-weight:900!important;
+  font-size:clamp(7px,.58vw,9px);
+  text-transform:uppercase;
+}
+
+.group-start{border-left:1px solid var(--gridStrong)}
+.notes-section{background:var(--notesBlock)}
+.ship-section{background:var(--shipBlock)}
+.job-section{background:var(--jobBlock)}
+.inspect-section{background:var(--inspectionBlock)}
+.sales-order{background:var(--salesBlock)!important;color:#e6e6e6!important}
+.left{justify-content:flex-start;padding-left:4px}
+.sales-entry{font-size:clamp(7px,.66vw,9.8px);font-weight:900}
+.inner{white-space:nowrap}
+
+.long .inner{
+  position:absolute;
+  animation:scrollCell 16s linear infinite;
+}
+
+@keyframes scrollCell{
+  0%{transform:translateX(100%)}
+  100%{transform:translateX(-100%)}
+}
+
+.struck{text-decoration:line-through;color:#777!important}
+.delay,.p1{background:#ff0000!important;color:#fff!important}
+.ontime,.ready{background:#00a83a!important;color:#fff!important}
+.p2{background:#ff7a00!important;color:#000!important}
+.pull{background:#ffff00!important;color:#000!important}
+.pulling{background:#00b0f0!important;color:#000!important}
+.waiting{color:#b8b8b8!important}
+.released{color:#00ff88!important}
+.partial{color:#ffff00!important}
+.hold,.notreleased{color:#ff3333!important}
+.review,.revision,.clarification{color:#00b0f0!important}
+
+.notes-panel,
+.shipping-panel,
+.inspection-panel,
+.job-panel,
+.live-panel{
+  padding:0!important;
+  white-space:normal!important;
+  display:block!important;
+  overflow:hidden!important;
+}
+
+.notes-panel{background:var(--notesBlock)!important}
+.shipping-panel{background:var(--shipBlock)!important}
+.inspection-panel{background:var(--inspectionBlock)!important}
+.job-panel{background:var(--jobBlock)!important}
+.live-panel{background:#000!important}
+
+.panel-title{
+  height:16px;
+  color:var(--orange);
+  font-weight:900;
+  font-size:clamp(7px,.6vw,9px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-bottom:1px solid var(--grid);
+  background:#000;
+  text-transform:uppercase;
+}
+
+.notes-table{
+  height:calc(100% - 16px);
+  display:grid;
+  grid-template-rows:repeat(7,1fr);
+}
+
+.note-row{
+  border-bottom:1px solid var(--grid);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  padding:0 5px;
+  font-weight:900;
+  font-size:clamp(7px,.62vw,9.2px);
+  overflow:hidden;
+  white-space:nowrap;
+}
+
+.video-crop{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#000;
+  position:relative;
+  border:1px solid var(--grid);
+}
+
+.video-crop iframe{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:160%;
+  height:100%;
+  border:0;
+  background:#000;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+
+.job-table{
+  height:calc(100% - 16px);
+  display:grid;
+  grid-template-columns:1fr 1.35fr 1fr;
+  grid-template-rows:16px repeat(12,1fr);
+}
+
+.job-head,.job-cell{
+  border-right:1px solid var(--grid);
+  border-bottom:1px solid var(--grid);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  padding:0 3px;
+  white-space:nowrap;
+  font-weight:900;
+}
+
+.job-head{
+  color:var(--orange);
+  background:#000;
+  font-size:clamp(6px,.56vw,8.5px);
+}
+
+.job-cell{
+  color:#fff;
+  background:rgba(6,16,24,.95);
+  font-size:clamp(7px,.62vw,9.5px);
+}
+
+.shipping-wrap{
+  width:100%;
+  height:100%;
+  display:grid;
+  grid-template-rows:16px 1fr 16px 1fr;
   overflow:hidden;
 }
 
-.video iframe{
-  width:100%;
-  height:100%;
-  border:0;
-}
-
-.main{
-  display:grid;
-  grid-template-columns:300px 1fr 500px;
-}
-
-.sales{
-  background:var(--salesBlock);
-  display:grid;
-  grid-template-rows:16px repeat(15,1fr);
-}
-
-.main-center{
-  background:var(--mainBlock);
-  display:grid;
-  grid-template-rows:16px repeat(15,1fr);
-}
-
-.jobs{
-  background:var(--jobBlock);
-  display:grid;
-  grid-template-rows:16px repeat(10,1fr);
-}
-
-.row{
-  display:grid;
+.shipping-title{
+  color:var(--orange);
+  font-weight:900;
+  font-size:clamp(7px,.6vw,9px);
+  display:flex;
   align-items:center;
-}
-
-.sales-row{
-  grid-template-columns:90px 110px 110px 120px;
-}
-
-.main-row{
-  grid-template-columns:140px 140px 140px 140px;
-}
-
-.jobs-row{
-  grid-template-columns:150px 190px 1fr;
-}
-
-.shipments{
-  display:grid;
-  grid-template-columns:300px 1fr 500px;
-}
-
-.notes{
-  background:var(--notesBlock);
-  display:grid;
-  grid-template-rows:16px repeat(12,1fr);
-}
-
-.ship-wrap{
-  background:var(--shipBlock);
-  display:grid;
-  grid-template-rows:16px repeat(6,1fr) 16px repeat(6,1fr);
-}
-
-.inspection{
-  background:var(--inspectionBlock);
-  display:grid;
-  grid-template-rows:16px repeat(12,1fr);
-}
-
-.ship-row{
-  display:grid;
-  grid-template-columns:1fr 160px 230px;
-  align-items:center;
-}
-
-.inspect-row{
-  display:grid;
-  grid-template-columns:1fr 110px 1fr;
-  align-items:center;
-}
-
-.center{
+  justify-content:center;
   text-align:center;
+  border-bottom:1px solid var(--grid);
+  background:#000;
+  text-transform:uppercase;
 }
 
-.green{
-  background:#00c73c;
-  color:#fff;
+.ship-table{
+  display:grid;
+  grid-template-columns:1.35fr .7fr 1.45fr;
+  grid-template-rows:14px repeat(6,1fr);
+  overflow:hidden;
+}
+
+.ship-head,.ship-cell{
+  border-right:1px solid var(--grid);
+  border-bottom:1px solid var(--grid);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  padding:0 2px;
+  white-space:nowrap;
   font-weight:900;
 }
 
-.red{
-  background:#ff1717;
-  color:#fff;
-  font-weight:900;
+.ship-head{
+  color:var(--orange);
+  background:#000;
+  font-size:clamp(6px,.54vw,8px);
 }
+
+.ship-cell{
+  color:#fff;
+  background:rgba(7,19,27,.9);
+  font-size:clamp(7px,.62vw,9.2px);
+}
+
+.inspection-table{
+  height:calc(100% - 16px);
+  display:grid;
+  grid-template-columns:1.55fr .55fr 1.05fr;
+  grid-template-rows:14px repeat(14,1fr);
+}
+
+.ins-head,.ins-cell{
+  border-right:1px solid var(--grid);
+  border-bottom:1px solid var(--grid);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  padding:0 3px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.ins-head{
+  color:var(--orange);
+  background:#000;
+  font-size:clamp(6px,.54vw,8px);
+}
+
+.ins-cell{
+  color:#fff;
+  background:rgba(19,15,24,.95);
+  font-size:clamp(7px,.62vw,9.2px);
+}
+
+.ins-left{justify-content:flex-start}
 
 .bottom{
   display:grid;
-  grid-template-columns:200px 120px 120px 1fr 620px;
+  grid-template-columns:12fr 17fr 35fr 36fr;
   gap:2px;
-  background:#000;
+  min-height:0;
+  overflow:hidden;
 }
 
 .bottom-card{
@@ -336,333 +485,677 @@ body{
   justify-content:center;
   text-align:center;
   overflow:hidden;
-  padding:2px;
+  padding:2px 2px 4px 2px;
   line-height:1;
 }
 
 .bottom-title{
   color:var(--orange);
-  font-size:7px;
+  font-size:7.8px;
   font-weight:900;
   line-height:1;
 }
 
 .bottom-value{
   color:#28d428;
-  font-size:12px;
+  font-size:12.5px;
   font-weight:900;
   line-height:1;
 }
 
 .bottom-small{
-  font-size:6px;
+  font-size:6.8px;
   font-weight:900;
   line-height:1;
-  white-space:nowrap;
+}
+
+.production-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  width:100%;
+  align-items:center;
+  min-height:0;
 }
 
 .legend{
+  background:#fff;
+  color:#000;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:5px;
-  font-size:8px;
+  gap:4px;
+  padding:0 2px;
   font-weight:900;
-  background:#fff;
-  color:#000;
+  font-size:8px;
+  overflow:hidden;
+  white-space:nowrap;
+  line-height:1;
 }
 
+.legend span{display:inline-flex;align-items:center;white-space:nowrap}
+.swatch{width:7px;height:7px;display:inline-block;margin-right:2px;flex-shrink:0}
+.sw-green{background:#00a83a}
+.sw-red{background:#ff0000}
+.sw-yellow{background:#ffff00}
+.sw-orange{background:#ff7a00}
+.sw-gray{background:#888}
+
 .wins{
+  background:#fff;
+  color:#000;
   display:flex;
   align-items:center;
-  padding-left:8px;
-  background:#fff;
-  color:#ff7a00;
+  gap:6px;
+  padding:0 5px;
   font-size:9px;
   font-weight:900;
   overflow:hidden;
   white-space:nowrap;
+  line-height:1;
 }
 
-@media (max-width:1600px){
-  :root{
-    --topHeight:25px;
-    --opsHeight:70px;
-    --bottomHeight:38px;
-  }
+.win-label{color:var(--orange);flex-shrink:0}
+.win-window{overflow:hidden;white-space:nowrap;min-width:0;flex:1}
+.win-scroll{display:inline;white-space:nowrap;animation:none!important}
 
+.error{color:red;font-size:22px;font-weight:900;padding:20px}
+
+@media (max-width:1600px){
+  :root{--topHeight:25px;--opsHeight:70px;--bottomHeight:36px}
+  .announcement{grid-template-columns:105px minmax(0,1fr)}
+  .announcement-label{font-size:8px}
   .cell{font-size:clamp(6px,.58vw,8.4px)}
   .header{font-size:clamp(6px,.54vw,8.2px)}
-
-  .bottom-title{font-size:6.5px}
-  .bottom-value{font-size:11px}
-  .bottom-small{font-size:5.8px}
+  .metric{height:42px}
+  .metric-label{font-size:6.3px}
+  .biggreen,.bigyellow{font-size:16px}
+  .bottom-title{font-size:7px}
+  .bottom-value{font-size:11.5px}
+  .bottom-small{font-size:6.3px}
+  .legend{font-size:7px}
+  .wins{font-size:8px}
 }
 
 @media (min-width:1900px){
-  :root{
-    --topHeight:28px;
-    --opsHeight:76px;
-    --bottomHeight:42px;
-  }
-
+  :root{--topHeight:28px;--opsHeight:76px;--bottomHeight:40px}
   .cell{font-size:10px}
-  .header{font-size:9px}
-
-  .bottom-title{font-size:7.5px}
-  .bottom-value{font-size:13px}
-  .bottom-small{font-size:6.5px}
+  .header{font-size:9.5px}
+  .metric{height:49px}
+  .metric-label{font-size:7.2px}
+  .biggreen,.bigyellow{font-size:20px}
+  .bottom-title{font-size:8px}
+  .bottom-value{font-size:13.5px}
+  .bottom-small{font-size:7px}
+  .legend{font-size:8.5px}
+  .wins{font-size:9.5px}
 }
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
+<div class="screen">
+  <div class="top">
+    <div class="logo"><img src="GITHUB LOGO 2.png"></div>
 
-  <div class="logo">
-    N-LINE VALVES ®
-  </div>
+    <div class="announcement">
+      <div class="announcement-label">ANNOUNCEMENTS</div>
+      <div class="marquee">
+        <div class="marquee-track" id="announceTrack">
+          <span></span><span></span>
+        </div>
+      </div>
+    </div>
 
-  <div class="announcement">
-    <div class="announcement-label">ANNOUNCEMENTS</div>
-    <div class="marquee">
-      <span>The quick brown fox jumps over the lazy dog</span>
+    <div class="right-panel">
+      <div class="clock-box">
+        <div id="dateBox"></div>
+        <div id="timeBox"></div>
+      </div>
+
+      <div class="weather-box">
+        <div class="weather-top" id="weatherTop">Weather loading</div>
+        <div class="weather-mid" id="weatherMid"></div>
+        <div class="weather-bottom" id="weatherBottom"></div>
+      </div>
     </div>
   </div>
 
-  <div class="marquee">
-    <span>The quick brown fox jumps over the lazy dog</span>
+  <div class="ops">
+    <div class="card">
+      <div class="card-title">UPCOMING CRITICAL DATES</div>
+      <div id="criticalDates"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">LIVE PRODUCTION COUNTERS</div>
+      <div class="metric-grid">
+        <div class="metric"><div class="metric-label">OPEN VALVE<br>SALES ORDERS</div><div class="biggreen" id="openValveOrders">-</div></div>
+        <div class="metric"><div class="metric-label">OPEN KIT<br>ORDERS</div><div class="biggreen" id="openKitOrders">-</div></div>
+        <div class="metric"><div class="metric-label">VALVES IN<br>ASSEMBLY</div><div class="biggreen" id="valvesAssembly">-</div></div>
+        <div class="metric"><div class="metric-label">WAITING ON<br>VENDOR</div><div class="bigyellow" id="waitingVendor">-</div></div>
+        <div class="metric"><div class="metric-label">READY TO<br>SHIP</div><div class="biggreen" id="readyShip">-</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">SAFETY MESSAGE</div>
+      <div class="safety-card">
+        <div class="safety-icon">⚠️</div>
+        <div class="safety-text" id="safetyMessage">Don’t take shortcuts.<br>Safety is a core value.</div>
+      </div>
+    </div>
   </div>
 
-  <div class="datetime">
-    <div>May 14</div>
-    <div>1:33 PM</div>
-    <div>Stafford 90°F</div>
-  </div>
+  <div class="board" id="board"></div>
 
+  <div class="bottom">
+    <div class="bottom-card">
+      <div class="bottom-title">SAFETY</div>
+      <div class="bottom-small">Days Since Recordable Incident</div>
+      <div class="bottom-value" id="safetyDays">-</div>
+    </div>
+
+    <div class="bottom-card">
+      <div class="bottom-title">PRODUCTION YTD</div>
+      <div class="production-grid">
+        <div>
+          <div class="bottom-small">Valves Completed</div>
+          <div class="bottom-value" id="valvesCompletedYTD">-</div>
+        </div>
+        <div>
+          <div class="bottom-small">Valves Shipped</div>
+          <div class="bottom-value" id="valvesShippedYTD">-</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span style="color:var(--orange)">STATUS LEGEND:</span>
+      <span><i class="swatch sw-green"></i>ON TIME</span>
+      <span><i class="swatch sw-red"></i>DELAY</span>
+      <span><i class="swatch sw-yellow"></i>PARTIAL</span>
+      <span><i class="swatch sw-orange"></i>HOLD</span>
+      <span><i class="swatch sw-gray"></i>WAITING</span>
+    </div>
+
+    <div class="wins">
+      <span class="win-label">LATEST WINS:</span>
+      <div class="win-window"><span class="win-scroll" id="latestWins">-</span></div>
+    </div>
+  </div>
 </div>
 
-<div class="ops">
+<script>
+const DATA_URL="https://script.google.com/macros/s/AKfycbzFxHCEVrtag58ofvfDZzJHrstGD_5fNRKQ2o8Lt3WSLmBt8zywimjjVRB36ju2pU-2uA/exec";
+const VIDEO_ID="pehIByVhAJY";
+const REFRESH_MS=5000;
+const VIDEO_RELOAD_MS=0;
 
-  <div class="critical cell">
-    <div class="header">Upcoming Critical Dates</div>
+const LAT=29.6161;
+const LON=-95.5577;
 
-    <div class="critical-row">
-      <div>13-May &nbsp;&nbsp; FAT – SUNCOR</div>
-      <div>2 Days</div>
+const MAIN_ROWS=18;
+const BOTTOM_START_ROW=20;
+const BOTTOM_ROWS=26;
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+let lastGoodText="";
+
+function liveSrc(){
+  return `https://www.youtube-nocookie.com/embed/${VIDEO_ID}?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=${VIDEO_ID}&enablejsapi=0&t=${Date.now()}`;
+}
+
+function clean(v){
+  if(v==null)return "";
+  const s=String(v).trim();
+  const m=s.match(/^Date\((\d+),(\d+),(\d+)/);
+  if(m)return `${m[3]}-${MONTHS[+m[2]]}`;
+  return s;
+}
+
+function displayText(v){return clean(v).replace(/^\*\*/,"").trim()}
+function isStruck(v){return clean(v).startsWith("**")}
+function norm(v){return displayText(v).toUpperCase().replace(/[\s\-\/]+/g,"")}
+
+function findRow(data,terms){
+  return data.findIndex(r=>r.some(c=>{
+    const v=norm(c);
+    return terms.some(t=>v.includes(norm(t)));
+  }));
+}
+
+function getControl(data,key,fallback="-"){
+  const wanted=norm(key);
+  for(const row of data){
+    for(let i=13;i<row.length-1;i++){
+      if(norm(row[i])===wanted){
+        const val=displayText(row[i+1]);
+        return val || fallback;
+      }
+    }
+  }
+  return fallback;
+}
+
+function statusClass(text){
+  if(isStruck(text))return"struck";
+  const s=norm(text);
+
+  if(s.includes("DELAY"))return"delay";
+  if(s==="P1")return"p1";
+  if(s==="P2")return"p2";
+  if(s==="PULL")return"pull";
+  if(s==="PULLING")return"pulling";
+  if(s==="READY")return"ready";
+  if(s.includes("ONTIME"))return"ontime";
+  if(s==="WAITING")return"waiting";
+
+  if(s==="RELEASED")return"released";
+  if(s==="PARTIAL")return"partial";
+  if(s==="HOLD")return"hold";
+  if(s==="NOTRELEASED")return"notreleased";
+  if(s==="INREVIEW")return"review";
+  if(s==="REVISION")return"revision";
+  if(s==="CLARIFICATION")return"clarification";
+
+  return"";
+}
+
+function updateClock(){
+  const now=new Date();
+  dateBox.textContent=now.toLocaleDateString("en-US",{month:"short",day:"numeric"});
+  timeBox.textContent=now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",second:"2-digit"});
+}
+setInterval(updateClock,1000);
+updateClock();
+
+function weatherIcon(code){
+  if(code===0)return"☀️";
+  if(code<=2)return"🌤️";
+  if(code===3)return"☁️";
+  if(code<=67)return"🌧️";
+  if(code<=82)return"🌦️";
+  if(code<=99)return"⛈️";
+  return"🌫️";
+}
+
+function nextRainText(hourly){
+  if(!hourly || !hourly.time)return "Next rain unavailable";
+  const now=Date.now();
+
+  for(let i=0;i<hourly.time.length;i++){
+    const t=new Date(hourly.time[i]).getTime();
+    const precip=Number(hourly.precipitation_probability?.[i] || 0);
+    const rain=Number(hourly.precipitation?.[i] || 0);
+
+    if(t>now && (precip>=35 || rain>0)){
+      const dt=new Date(hourly.time[i]);
+      const day=dt.toLocaleDateString("en-US",{weekday:"short"});
+      const time=dt.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+      return `Next rain ${day} ${time}`;
+    }
+  }
+  return "Next rain none 7d";
+}
+
+async function loadWeather(){
+  try{
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&hourly=precipitation_probability,precipitation&forecast_days=7&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch`;
+    const res=await fetch(url,{cache:"no-store"});
+    const data=await res.json();
+    const c=data.current;
+
+    weatherTop.textContent=`${weatherIcon(c.weather_code)} Stafford ${Math.round(c.temperature_2m)}°F`;
+    weatherMid.textContent=`Humidity ${c.relative_humidity_2m}% Wind ${Math.round(c.wind_speed_10m)}mph`;
+    weatherBottom.textContent=nextRainText(data.hourly);
+  }catch(e){
+    weatherTop.textContent="Weather unavailable";
+    weatherMid.textContent="";
+    weatherBottom.textContent="";
+  }
+}
+loadWeather();
+setInterval(loadWeather,600000);
+
+function setAnnouncement(text){
+  const finalText=displayText(text)&&displayText(text).trim()?displayText(text):" ";
+  const spans=document.querySelectorAll("#announceTrack span");
+  spans[0].textContent=finalText;
+  spans[1].textContent=finalText;
+}
+
+function makeCell(text,options={}){
+  const div=document.createElement("div");
+  div.className="cell";
+
+  if(options.header)div.classList.add("header");
+  if(options.left)div.classList.add("left");
+  if(options.groupStart)div.classList.add("group-start");
+
+  if(options.extraClass){
+    String(options.extraClass).split(/\s+/).forEach(cls=>{
+      if(cls)div.classList.add(cls);
+    });
+  }
+
+  if(options.salesEntry)div.classList.add("sales-entry");
+
+  const cls=statusClass(text);
+  if(cls)div.classList.add(cls);
+
+  if(options.html){
+    div.innerHTML=options.html;
+  }else{
+    const inner=document.createElement("span");
+    inner.className="inner";
+    inner.textContent=displayText(text);
+    div.appendChild(inner);
+
+    requestAnimationFrame(()=>{
+      if(inner.scrollWidth>div.clientWidth){
+        div.classList.add("long");
+      }
+    });
+  }
+
+  if(options.colStart)div.style.gridColumnStart=options.colStart;
+  if(options.colEnd)div.style.gridColumnEnd=options.colEnd;
+  if(options.rowStart)div.style.gridRowStart=options.rowStart;
+  if(options.rowEnd)div.style.gridRowEnd=options.rowEnd;
+
+  return div;
+}
+
+function isOutgoingHeader(row){
+  return norm(row?.[10] || "").includes("OUTGOINGSHIPMENTS");
+}
+
+function buildNotesHtml(title,bottomRows){
+  const notes=[];
+  for(let i=0;i<7;i++){
+    notes.push(displayText(bottomRows[i]?.[0] || ""));
+  }
+
+  return `
+    <div class="panel-title">${title}</div>
+    <div class="notes-table">
+      ${notes.map(n=>`<div class="note-row">${n}</div>`).join("")}
     </div>
+  `;
+}
 
-    <div class="critical-row">
-      <div>16-May &nbsp;&nbsp; Fire Test – 25-1274</div>
-      <div>5 Days</div>
+function buildShippingHtml(mainRows){
+  const incoming=[];
+  const outgoing=[];
+  let outgoingMode=false;
+
+  for(const row of mainRows){
+    if(isOutgoingHeader(row)){
+      outgoingMode=true;
+      continue;
+    }
+
+    const item=displayText(row[10]);
+    const date=displayText(row[11]);
+    const action=displayText(row[12]);
+
+    if(item || date || action){
+      if(outgoingMode) outgoing.push([item,date,action]);
+      else incoming.push([item,date,action]);
+    }
+  }
+
+  while(incoming.length<6) incoming.push(["","",""]);
+  while(outgoing.length<6) outgoing.push(["","",""]);
+
+  function rows(arr){
+    return `
+      <div class="ship-head">ITEM</div>
+      <div class="ship-head">DATE</div>
+      <div class="ship-head">ACTION</div>
+      ${arr.slice(0,6).map(r=>`
+        <div class="ship-cell">${r[0]}</div>
+        <div class="ship-cell">${r[1]}</div>
+        <div class="ship-cell">${r[2]}</div>
+      `).join("")}
+    `;
+  }
+
+  return `
+    <div class="shipping-wrap">
+      <div class="shipping-title">INCOMING SHIPMENTS</div>
+      <div class="ship-table">${rows(incoming)}</div>
+      <div class="shipping-title">OUTGOING SHIPMENTS</div>
+      <div class="ship-table">${rows(outgoing)}</div>
     </div>
+  `;
+}
 
-    <div class="critical-row">
-      <div>20-May &nbsp;&nbsp; Client Inspection – 25-1317</div>
-      <div>9 Days</div>
+function buildInspectionHtml(bottomRows){
+  const rows=[];
+  for(let i=0;i<14;i++){
+    rows.push([
+      displayText(bottomRows[i]?.[9] || ""),
+      displayText(bottomRows[i]?.[11] || ""),
+      displayText(bottomRows[i]?.[12] || "")
+    ]);
+  }
+
+  return `
+    <div class="panel-title">INSPECTION</div>
+    <div class="inspection-table">
+      <div class="ins-head">ITEM</div>
+      <div class="ins-head">REQ DATE</div>
+      <div class="ins-head">STATUS</div>
+      ${rows.map(r=>`
+        <div class="ins-cell ins-left">${r[0]}</div>
+        <div class="ins-cell">${r[1]}</div>
+        <div class="ins-cell ${statusClass(r[2])}">${r[2]}</div>
+      `).join("")}
     </div>
+  `;
+}
 
-    <div class="critical-row">
-      <div>24-May &nbsp;&nbsp; Crating Deadline – 25-1302</div>
-      <div>13 Days</div>
+function buildJobStatusHtml(data){
+  let start=findRow(data,["JOB STATUS"]);
+  let rows=[];
+
+  if(start>=0){
+    for(let i=start+2;i<data.length;i++){
+      const job=displayText(data[i]?.[13] || "");
+      const type=displayText(data[i]?.[14] || "");
+      const status=displayText(data[i]?.[15] || "");
+
+      if(job || type || status){
+        rows.push([job,type,status]);
+      }
+    }
+  }
+
+  while(rows.length<12) rows.push(["","",""]);
+
+  return `
+    <div class="panel-title">JOB STATUS</div>
+    <div class="job-table">
+      <div class="job-head">JOB NO.</div>
+      <div class="job-head">ASSEMBLY TYPE</div>
+      <div class="job-head">STATUS</div>
+      ${rows.slice(0,12).map(r=>`
+        <div class="job-cell">${r[0]}</div>
+        <div class="job-cell">${r[1]}</div>
+        <div class="job-cell ${statusClass(r[2])}">${r[2]}</div>
+      `).join("")}
     </div>
-  </div>
+  `;
+}
 
-  <div class="metrics cell">
-    <div class="header">Live Production Counters</div>
+function updateDashboardControls(data){
+  openValveOrders.textContent=getControl(data,"OPEN VALVE SALES ORDERS","-");
+  openKitOrders.textContent=getControl(data,"OPEN KIT ORDERS","-");
+  valvesAssembly.textContent=getControl(data,"VALVES IN ASSEMBLY","-");
+  waitingVendor.textContent=getControl(data,"WAITING ON VENDOR","-");
+  readyShip.textContent=getControl(data,"READY TO SHIP","-");
 
-    <div class="metric-wrap">
+  safetyDays.textContent=getControl(data,"DAYS SINCE INCIDENT","-");
+  valvesCompletedYTD.textContent=getControl(data,"VALVES COMPLETED YTD","-");
+  valvesShippedYTD.textContent=getControl(data,"VALVES SHIPPED YTD","-");
 
-      <div class="metric">
-        <div class="metric-label">OPEN VALVE<br>SALES ORDERS</div>
-        <div class="biggreen">27</div>
+  const safety=getControl(data,"SAFETY MESSAGE","");
+  if(safety) safetyMessage.innerHTML=safety;
+
+  latestWins.textContent=getControl(data,"LATEST WINS","-");
+
+  const dates=[
+    getControl(data,"CRITICAL DATE 1",""),
+    getControl(data,"CRITICAL DATE 2",""),
+    getControl(data,"CRITICAL DATE 3",""),
+    getControl(data,"CRITICAL DATE 4","")
+  ].filter(Boolean);
+
+  criticalDates.innerHTML="";
+  dates.forEach(d=>{
+    const parts=d.split("|");
+    const div=document.createElement("div");
+    div.className="date-row";
+    div.innerHTML=`<span>${parts[0]||""}</span><span>${parts[1]||""}</span><span>${parts[2]||""}</span>`;
+    criticalDates.appendChild(div);
+  });
+}
+
+function render(data){
+  const board=document.getElementById("board");
+  board.innerHTML="";
+
+  updateDashboardControls(data);
+
+  const annRow=findRow(data,["ANNOUNCEMENT","ANNOUNCEMENTS","ANNOUNCMENTS"]);
+  const headerRow=findRow(data,["SALES ORDER"]);
+  const notesRow=findRow(data,["NOTES"]);
+
+  if(annRow>=0)setAnnouncement(data[annRow][1]);
+
+  if(headerRow<0){
+    board.innerHTML='<div class="error">SALES ORDER HEADER NOT FOUND</div>';
+    return;
+  }
+
+  const header=data[headerRow];
+
+  board.appendChild(makeCell(header[0],{header:true,rowStart:1,colStart:1,extraClass:"sales-order"}));
+  board.appendChild(makeCell(header[1],{header:true,rowStart:1,colStart:2}));
+  board.appendChild(makeCell(header[2],{header:true,rowStart:1,colStart:3}));
+  board.appendChild(makeCell(header[3],{header:true,rowStart:1,colStart:4}));
+
+  board.appendChild(makeCell(header[4],{header:true,rowStart:1,colStart:5,colEnd:7,groupStart:true}));
+  board.appendChild(makeCell(header[6],{header:true,rowStart:1,colStart:7,colEnd:9,groupStart:true}));
+  board.appendChild(makeCell(header[8],{header:true,rowStart:1,colStart:9,colEnd:11,groupStart:true}));
+
+  const tableEnd=notesRow>headerRow?notesRow:data.length;
+  const mainRows=data.slice(headerRow+1,tableEnd);
+
+  for(let r=0;r<MAIN_ROWS;r++){
+    const row=mainRows[r]||[];
+    const gridRow=2+r;
+
+    for(let c=0;c<10;c++){
+      const opt={
+        rowStart:gridRow,
+        colStart:c+1,
+        groupStart:[5,7,9].includes(c+1),
+        salesEntry:c+1===1
+      };
+
+      if(c+1===1)opt.extraClass="sales-order";
+      board.appendChild(makeCell(row[c],opt));
+    }
+  }
+
+  board.appendChild(makeCell("",{
+    rowStart:1,
+    rowEnd:20,
+    colStart:11,
+    colEnd:14,
+    extraClass:"job-panel",
+    html:buildJobStatusHtml(data)
+  }));
+
+  const bottomRows=notesRow>=0?data.slice(notesRow+1):[];
+  const notesTitle=notesRow>=0?clean(data[notesRow][0]):"NOTES / IMPORTANT REMARKS";
+
+  board.appendChild(makeCell("",{
+    rowStart:BOTTOM_START_ROW,
+    rowEnd:34,
+    colStart:1,
+    colEnd:4,
+    extraClass:"notes-panel",
+    html:buildNotesHtml(notesTitle,bottomRows)
+  }));
+
+  board.appendChild(makeCell("",{
+    rowStart:34,
+    rowEnd:47,
+    colStart:1,
+    colEnd:4,
+    extraClass:"live-panel",
+    html:`
+      <div class="video-crop">
+        <iframe
+          id="liveFrame"
+          src="${liveSrc()}"
+          allow="autoplay; encrypted-media; fullscreen"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen>
+        </iframe>
       </div>
+    `
+  }));
 
-      <div class="metric">
-        <div class="metric-label">OPEN KIT<br>ORDERS</div>
-        <div class="biggreen">4</div>
-      </div>
+  board.appendChild(makeCell("",{
+    rowStart:BOTTOM_START_ROW,
+    rowEnd:47,
+    colStart:4,
+    colEnd:10,
+    extraClass:"shipping-panel",
+    html:buildShippingHtml(mainRows)
+  }));
 
-      <div class="metric">
-        <div class="metric-label">VALVES IN<br>ASSEMBLY</div>
-        <div class="biggreen">14</div>
-      </div>
+  board.appendChild(makeCell("",{
+    rowStart:BOTTOM_START_ROW,
+    rowEnd:47,
+    colStart:10,
+    colEnd:14,
+    extraClass:"inspection-panel",
+    html:buildInspectionHtml(bottomRows)
+  }));
+}
 
-      <div class="metric">
-        <div class="metric-label">WAITING ON<br>VENDOR</div>
-        <div class="bigyellow">5</div>
-      </div>
+function refreshLiveVideo(){
+  const frame=document.getElementById("liveFrame");
+  if(frame) frame.src=liveSrc();
+}
 
-      <div class="metric">
-        <div class="metric-label">READY TO<br>SHIP</div>
-        <div class="biggreen">6</div>
-      </div>
+if(VIDEO_RELOAD_MS>0) setInterval(refreshLiveVideo,VIDEO_RELOAD_MS);
 
-    </div>
-  </div>
+async function load(){
+  try{
+    const res=await fetch(DATA_URL+"?t="+Date.now(),{cache:"no-store"});
+    const data=await res.json();
+    const text=JSON.stringify(data);
 
-  <div class="right-top cell">
+    if(!data || !data.length) return;
+    if(text===lastGoodText) return;
 
-    <div class="safety">
-      <div class="header">Safety Message</div>
-      <div class="safety-text">
-        ⚠ Don’t take shortcuts.<br>
-        Safety is a core value.
-      </div>
-    </div>
+    lastGoodText=text;
+    render(data);
+  }catch(e){
+    console.warn("Temporary data load skipped:",e.message);
+  }
+}
 
-    <div class="video">
-      <iframe
-        src="https://www.youtube.com/embed/pehIByVhAJY?autoplay=1&mute=1&controls=0&loop=1&playlist=pehIByVhAJY&modestbranding=1&rel=0"
-        allow="autoplay"
-      ></iframe>
-    </div>
-
-  </div>
-
-</div>
-
-<div class="main">
-
-  <div class="sales cell">
-
-    <div class="sales-row header row">
-      <div>Sales Order</div>
-      <div>Type</div>
-      <div>Engineering</div>
-      <div>Stage</div>
-    </div>
-
-  </div>
-
-  <div class="main-center cell">
-
-    <div class="main-row header row">
-      <div>Assembly Ready</div>
-      <div>Forecast Testing</div>
-      <div>Crate Deadline</div>
-      <div></div>
-    </div>
-
-  </div>
-
-  <div class="jobs cell">
-
-    <div class="jobs-row header row">
-      <div>Job No.</div>
-      <div>Assembly Type</div>
-      <div>Status</div>
-    </div>
-
-  </div>
-
-</div>
-
-<div class="shipments">
-
-  <div class="notes cell">
-
-    <div class="header">Notes / Important Remarks</div>
-
-  </div>
-
-  <div class="ship-wrap cell">
-
-    <div class="header">Incoming Shipments</div>
-
-    <div class="ship-row header">
-      <div>Item</div>
-      <div>Date</div>
-      <div>Action</div>
-    </div>
-
-    <div class="ship-row">
-      <div class="center">Dynamics Crate</div>
-      <div class="center">TODAY</div>
-      <div class="center">UNCRATE ASAP</div>
-    </div>
-
-    <div class="ship-row">
-      <div></div>
-      <div></div>
-      <div class="center">EXPEDITE</div>
-    </div>
-
-    <div class="ship-row">
-      <div></div>
-      <div></div>
-      <div class="center">SEND TO ASSEMBLY</div>
-    </div>
-
-    <div class="ship-row"><div></div><div></div><div></div></div>
-    <div class="ship-row"><div></div><div></div><div></div></div>
-
-    <div class="header">Outgoing Shipments</div>
-
-    <div class="ship-row header">
-      <div>Item</div>
-      <div>Date</div>
-      <div>Action</div>
-    </div>
-
-    <div class="ship-row"><div></div><div></div><div></div></div>
-    <div class="ship-row"><div></div><div></div><div></div></div>
-    <div class="ship-row"><div></div><div></div><div></div></div>
-    <div class="ship-row"><div></div><div></div><div></div></div>
-    <div class="ship-row"><div></div><div></div><div></div></div>
-
-  </div>
-
-  <div class="inspection cell">
-
-    <div class="inspect-row header">
-      <div>Item</div>
-      <div>Req Date</div>
-      <div>Status</div>
-    </div>
-
-  </div>
-
-</div>
-
-<div class="bottom">
-
-  <div class="bottom-card">
-    <div class="bottom-title">SAFETY</div>
-    <div class="bottom-small">Days Since Recordable Incident</div>
-    <div class="bottom-value">125</div>
-  </div>
-
-  <div class="bottom-card">
-    <div class="bottom-title">Production YTD</div>
-    <div class="bottom-small">Valves Completed</div>
-    <div class="bottom-value">38</div>
-  </div>
-
-  <div class="bottom-card">
-    <div class="bottom-title">Production YTD</div>
-    <div class="bottom-small">Valves Shipped</div>
-    <div class="bottom-value">31</div>
-  </div>
-
-  <div class="legend">
-    STATUS LEGEND:
-    <span style="color:#00c73c">■ ON TIME</span>
-    <span style="color:#ff1717">■ DELAY</span>
-    <span style="color:#ffe600">■ PARTIAL</span>
-    <span>■ HOLD</span>
-    <span>■ WAITING</span>
-  </div>
-
-  <div class="wins">
-    LATEST WINS:&nbsp;
-    25-1298 Hydro Test Passed •
-    V-812 Shipped Successfully •
-    New PO 25-1330 Released
-  </div>
-
-</div>
+load();
+setInterval(load,REFRESH_MS);
+</script>
 
 </body>
 </html>
