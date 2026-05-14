@@ -26,11 +26,10 @@
   --silverHeader:
     linear-gradient(
       180deg,
-      #8a929b 0%,
-      #666e77 22%,
-      #464d55 52%,
-      #68717a 78%,
-      #929aa3 100%
+      #5f6872 0%,
+      #4b535c 38%,
+      #434b54 58%,
+      #59626c 100%
     );
 }
 
@@ -251,16 +250,22 @@ html,body{
   position:relative;
 }
 
-/* LIGHTER SILVER GRADIENT HEADER CELLS */
+/* GUNMETAL GRADIENT MAIN HEADER CELLS */
 .header{
   background:var(--silverHeader)!important;
   color:var(--orange)!important;
   font-weight:900!important;
   font-size:clamp(7px,.58vw,9px);
   text-transform:uppercase;
-  border-top:1px solid rgba(255,255,255,.28)!important;
-  border-bottom:1px solid rgba(0,0,0,.62)!important;
+  border-top:1px solid rgba(255,255,255,.18)!important;
+  border-bottom:1px solid rgba(0,0,0,.72)!important;
   text-shadow:0 1px 1px rgba(0,0,0,.9);
+}
+
+/* SALES ORDER HEADER NOW MATCHES */
+.header.sales-order{
+  background:var(--silverHeader)!important;
+  color:var(--orange)!important;
 }
 
 .group-start{border-left:1px solid var(--gridStrong)}
@@ -324,7 +329,7 @@ html,body{
   background:var(--silverHeader);
   text-transform:uppercase;
   text-shadow:0 1px 1px rgba(0,0,0,.9);
-  border-top:1px solid rgba(255,255,255,.28);
+  border-top:1px solid rgba(255,255,255,.18);
 }
 
 .notes-table{
@@ -418,7 +423,7 @@ html,body{
   background:var(--silverHeader);
   text-transform:uppercase;
   text-shadow:0 1px 1px rgba(0,0,0,.9);
-  border-top:1px solid rgba(255,255,255,.28);
+  border-top:1px solid rgba(255,255,255,.18);
 }
 
 .ship-table{
