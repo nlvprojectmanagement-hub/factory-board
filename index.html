@@ -26,31 +26,22 @@
 }
 
 html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  background:#000;
-  overflow:hidden;
+  margin:0;width:100%;height:100%;
+  background:#000;overflow:hidden;
   font-family:Arial,Helvetica,sans-serif;
 }
 
 .screen{
-  width:100vw;
-  height:100vh;
+  width:100vw;height:100vh;
   display:grid;
   grid-template-rows:var(--topHeight) var(--opsHeight) minmax(0,1fr) var(--bottomHeight);
-  gap:2px;
-  padding:2px;
-  background:#000;
+  gap:2px;padding:2px;background:#000;
 }
 
-/* TOP */
 .top{
   display:grid;
   grid-template-columns:150px minmax(0,1fr) auto;
-  gap:2px;
-  min-width:0;
-  overflow:hidden;
+  gap:2px;overflow:hidden;
 }
 
 .logo,.announcement,.right-panel{
@@ -60,17 +51,8 @@ html,body{
   min-width:0;
 }
 
-.logo{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.logo img{
-  max-height:24px;
-  max-width:148px;
-  object-fit:contain;
-}
+.logo{display:flex;align-items:center;justify-content:center}
+.logo img{max-height:24px;max-width:148px;object-fit:contain}
 
 .announcement{
   display:grid;
@@ -88,7 +70,6 @@ html,body{
   border-right:1px solid rgba(0,0,0,.18);
   white-space:nowrap;
   overflow:hidden;
-  letter-spacing:.1px;
 }
 
 .marquee{
@@ -96,7 +77,6 @@ html,body{
   display:flex;
   align-items:center;
   min-width:0;
-  contain:paint;
 }
 
 .marquee-track{
@@ -107,9 +87,6 @@ html,body{
   font-weight:900;
   font-size:10px;
   animation:move 42s linear infinite;
-  will-change:transform;
-  transform:translateZ(0);
-  backface-visibility:hidden;
 }
 
 @keyframes move{
@@ -121,7 +98,6 @@ html,body{
   display:flex;
   justify-content:flex-end;
   align-items:stretch;
-  min-width:0;
 }
 
 .clock-box{
@@ -155,7 +131,6 @@ html,body{
 .weather-top{font-size:8.5px;white-space:nowrap}
 .weather-mid,.weather-bottom{font-size:7.3px;white-space:nowrap}
 
-/* OPS */
 .ops{
   display:grid;
   grid-template-columns:20fr 42fr 28fr 22fr;
@@ -191,11 +166,6 @@ html,body{
   line-height:1.1;
 }
 
-.icon{
-  color:var(--orange);
-  font-size:11px;
-}
-
 .metric-grid{
   display:grid;
   grid-template-columns:repeat(5,1fr);
@@ -216,7 +186,6 @@ html,body{
   font-size:6.9px;
   font-weight:900;
   line-height:1.02;
-  min-height:18px;
 }
 
 .biggreen,.bigyellow{
@@ -248,21 +217,9 @@ html,body{
   padding:0 8px;
 }
 
-.safety-icon{
-  color:var(--orange);
-  font-size:22px;
-  text-align:center;
-  flex-shrink:0;
-}
+.safety-icon{font-size:22px;flex-shrink:0}
+.safety-text{font-size:9.2px;font-weight:900;line-height:1.1;text-align:left}
 
-.safety-text{
-  font-size:9.2px;
-  font-weight:900;
-  line-height:1.1;
-  text-align:left;
-}
-
-/* BOARD */
 .board{
   display:grid;
   grid-template-columns:
@@ -271,10 +228,7 @@ html,body{
     10fr 9fr
     9fr 9fr
     12fr 7fr 16fr;
-
   grid-template-rows:repeat(46,minmax(0,1fr));
-
-  align-content:stretch;
   border-top:1px solid var(--grid);
   border-left:1px solid var(--grid);
   background:#000;
@@ -283,8 +237,6 @@ html,body{
 }
 
 .cell{
-  height:100%;
-  min-height:0;
   border-right:1px solid var(--grid);
   border-bottom:1px solid var(--grid);
   background:var(--mainBlock);
@@ -319,12 +271,12 @@ html,body{
 .group-start{border-left:1px solid var(--gridStrong)}
 .ship-section{background:var(--shipBlock)}
 .notes-section{background:var(--notesBlock)}
+.focus-section{background:#050505}
 .live-section{background:var(--liveBlock)}
 .inspect-section{background:var(--inspectionBlock)}
 .sales-order{background:var(--salesBlock)!important;color:#e6e6e6!important}
 .left{justify-content:flex-start;padding-left:4px}
 .sales-entry{font-size:clamp(7px,.66vw,9.8px);font-weight:900}
-
 .inner{white-space:nowrap}
 
 .long .inner{
@@ -349,11 +301,11 @@ html,body{
 .hold,.notreleased{color:#ff3333!important}
 .review,.revision,.clarification{color:#00b0f0!important}
 
-/* LIVE VIDEO */
 .live-panel{
   padding:0!important;
   background:#000!important;
   overflow:hidden!important;
+  z-index:5;
 }
 
 .video-crop{
@@ -376,7 +328,38 @@ html,body{
   pointer-events:none;
 }
 
-/* BOTTOM */
+.focus-panel{
+  background:#050505!important;
+  color:#fff;
+  z-index:4;
+  padding:8px 12px!important;
+  align-items:flex-start!important;
+  justify-content:flex-start!important;
+  white-space:normal!important;
+}
+
+.focus-content{
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  gap:5px;
+  overflow:hidden;
+}
+
+.focus-line{
+  font-size:clamp(8px,.75vw,12px);
+  font-weight:900;
+  line-height:1.2;
+  white-space:normal;
+}
+
+.focus-label{
+  color:var(--orange);
+  margin-right:6px;
+}
+
 .bottom{
   display:grid;
   grid-template-columns:12fr 17fr 35fr 36fr;
@@ -399,25 +382,9 @@ html,body{
   line-height:.92;
 }
 
-.bottom-title{
-  color:var(--orange);
-  font-size:8px;
-  font-weight:900;
-  line-height:.9;
-}
-
-.bottom-value{
-  color:#28d428;
-  font-size:13px;
-  font-weight:900;
-  line-height:.9;
-}
-
-.bottom-small{
-  font-size:7px;
-  font-weight:900;
-  line-height:.9;
-}
+.bottom-title{color:var(--orange);font-size:8px;font-weight:900;line-height:.9}
+.bottom-value{color:#28d428;font-size:13px;font-weight:900;line-height:.9}
+.bottom-small{font-size:7px;font-weight:900;line-height:.9}
 
 .production-grid{
   display:grid;
@@ -441,20 +408,8 @@ html,body{
   line-height:1;
 }
 
-.legend span{
-  display:inline-flex;
-  align-items:center;
-  white-space:nowrap;
-}
-
-.swatch{
-  width:7px;
-  height:7px;
-  display:inline-block;
-  margin-right:2px;
-  flex-shrink:0;
-}
-
+.legend span{display:inline-flex;align-items:center;white-space:nowrap}
+.swatch{width:7px;height:7px;display:inline-block;margin-right:2px;flex-shrink:0}
 .sw-green{background:#00a83a}
 .sw-red{background:#ff0000}
 .sw-yellow{background:#ffff00}
@@ -475,24 +430,9 @@ html,body{
   line-height:1;
 }
 
-.win-label{
-  color:var(--orange);
-  flex-shrink:0;
-  white-space:nowrap;
-}
-
-.win-window{
-  overflow:hidden;
-  white-space:nowrap;
-  min-width:0;
-  flex:1;
-}
-
-.win-scroll{
-  display:inline;
-  white-space:nowrap;
-  animation:none!important;
-}
+.win-label{color:var(--orange);flex-shrink:0}
+.win-window{overflow:hidden;white-space:nowrap;min-width:0;flex:1}
+.win-scroll{display:inline;white-space:nowrap;animation:none!important}
 
 .error{
   color:red;
@@ -501,110 +441,34 @@ html,body{
   padding:20px;
 }
 
-/* PC / SMALLER SCREEN ADJUST */
 @media (max-width:1600px){
-  :root{
-    --topHeight:25px;
-    --opsHeight:70px;
-    --bottomHeight:30px;
-  }
-
-  .announcement{
-    grid-template-columns:105px minmax(0,1fr);
-  }
-
-  .announcement-label{
-    font-size:8px;
-  }
-
-  .cell{
-    font-size:clamp(6px,.58vw,8.4px);
-  }
-
-  .header{
-    font-size:clamp(6px,.54vw,8.2px);
-  }
-
-  .metric{
-    height:42px;
-  }
-
-  .metric-label{
-    font-size:6.3px;
-  }
-
-  .biggreen,.bigyellow{
-    font-size:16px;
-  }
-
-  .bottom-title{
-    font-size:7px;
-  }
-
-  .bottom-value{
-    font-size:12px;
-  }
-
-  .bottom-small{
-    font-size:6.5px;
-  }
-
-  .legend{
-    font-size:7px;
-  }
-
-  .wins{
-    font-size:8px;
-  }
+  :root{--topHeight:25px;--opsHeight:70px;--bottomHeight:30px}
+  .announcement{grid-template-columns:105px minmax(0,1fr)}
+  .announcement-label{font-size:8px}
+  .cell{font-size:clamp(6px,.58vw,8.4px)}
+  .header{font-size:clamp(6px,.54vw,8.2px)}
+  .metric{height:42px}
+  .metric-label{font-size:6.3px}
+  .biggreen,.bigyellow{font-size:16px}
+  .bottom-title{font-size:7px}
+  .bottom-value{font-size:12px}
+  .bottom-small{font-size:6.5px}
+  .legend{font-size:7px}
+  .wins{font-size:8px}
 }
 
-/* 4K / LARGE TV ADJUST */
 @media (min-width:1900px){
-  :root{
-    --topHeight:28px;
-    --opsHeight:76px;
-    --bottomHeight:34px;
-  }
-
-  .cell{
-    font-size:10px;
-  }
-
-  .header{
-    font-size:9.5px;
-  }
-
-  .metric{
-    height:49px;
-  }
-
-  .metric-label{
-    font-size:7.2px;
-  }
-
-  .biggreen,.bigyellow{
-    font-size:20px;
-  }
-
-  .bottom-title{
-    font-size:8.5px;
-  }
-
-  .bottom-value{
-    font-size:15px;
-  }
-
-  .bottom-small{
-    font-size:7.5px;
-  }
-
-  .legend{
-    font-size:8.5px;
-  }
-
-  .wins{
-    font-size:9.5px;
-  }
+  :root{--topHeight:28px;--opsHeight:76px;--bottomHeight:34px}
+  .cell{font-size:10px}
+  .header{font-size:9.5px}
+  .metric{height:49px}
+  .metric-label{font-size:7.2px}
+  .biggreen,.bigyellow{font-size:20px}
+  .bottom-title{font-size:8.5px}
+  .bottom-value{font-size:15px}
+  .bottom-small{font-size:7.5px}
+  .legend{font-size:8.5px}
+  .wins{font-size:9.5px}
 }
 </style>
 </head>
@@ -641,10 +505,10 @@ html,body{
   <div class="ops">
     <div class="card">
       <div class="card-title">TODAY'S PRIORITIES</div>
-      <div class="prior-row"><span class="icon">📋</span><span>TEST TODAY</span><span id="testToday">-</span></div>
-      <div class="prior-row"><span class="icon">🚚</span><span>SHIP TODAY</span><span id="shipToday">-</span></div>
-      <div class="prior-row"><span class="icon">🔥</span><span>HOT JOBS</span><span id="hotJobs">-</span></div>
-      <div class="prior-row"><span class="icon">👥</span><span>CUSTOMER VISITS</span><span id="customerVisits">-</span></div>
+      <div class="prior-row"><span>📋</span><span>TEST TODAY</span><span id="testToday">-</span></div>
+      <div class="prior-row"><span>🚚</span><span>SHIP TODAY</span><span id="shipToday">-</span></div>
+      <div class="prior-row"><span>🔥</span><span>HOT JOBS</span><span id="hotJobs">-</span></div>
+      <div class="prior-row"><span>👥</span><span>CUSTOMER VISITS</span><span id="customerVisits">-</span></div>
     </div>
 
     <div class="card">
@@ -992,13 +856,14 @@ function render(data){
   }
 
   const notesTitle=notesRow>=0?clean(data[notesRow][0]):"NOTES / IMPORTANT REMARKS";
+  const focusText=getControl(data,"NEED ATTENTION","Waiting on critical updates | Review open blockers | Confirm urgent shop priorities");
 
   board.appendChild(makeCell(notesTitle,{
     header:true,left:true,rowStart:BOTTOM_START_ROW,colStart:1,colEnd:6,extraClass:"notes-section"
   }));
 
-  board.appendChild(makeCell("LIVE STREAM",{
-    header:true,rowStart:BOTTOM_START_ROW,colStart:6,colEnd:10,extraClass:"live-section"
+  board.appendChild(makeCell("NEED ATTENTION / BLOCKERS",{
+    header:true,rowStart:BOTTOM_START_ROW,colStart:6,colEnd:10,extraClass:"focus-section"
   }));
 
   board.appendChild(makeCell("INSPECTION",{
@@ -1018,6 +883,24 @@ function render(data){
     rowEnd:BOTTOM_START_ROW+1+BOTTOM_ROWS,
     colStart:6,
     colEnd:10,
+    extraClass:"focus-panel",
+    html:`
+      <div class="focus-content">
+        <div class="focus-line"><span class="focus-label">FOCUS:</span>${focusText}</div>
+        <div class="focus-line"><span class="focus-label">SHOP:</span>Keep travelers updated, confirm test/ship priorities, and clear blockers early.</div>
+      </div>
+    `
+  }));
+
+  board.appendChild(makeCell("LIVE STREAM",{
+    header:true,rowStart:9,colStart:11,colEnd:14,extraClass:"live-section"
+  }));
+
+  board.appendChild(makeCell("",{
+    rowStart:10,
+    rowEnd:20,
+    colStart:11,
+    colEnd:14,
     extraClass:"live-panel",
     html:`
       <div class="video-crop">
