@@ -22,6 +22,16 @@
   --topHeight:25px;
   --opsHeight:72px;
   --bottomHeight:38px;
+
+  --silverHeader:
+    linear-gradient(
+      180deg,
+      #4d545c 0%,
+      #2e343b 22%,
+      #171b20 52%,
+      #30363d 78%,
+      #555d66 100%
+    );
 }
 
 html,body{
@@ -241,12 +251,16 @@ html,body{
   position:relative;
 }
 
+/* MODERN SILVER GRADIENT HEADER CELLS */
 .header{
-  background:#000!important;
+  background:var(--silverHeader)!important;
   color:var(--orange)!important;
   font-weight:900!important;
   font-size:clamp(7px,.58vw,9px);
   text-transform:uppercase;
+  border-top:1px solid rgba(255,255,255,.18)!important;
+  border-bottom:1px solid rgba(0,0,0,.8)!important;
+  text-shadow:0 1px 1px rgba(0,0,0,.9);
 }
 
 .group-start{border-left:1px solid var(--gridStrong)}
@@ -298,6 +312,13 @@ html,body{
 .job-panel{background:var(--jobBlock)!important}
 .live-panel{background:#000!important}
 
+/* THICKER DIVIDER ABOVE LOWER SECTIONS */
+.notes-panel,
+.shipping-panel,
+.inspection-panel{
+  border-top:3px solid rgba(180,205,230,.62)!important;
+}
+
 .panel-title{
   height:16px;
   color:var(--orange);
@@ -307,8 +328,10 @@ html,body{
   align-items:center;
   justify-content:center;
   border-bottom:1px solid var(--grid);
-  background:#000;
+  background:var(--silverHeader);
   text-transform:uppercase;
+  text-shadow:0 1px 1px rgba(0,0,0,.9);
+  border-top:1px solid rgba(255,255,255,.18);
 }
 
 .notes-table{
@@ -399,8 +422,10 @@ html,body{
   justify-content:center;
   text-align:center;
   border-bottom:1px solid var(--grid);
-  background:#000;
+  background:var(--silverHeader);
   text-transform:uppercase;
+  text-shadow:0 1px 1px rgba(0,0,0,.9);
+  border-top:1px solid rgba(255,255,255,.18);
 }
 
 .ship-table{
