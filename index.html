@@ -44,7 +44,6 @@ html,body{
   background:#000;
 }
 
-/* TOP */
 .top{
   display:grid;
   grid-template-columns:150px minmax(0,1fr) auto;
@@ -148,10 +147,10 @@ html,body{
 .weather-top{font-size:8.5px;white-space:nowrap}
 .weather-mid,.weather-bottom{font-size:7.3px;white-space:nowrap}
 
-/* OPS */
+/* TOP DASHBOARD CARDS */
 .ops{
   display:grid;
-  grid-template-columns:42fr 36fr 22fr;
+  grid-template-columns:44fr 26fr 18fr;
   gap:3px;
   min-height:0;
   overflow:hidden;
@@ -238,7 +237,7 @@ html,body{
   text-align:left;
 }
 
-/* BOARD */
+/* MAIN BOARD */
 .board{
   display:grid;
   grid-template-columns:
@@ -280,16 +279,9 @@ html,body{
   text-transform:uppercase;
 }
 
-.sub-header{
-  background:#000!important;
-  color:var(--orange)!important;
-  font-weight:900!important;
-  text-transform:uppercase;
-}
-
 .group-start{border-left:1px solid var(--gridStrong)}
-.ship-section{background:var(--shipBlock)}
 .notes-section{background:var(--notesBlock)}
+.ship-section{background:var(--shipBlock)}
 .live-section{background:var(--liveBlock)}
 .inspect-section{background:var(--inspectionBlock)}
 .sales-order{background:var(--salesBlock)!important;color:#e6e6e6!important}
@@ -319,7 +311,7 @@ html,body{
 .hold,.notreleased{color:#ff3333!important}
 .review,.revision,.clarification{color:#00b0f0!important}
 
-/* LIVE VIDEO */
+/* LIVE STREAM RIGHT SIDE */
 .live-panel{
   padding:0!important;
   background:#000!important;
@@ -360,7 +352,7 @@ html,body{
   width:100%;
   height:100%;
   display:grid;
-  grid-template-rows:16px 1fr 16px 1fr;
+  grid-template-rows:14px 1fr 14px 1fr;
   overflow:hidden;
 }
 
@@ -378,7 +370,7 @@ html,body{
 .ship-table{
   display:grid;
   grid-template-columns:1.35fr .7fr 1.45fr;
-  grid-auto-rows:minmax(0,1fr);
+  grid-template-rows:12px repeat(6,1fr);
   overflow:hidden;
 }
 
@@ -770,7 +762,6 @@ function makeCell(text,options={}){
   div.className="cell";
 
   if(options.header)div.classList.add("header");
-  if(options.subHeader)div.classList.add("sub-header");
   if(options.left)div.classList.add("left");
   if(options.groupStart)div.classList.add("group-start");
 
@@ -833,15 +824,15 @@ function buildShippingHtml(mainRows){
     }
   }
 
-  while(incoming.length<4) incoming.push(["","",""]);
-  while(outgoing.length<4) outgoing.push(["","",""]);
+  while(incoming.length<6) incoming.push(["","",""]);
+  while(outgoing.length<6) outgoing.push(["","",""]);
 
   function rows(arr){
     return `
       <div class="ship-head">ITEM</div>
       <div class="ship-head">DATE</div>
       <div class="ship-head">ACTION</div>
-      ${arr.slice(0,4).map(r=>`
+      ${arr.slice(0,6).map(r=>`
         <div class="ship-cell">${r[0]}</div>
         <div class="ship-cell">${r[1]}</div>
         <div class="ship-cell">${r[2]}</div>
@@ -941,7 +932,6 @@ function render(data){
     }
   }
 
-  /* LIVE STREAM directly below clock/weather/safety on right side */
   board.appendChild(makeCell("LIVE STREAM",{
     header:true,
     rowStart:1,
@@ -972,13 +962,13 @@ function render(data){
   const notesTitle=notesRow>=0?clean(data[notesRow][0]):"NOTES / IMPORTANT REMARKS";
 
   board.appendChild(makeCell(notesTitle,{
-    header:true,left:true,rowStart:BOTTOM_START_ROW,colStart:1,colEnd:5,extraClass:"notes-section"
+    header:true,left:true,rowStart:BOTTOM_START_ROW,colStart:1,colEnd:4,extraClass:"notes-section"
   }));
 
   board.appendChild(makeCell("",{
     rowStart:BOTTOM_START_ROW,
     rowEnd:BOTTOM_START_ROW+1+BOTTOM_ROWS,
-    colStart:5,
+    colStart:4,
     colEnd:10,
     extraClass:"shipping-panel",
     html:buildShippingHtml(mainRows)
@@ -1003,7 +993,7 @@ function render(data){
     const gridRow=BOTTOM_START_ROW+1+r;
 
     board.appendChild(makeCell(row[0],{
-      left:true,rowStart:gridRow,colStart:1,colEnd:5,extraClass:"notes-section"
+      left:true,rowStart:gridRow,colStart:1,colEnd:4,extraClass:"notes-section"
     }));
 
     board.appendChild(makeCell(row[9],{
