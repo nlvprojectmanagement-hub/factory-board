@@ -16,7 +16,6 @@
   --mainBlock:#020202;
   --shipBlock:#07131b;
   --notesBlock:#050505;
-  --focusBlock:#050505;
   --liveBlock:#020202;
   --inspectionBlock:#130f18;
   --salesBlock:#1e1e1e;
@@ -152,7 +151,7 @@ html,body{
 /* OPS */
 .ops{
   display:grid;
-  grid-template-columns:20fr 42fr 28fr 22fr;
+  grid-template-columns:42fr 36fr 22fr;
   gap:3px;
   min-height:0;
   overflow:hidden;
@@ -174,15 +173,6 @@ html,body{
   text-align:center;
   margin-bottom:2px;
   line-height:1;
-}
-
-.prior-row{
-  display:grid;
-  grid-template-columns:17px 1fr auto;
-  align-items:center;
-  font-size:9.6px;
-  font-weight:900;
-  line-height:1.1;
 }
 
 .metric-grid{
@@ -300,7 +290,6 @@ html,body{
 .group-start{border-left:1px solid var(--gridStrong)}
 .ship-section{background:var(--shipBlock)}
 .notes-section{background:var(--notesBlock)}
-.focus-section{background:var(--focusBlock)}
 .live-section{background:var(--liveBlock)}
 .inspect-section{background:var(--inspectionBlock)}
 .sales-order{background:var(--salesBlock)!important;color:#e6e6e6!important}
@@ -358,37 +347,63 @@ html,body{
   pointer-events:none;
 }
 
-/* FOCUS */
-.focus-panel{
-  background:#050505!important;
+/* SHIPPING CENTER PANEL */
+.shipping-panel{
+  background:var(--shipBlock)!important;
   color:#fff;
-  z-index:4;
-  padding:8px 12px!important;
-  align-items:flex-start!important;
-  justify-content:flex-start!important;
+  padding:0!important;
   white-space:normal!important;
+  display:block!important;
 }
 
-.focus-content{
+.shipping-wrap{
   width:100%;
   height:100%;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-start;
-  gap:5px;
+  display:grid;
+  grid-template-rows:16px 1fr 16px 1fr;
   overflow:hidden;
 }
 
-.focus-line{
-  font-size:clamp(8px,.75vw,12px);
+.shipping-title{
+  color:var(--orange);
   font-weight:900;
-  line-height:1.2;
-  white-space:normal;
+  font-size:clamp(7px,.6vw,9px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-bottom:1px solid var(--grid);
+  background:#000;
 }
 
-.focus-label{
+.ship-table{
+  display:grid;
+  grid-template-columns:1.35fr .7fr 1.45fr;
+  grid-auto-rows:minmax(0,1fr);
+  overflow:hidden;
+}
+
+.ship-head,.ship-cell{
+  border-right:1px solid var(--grid);
+  border-bottom:1px solid var(--grid);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  padding:0 2px;
+  white-space:nowrap;
+  font-weight:900;
+}
+
+.ship-head{
   color:var(--orange);
-  margin-right:6px;
+  background:#000;
+  font-size:clamp(6px,.54vw,8px);
+}
+
+.ship-cell{
+  color:#fff;
+  background:rgba(7,19,27,.9);
+  font-size:clamp(6px,.56vw,8.5px);
 }
 
 /* BOTTOM */
@@ -547,14 +562,6 @@ html,body{
   </div>
 
   <div class="ops">
-    <div class="card">
-      <div class="card-title">TODAY'S PRIORITIES</div>
-      <div class="prior-row"><span>📋</span><span>TEST TODAY</span><span id="testToday">-</span></div>
-      <div class="prior-row"><span>🚚</span><span>SHIP TODAY</span><span id="shipToday">-</span></div>
-      <div class="prior-row"><span>🔥</span><span>HOT JOBS</span><span id="hotJobs">-</span></div>
-      <div class="prior-row"><span>👥</span><span>CUSTOMER VISITS</span><span id="customerVisits">-</span></div>
-    </div>
-
     <div class="card">
       <div class="card-title">LIVE PRODUCTION COUNTERS</div>
       <div class="metric-grid">
@@ -805,17 +812,59 @@ function isOutgoingHeader(row){
   return norm(row?.[10] || "").includes("OUTGOINGSHIPMENTS");
 }
 
+function buildShippingHtml(mainRows){
+  const incoming=[];
+  const outgoing=[];
+  let outgoingMode=false;
+
+  for(const row of mainRows){
+    if(isOutgoingHeader(row)){
+      outgoingMode=true;
+      continue;
+    }
+
+    const item=displayText(row[10]);
+    const date=displayText(row[11]);
+    const action=displayText(row[12]);
+
+    if(item || date || action){
+      if(outgoingMode) outgoing.push([item,date,action]);
+      else incoming.push([item,date,action]);
+    }
+  }
+
+  while(incoming.length<4) incoming.push(["","",""]);
+  while(outgoing.length<4) outgoing.push(["","",""]);
+
+  function rows(arr){
+    return `
+      <div class="ship-head">ITEM</div>
+      <div class="ship-head">DATE</div>
+      <div class="ship-head">ACTION</div>
+      ${arr.slice(0,4).map(r=>`
+        <div class="ship-cell">${r[0]}</div>
+        <div class="ship-cell">${r[1]}</div>
+        <div class="ship-cell">${r[2]}</div>
+      `).join("")}
+    `;
+  }
+
+  return `
+    <div class="shipping-wrap">
+      <div class="shipping-title">INCOMING SHIPMENTS</div>
+      <div class="ship-table">${rows(incoming)}</div>
+      <div class="shipping-title">OUTGOING SHIPMENTS</div>
+      <div class="ship-table">${rows(outgoing)}</div>
+    </div>
+  `;
+}
+
 function updateDashboardControls(data){
   openValveOrders.textContent=getControl(data,"OPEN VALVE SALES ORDERS","-");
   openKitOrders.textContent=getControl(data,"OPEN KIT ORDERS","-");
   valvesAssembly.textContent=getControl(data,"VALVES IN ASSEMBLY","-");
   waitingVendor.textContent=getControl(data,"WAITING ON VENDOR","-");
   readyShip.textContent=getControl(data,"READY TO SHIP","-");
-
-  testToday.textContent=getControl(data,"TEST TODAY","2");
-  shipToday.textContent=getControl(data,"SHIP TODAY","1");
-  hotJobs.textContent=getControl(data,"HOT JOBS","3");
-  customerVisits.textContent=getControl(data,"CUSTOMER VISITS","-");
 
   safetyDays.textContent=getControl(data,"DAYS SINCE INCIDENT","-");
   valvesCompletedYTD.textContent=getControl(data,"VALVES COMPLETED YTD","-");
@@ -871,82 +920,38 @@ function render(data){
   board.appendChild(makeCell(header[6],{header:true,rowStart:1,colStart:7,colEnd:9,groupStart:true}));
   board.appendChild(makeCell(header[8],{header:true,rowStart:1,colStart:9,colEnd:11,groupStart:true}));
 
-  board.appendChild(makeCell(header[10],{header:true,rowStart:1,colStart:11,groupStart:true,extraClass:"ship-section"}));
-  board.appendChild(makeCell(header[11],{header:true,rowStart:1,colStart:12,extraClass:"ship-section"}));
-  board.appendChild(makeCell(header[12],{header:true,rowStart:1,colStart:13,extraClass:"ship-section"}));
-
   const tableEnd=notesRow>headerRow?notesRow:data.length;
   const mainRows=data.slice(headerRow+1,tableEnd);
 
   for(let r=0;r<MAIN_ROWS;r++){
     const row=mainRows[r]||[];
     const gridRow=2+r;
-    const outgoing=isOutgoingHeader(row);
 
-    for(let c=0;c<13;c++){
+    for(let c=0;c<10;c++){
       const opt={
         rowStart:gridRow,
         colStart:c+1,
-        groupStart:[5,7,9,11].includes(c+1),
+        groupStart:[5,7,9].includes(c+1),
         salesEntry:c+1===1
       };
 
       if(c+1===1)opt.extraClass="sales-order";
-      if(c+1>=11&&c+1<=13)opt.extraClass="ship-section";
-      if(outgoing && c+1>=11&&c+1<=13)opt.subHeader=true;
 
       board.appendChild(makeCell(row[c],opt));
     }
   }
 
-  const notesTitle=notesRow>=0?clean(data[notesRow][0]):"NOTES / IMPORTANT REMARKS";
-  const focusText=getControl(data,"NEED ATTENTION","Waiting on critical updates | Review open blockers | Confirm urgent shop priorities");
-
-  board.appendChild(makeCell(notesTitle,{
-    header:true,left:true,rowStart:BOTTOM_START_ROW,colStart:1,colEnd:6,extraClass:"notes-section"
-  }));
-
-  board.appendChild(makeCell("NEED ATTENTION / BLOCKERS",{
-    header:true,rowStart:BOTTOM_START_ROW,colStart:6,colEnd:10,extraClass:"focus-section"
-  }));
-
-  board.appendChild(makeCell("INSPECTION",{
-    header:true,rowStart:BOTTOM_START_ROW,colStart:10,colEnd:12,groupStart:true,extraClass:"inspect-section"
-  }));
-
-  board.appendChild(makeCell("REQ DATE",{
-    header:true,rowStart:BOTTOM_START_ROW,colStart:12,extraClass:"inspect-section"
-  }));
-
-  board.appendChild(makeCell("STATUS",{
-    header:true,rowStart:BOTTOM_START_ROW,colStart:13,extraClass:"inspect-section"
-  }));
-
-  board.appendChild(makeCell("",{
-    rowStart:BOTTOM_START_ROW+1,
-    rowEnd:BOTTOM_START_ROW+1+BOTTOM_ROWS,
-    colStart:6,
-    colEnd:10,
-    extraClass:"focus-panel",
-    html:`
-      <div class="focus-content">
-        <div class="focus-line"><span class="focus-label">FOCUS:</span>${focusText}</div>
-        <div class="focus-line"><span class="focus-label">SHOP:</span>Keep travelers updated, confirm test/ship priorities, and clear blockers early.</div>
-      </div>
-    `
-  }));
-
-  /* Live stream moved to right shipping area BELOW incoming/outgoing zone */
+  /* LIVE STREAM directly below clock/weather/safety on right side */
   board.appendChild(makeCell("LIVE STREAM",{
     header:true,
-    rowStart:14,
+    rowStart:1,
     colStart:11,
     colEnd:14,
     extraClass:"live-section"
   }));
 
   board.appendChild(makeCell("",{
-    rowStart:15,
+    rowStart:2,
     rowEnd:20,
     colStart:11,
     colEnd:14,
@@ -964,6 +969,33 @@ function render(data){
     `
   }));
 
+  const notesTitle=notesRow>=0?clean(data[notesRow][0]):"NOTES / IMPORTANT REMARKS";
+
+  board.appendChild(makeCell(notesTitle,{
+    header:true,left:true,rowStart:BOTTOM_START_ROW,colStart:1,colEnd:5,extraClass:"notes-section"
+  }));
+
+  board.appendChild(makeCell("",{
+    rowStart:BOTTOM_START_ROW,
+    rowEnd:BOTTOM_START_ROW+1+BOTTOM_ROWS,
+    colStart:5,
+    colEnd:10,
+    extraClass:"shipping-panel",
+    html:buildShippingHtml(mainRows)
+  }));
+
+  board.appendChild(makeCell("INSPECTION",{
+    header:true,rowStart:BOTTOM_START_ROW,colStart:10,colEnd:12,groupStart:true,extraClass:"inspect-section"
+  }));
+
+  board.appendChild(makeCell("REQ DATE",{
+    header:true,rowStart:BOTTOM_START_ROW,colStart:12,extraClass:"inspect-section"
+  }));
+
+  board.appendChild(makeCell("STATUS",{
+    header:true,rowStart:BOTTOM_START_ROW,colStart:13,extraClass:"inspect-section"
+  }));
+
   const bottomRows=notesRow>=0?data.slice(notesRow+1):[];
 
   for(let r=0;r<BOTTOM_ROWS;r++){
@@ -971,7 +1003,7 @@ function render(data){
     const gridRow=BOTTOM_START_ROW+1+r;
 
     board.appendChild(makeCell(row[0],{
-      left:true,rowStart:gridRow,colStart:1,colEnd:6,extraClass:"notes-section"
+      left:true,rowStart:gridRow,colStart:1,colEnd:5,extraClass:"notes-section"
     }));
 
     board.appendChild(makeCell(row[9],{
