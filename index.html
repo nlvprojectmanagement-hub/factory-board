@@ -26,29 +26,23 @@
 }
 
 html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  background:#000;
-  overflow:hidden;
+  margin:0;width:100%;height:100%;
+  background:#000;overflow:hidden;
   font-family:Arial,Helvetica,sans-serif;
 }
 
 .screen{
-  width:100vw;
-  height:100vh;
+  width:100vw;height:100vh;
   display:grid;
   grid-template-rows:var(--topHeight) var(--opsHeight) minmax(0,1fr) var(--bottomHeight);
-  gap:2px;
-  padding:2px;
-  background:#000;
+  gap:2px;padding:2px;background:#000;
 }
 
+/* TOP */
 .top{
   display:grid;
   grid-template-columns:150px minmax(0,1fr) auto;
-  gap:2px;
-  overflow:hidden;
+  gap:2px;overflow:hidden;
 }
 
 .logo,.announcement,.right-panel{
@@ -58,22 +52,12 @@ html,body{
   min-width:0;
 }
 
-.logo{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.logo img{
-  max-height:24px;
-  max-width:148px;
-  object-fit:contain;
-}
+.logo{display:flex;align-items:center;justify-content:center}
+.logo img{max-height:24px;max-width:148px;object-fit:contain}
 
 .announcement{
   display:grid;
   grid-template-columns:110px minmax(0,1fr);
-  min-width:0;
 }
 
 .announcement-label{
@@ -92,7 +76,6 @@ html,body{
   overflow:hidden;
   display:flex;
   align-items:center;
-  min-width:0;
 }
 
 .marquee-track{
@@ -147,10 +130,10 @@ html,body{
 .weather-top{font-size:8.5px;white-space:nowrap}
 .weather-mid,.weather-bottom{font-size:7.3px;white-space:nowrap}
 
-/* TOP DASHBOARD CARDS */
+/* OPS */
 .ops{
   display:grid;
-  grid-template-columns:44fr 26fr 18fr;
+  grid-template-columns:26fr 44fr 18fr;
   gap:3px;
   min-height:0;
   overflow:hidden;
@@ -225,19 +208,10 @@ html,body{
   padding:0 8px;
 }
 
-.safety-icon{
-  font-size:22px;
-  flex-shrink:0;
-}
+.safety-icon{font-size:22px;flex-shrink:0}
+.safety-text{font-size:9.2px;font-weight:900;line-height:1.1;text-align:left}
 
-.safety-text{
-  font-size:9.2px;
-  font-weight:900;
-  line-height:1.1;
-  text-align:left;
-}
-
-/* MAIN BOARD */
+/* BOARD */
 .board{
   display:grid;
   grid-template-columns:
@@ -311,7 +285,7 @@ html,body{
 .hold,.notreleased{color:#ff3333!important}
 .review,.revision,.clarification{color:#00b0f0!important}
 
-/* LIVE STREAM RIGHT SIDE */
+/* LIVE */
 .live-panel{
   padding:0!important;
   background:#000!important;
@@ -339,24 +313,22 @@ html,body{
   pointer-events:none;
 }
 
-/* SHIPPING CENTER PANEL */
-.shipping-panel{
-  background:var(--shipBlock)!important;
-  color:#fff;
+/* BOTTOM PANELS */
+.notes-panel,
+.shipping-panel,
+.inspection-panel{
   padding:0!important;
   white-space:normal!important;
   display:block!important;
+  overflow:hidden!important;
 }
 
-.shipping-wrap{
-  width:100%;
-  height:100%;
-  display:grid;
-  grid-template-rows:14px 1fr 14px 1fr;
-  overflow:hidden;
-}
+.notes-panel{background:var(--notesBlock)!important}
+.shipping-panel{background:var(--shipBlock)!important}
+.inspection-panel{background:var(--inspectionBlock)!important}
 
-.shipping-title{
+.panel-title{
+  height:16px;
   color:var(--orange);
   font-weight:900;
   font-size:clamp(7px,.6vw,9px);
@@ -365,12 +337,40 @@ html,body{
   justify-content:center;
   border-bottom:1px solid var(--grid);
   background:#000;
+  text-transform:uppercase;
+}
+
+.notes-table{
+  height:calc(100% - 16px);
+  display:grid;
+  grid-template-rows:repeat(10,1fr);
+}
+
+.note-row{
+  border-bottom:1px solid var(--grid);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  padding:0 5px;
+  font-weight:900;
+  font-size:clamp(7px,.62vw,9.2px);
+  overflow:hidden;
+  white-space:nowrap;
+}
+
+.shipping-wrap{
+  width:100%;
+  height:100%;
+  display:grid;
+  grid-template-rows:16px 1fr 16px 1fr;
+  overflow:hidden;
 }
 
 .ship-table{
   display:grid;
   grid-template-columns:1.35fr .7fr 1.45fr;
-  grid-template-rows:12px repeat(6,1fr);
+  grid-template-rows:14px repeat(6,1fr);
   overflow:hidden;
 }
 
@@ -395,10 +395,43 @@ html,body{
 .ship-cell{
   color:#fff;
   background:rgba(7,19,27,.9);
-  font-size:clamp(6px,.56vw,8.5px);
+  font-size:clamp(7px,.62vw,9.2px);
 }
 
-/* BOTTOM */
+.inspection-table{
+  height:calc(100% - 16px);
+  display:grid;
+  grid-template-columns:1.55fr .55fr 1.05fr;
+  grid-template-rows:14px repeat(10,1fr);
+}
+
+.ins-head,.ins-cell{
+  border-right:1px solid var(--grid);
+  border-bottom:1px solid var(--grid);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  padding:0 3px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.ins-head{
+  color:var(--orange);
+  background:#000;
+  font-size:clamp(6px,.54vw,8px);
+}
+
+.ins-cell{
+  color:#fff;
+  background:rgba(19,15,24,.95);
+  font-size:clamp(7px,.62vw,9.2px);
+}
+
+.ins-left{justify-content:flex-start}
+
+/* BOTTOM BAR */
 .bottom{
   display:grid;
   grid-template-columns:12fr 17fr 35fr 36fr;
@@ -447,20 +480,8 @@ html,body{
   line-height:1;
 }
 
-.legend span{
-  display:inline-flex;
-  align-items:center;
-  white-space:nowrap;
-}
-
-.swatch{
-  width:7px;
-  height:7px;
-  display:inline-block;
-  margin-right:2px;
-  flex-shrink:0;
-}
-
+.legend span{display:inline-flex;align-items:center;white-space:nowrap}
+.swatch{width:7px;height:7px;display:inline-block;margin-right:2px;flex-shrink:0}
 .sw-green{background:#00a83a}
 .sw-red{background:#ff0000}
 .sw-yellow{background:#ffff00}
@@ -485,12 +506,7 @@ html,body{
 .win-window{overflow:hidden;white-space:nowrap;min-width:0;flex:1}
 .win-scroll{display:inline;white-space:nowrap;animation:none!important}
 
-.error{
-  color:red;
-  font-size:22px;
-  font-weight:900;
-  padding:20px;
-}
+.error{color:red;font-size:22px;font-weight:900;padding:20px}
 
 @media (max-width:1600px){
   :root{--topHeight:25px;--opsHeight:70px;--bottomHeight:30px}
@@ -555,6 +571,11 @@ html,body{
 
   <div class="ops">
     <div class="card">
+      <div class="card-title">UPCOMING CRITICAL DATES</div>
+      <div id="criticalDates"></div>
+    </div>
+
+    <div class="card">
       <div class="card-title">LIVE PRODUCTION COUNTERS</div>
       <div class="metric-grid">
         <div class="metric"><div class="metric-label">OPEN VALVE<br>SALES ORDERS</div><div class="biggreen" id="openValveOrders">-</div></div>
@@ -563,11 +584,6 @@ html,body{
         <div class="metric"><div class="metric-label">WAITING ON<br>VENDOR</div><div class="bigyellow" id="waitingVendor">-</div></div>
         <div class="metric"><div class="metric-label">READY TO<br>SHIP</div><div class="biggreen" id="readyShip">-</div></div>
       </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">UPCOMING CRITICAL DATES</div>
-      <div id="criticalDates"></div>
     </div>
 
     <div class="card">
@@ -803,6 +819,20 @@ function isOutgoingHeader(row){
   return norm(row?.[10] || "").includes("OUTGOINGSHIPMENTS");
 }
 
+function buildNotesHtml(title,bottomRows){
+  const notes=[];
+  for(let i=0;i<10;i++){
+    notes.push(displayText(bottomRows[i]?.[0] || ""));
+  }
+
+  return `
+    <div class="panel-title">${title}</div>
+    <div class="notes-table">
+      ${notes.map(n=>`<div class="note-row">${n}</div>`).join("")}
+    </div>
+  `;
+}
+
 function buildShippingHtml(mainRows){
   const incoming=[];
   const outgoing=[];
@@ -846,6 +876,31 @@ function buildShippingHtml(mainRows){
       <div class="ship-table">${rows(incoming)}</div>
       <div class="shipping-title">OUTGOING SHIPMENTS</div>
       <div class="ship-table">${rows(outgoing)}</div>
+    </div>
+  `;
+}
+
+function buildInspectionHtml(bottomRows){
+  const rows=[];
+  for(let i=0;i<10;i++){
+    rows.push([
+      displayText(bottomRows[i]?.[9] || ""),
+      displayText(bottomRows[i]?.[11] || ""),
+      displayText(bottomRows[i]?.[12] || "")
+    ]);
+  }
+
+  return `
+    <div class="panel-title">INSPECTION</div>
+    <div class="inspection-table">
+      <div class="ins-head">ITEM</div>
+      <div class="ins-head">REQ DATE</div>
+      <div class="ins-head">STATUS</div>
+      ${rows.map(r=>`
+        <div class="ins-cell ins-left">${r[0]}</div>
+        <div class="ins-cell">${r[1]}</div>
+        <div class="ins-cell ${statusClass(r[2])}">${r[2]}</div>
+      `).join("")}
     </div>
   `;
 }
@@ -927,7 +982,6 @@ function render(data){
       };
 
       if(c+1===1)opt.extraClass="sales-order";
-
       board.appendChild(makeCell(row[c],opt));
     }
   }
@@ -959,55 +1013,35 @@ function render(data){
     `
   }));
 
+  const bottomRows=notesRow>=0?data.slice(notesRow+1):[];
   const notesTitle=notesRow>=0?clean(data[notesRow][0]):"NOTES / IMPORTANT REMARKS";
 
-  board.appendChild(makeCell(notesTitle,{
-    header:true,left:true,rowStart:BOTTOM_START_ROW,colStart:1,colEnd:4,extraClass:"notes-section"
+  board.appendChild(makeCell("",{
+    rowStart:BOTTOM_START_ROW,
+    rowEnd:47,
+    colStart:1,
+    colEnd:4,
+    extraClass:"notes-panel",
+    html:buildNotesHtml(notesTitle,bottomRows)
   }));
 
   board.appendChild(makeCell("",{
     rowStart:BOTTOM_START_ROW,
-    rowEnd:BOTTOM_START_ROW+1+BOTTOM_ROWS,
+    rowEnd:47,
     colStart:4,
     colEnd:10,
     extraClass:"shipping-panel",
     html:buildShippingHtml(mainRows)
   }));
 
-  board.appendChild(makeCell("INSPECTION",{
-    header:true,rowStart:BOTTOM_START_ROW,colStart:10,colEnd:12,groupStart:true,extraClass:"inspect-section"
+  board.appendChild(makeCell("",{
+    rowStart:BOTTOM_START_ROW,
+    rowEnd:47,
+    colStart:10,
+    colEnd:14,
+    extraClass:"inspection-panel",
+    html:buildInspectionHtml(bottomRows)
   }));
-
-  board.appendChild(makeCell("REQ DATE",{
-    header:true,rowStart:BOTTOM_START_ROW,colStart:12,extraClass:"inspect-section"
-  }));
-
-  board.appendChild(makeCell("STATUS",{
-    header:true,rowStart:BOTTOM_START_ROW,colStart:13,extraClass:"inspect-section"
-  }));
-
-  const bottomRows=notesRow>=0?data.slice(notesRow+1):[];
-
-  for(let r=0;r<BOTTOM_ROWS;r++){
-    const row=bottomRows[r]||[];
-    const gridRow=BOTTOM_START_ROW+1+r;
-
-    board.appendChild(makeCell(row[0],{
-      left:true,rowStart:gridRow,colStart:1,colEnd:4,extraClass:"notes-section"
-    }));
-
-    board.appendChild(makeCell(row[9],{
-      left:true,rowStart:gridRow,colStart:10,colEnd:12,groupStart:true,extraClass:"inspect-section"
-    }));
-
-    board.appendChild(makeCell(row[11],{
-      rowStart:gridRow,colStart:12,extraClass:"inspect-section"
-    }));
-
-    board.appendChild(makeCell(row[12],{
-      rowStart:gridRow,colStart:13,extraClass:"inspect-section"
-    }));
-  }
 }
 
 function refreshLiveVideo(){
