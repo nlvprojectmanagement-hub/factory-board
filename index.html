@@ -9,8 +9,9 @@
 *{box-sizing:border-box}
 
 :root{
-  --grid:rgba(180,205,230,.28);
-  --gridStrong:rgba(255,122,0,.52);
+  --grid:rgba(195,215,235,.34);
+  --gridSoft:rgba(180,205,230,.20);
+  --gridStrong:rgba(255,122,0,.58);
   --orange:#ff7a00;
   --white:#f4f7fb;
   --mainBlock:#020202;
@@ -27,10 +28,10 @@
   --silverHeader:
     linear-gradient(
       180deg,
-      #5f6872 0%,
-      #4b535c 38%,
-      #434b54 58%,
-      #59626c 100%
+      #55606a 0%,
+      #46505a 38%,
+      #3f4851 58%,
+      #515b65 100%
     );
 }
 
@@ -38,6 +39,9 @@ html,body{
   margin:0;width:100%;height:100%;
   background:#000;overflow:hidden;
   font-family:Arial,Helvetica,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:geometricPrecision;
 }
 
 .screen{
@@ -108,7 +112,7 @@ html,body{
 }
 
 .clock-box{
-  width:78px;
+  width:86px;
   flex-shrink:0;
   display:flex;
   flex-direction:column;
@@ -116,9 +120,24 @@ html,body{
   align-items:center;
   color:#000;
   font-weight:900;
-  font-size:11px;
-  line-height:1.03;
+  line-height:1.01;
   border-left:1px solid rgba(0,0,0,.18);
+}
+
+#dateBox{
+  font-size:11px;
+}
+
+#timeBox{
+  font-size:11px;
+}
+
+#updatedBox{
+  font-size:6.6px;
+  line-height:1;
+  margin-top:1px;
+  color:#333;
+  white-space:nowrap;
 }
 
 .weather-box{
@@ -199,7 +218,7 @@ html,body{
 .date-row{
   display:grid;
   grid-template-columns:48px 1fr 38px;
-  border-bottom:1px solid rgba(180,205,230,.18);
+  border-bottom:1px solid var(--gridSoft);
   font-size:8.6px;
   font-weight:900;
   padding:1px 0;
@@ -236,7 +255,7 @@ html,body{
 
 .cell{
   border-right:1px solid var(--grid);
-  border-bottom:1px solid var(--grid);
+  border-bottom:1px solid var(--gridSoft);
   background:var(--mainBlock);
   color:var(--white);
   font-weight:800;
@@ -257,9 +276,9 @@ html,body{
   font-weight:900!important;
   font-size:clamp(7px,.58vw,9px);
   text-transform:uppercase;
-  border-top:1px solid rgba(255,255,255,.18)!important;
-  border-bottom:1px solid rgba(0,0,0,.72)!important;
-  text-shadow:0 1px 1px rgba(0,0,0,.9);
+  border-top:1px solid rgba(255,255,255,.16)!important;
+  border-bottom:1px solid rgba(0,0,0,.82)!important;
+  text-shadow:0 1px 1px rgba(0,0,0,.95);
 }
 
 .header.sales-order{
@@ -324,11 +343,11 @@ html,body{
   display:flex;
   align-items:center;
   justify-content:center;
-  border-bottom:1px solid var(--grid);
+  border-bottom:1px solid rgba(0,0,0,.82);
   background:var(--silverHeader);
   text-transform:uppercase;
-  text-shadow:0 1px 1px rgba(0,0,0,.9);
-  border-top:1px solid rgba(255,255,255,.18);
+  text-shadow:0 1px 1px rgba(0,0,0,.95);
+  border-top:1px solid rgba(255,255,255,.16);
 }
 
 .notes-table{
@@ -338,7 +357,7 @@ html,body{
 }
 
 .note-row{
-  border-bottom:1px solid var(--grid);
+  border-bottom:1px solid var(--gridSoft);
   color:#fff;
   display:flex;
   align-items:center;
@@ -380,7 +399,7 @@ html,body{
 
 .job-head,.job-cell{
   border-right:1px solid var(--grid);
-  border-bottom:1px solid var(--grid);
+  border-bottom:1px solid var(--gridSoft);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -419,11 +438,11 @@ html,body{
   align-items:center;
   justify-content:center;
   text-align:center;
-  border-bottom:1px solid var(--grid);
+  border-bottom:1px solid rgba(0,0,0,.82);
   background:var(--silverHeader);
   text-transform:uppercase;
-  text-shadow:0 1px 1px rgba(0,0,0,.9);
-  border-top:1px solid rgba(255,255,255,.18);
+  text-shadow:0 1px 1px rgba(0,0,0,.95);
+  border-top:1px solid rgba(255,255,255,.16);
 }
 
 .ship-table{
@@ -435,7 +454,7 @@ html,body{
 
 .ship-head,.ship-cell{
   border-right:1px solid var(--grid);
-  border-bottom:1px solid var(--grid);
+  border-bottom:1px solid var(--gridSoft);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -466,7 +485,7 @@ html,body{
 
 .ins-head,.ins-cell{
   border-right:1px solid var(--grid);
-  border-bottom:1px solid var(--grid);
+  border-bottom:1px solid var(--gridSoft);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -577,9 +596,31 @@ html,body{
   line-height:1;
 }
 
-.win-label{color:var(--orange);flex-shrink:0}
-.win-window{overflow:hidden;white-space:nowrap;min-width:0;flex:1}
-.win-scroll{display:inline;white-space:nowrap;animation:none!important}
+.win-label{
+  color:var(--orange);
+  flex-shrink:0;
+}
+
+.win-window{
+  overflow:hidden;
+  white-space:nowrap;
+  min-width:0;
+  flex:1;
+  position:relative;
+}
+
+.win-scroll{
+  display:inline-block;
+  padding-left:100%;
+  white-space:nowrap;
+  animation:winsMove 58s linear infinite;
+  will-change:transform;
+}
+
+@keyframes winsMove{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-100%)}
+}
 
 .error{color:red;font-size:22px;font-weight:900;padding:20px}
 
@@ -593,6 +634,9 @@ html,body{
 
   .announcement{grid-template-columns:105px minmax(0,1fr)}
   .announcement-label{font-size:8px}
+  .clock-box{width:84px}
+  #dateBox,#timeBox{font-size:10.5px}
+  #updatedBox{font-size:6.2px}
   .cell{font-size:clamp(6px,.58vw,8.4px)}
   .header{font-size:clamp(6px,.54vw,8.2px)}
   .metric{height:42px}
@@ -613,6 +657,9 @@ html,body{
     --titleHeight:17px;
   }
 
+  .clock-box{width:92px}
+  #dateBox,#timeBox{font-size:12px}
+  #updatedBox{font-size:7px}
   .cell{font-size:10px}
   .header{font-size:9.5px}
   .metric{height:49px}
@@ -646,6 +693,7 @@ html,body{
       <div class="clock-box">
         <div id="dateBox"></div>
         <div id="timeBox"></div>
+        <div id="updatedBox">Updated --</div>
       </div>
 
       <div class="weather-box">
@@ -677,7 +725,7 @@ html,body{
       <div class="card-title">SAFETY MESSAGE</div>
       <div class="safety-card">
         <div class="safety-icon">⚠️</div>
-        <div class="safety-text" id="safetyMessage">Don’t take shortcuts.<br>Safety is a core value.</div>
+        <div class="safety-text" id="safetyMessage">What we build matters.<br>So does how we build it.</div>
       </div>
     </div>
   </div>
@@ -716,7 +764,9 @@ html,body{
 
     <div class="wins">
       <span class="win-label">LATEST WINS:</span>
-      <div class="win-window"><span class="win-scroll" id="latestWins">-</span></div>
+      <div class="win-window">
+        <span class="win-scroll" id="latestWins">-</span>
+      </div>
     </div>
   </div>
 </div>
@@ -805,6 +855,14 @@ function updateClock(){
 }
 setInterval(updateClock,1000);
 updateClock();
+
+function updateLastUpdated(){
+  const now=new Date();
+  updatedBox.textContent="Updated " + now.toLocaleTimeString("en-US",{
+    hour:"numeric",
+    minute:"2-digit"
+  });
+}
 
 function weatherIcon(code){
   if(code===0)return"☀️";
@@ -1184,6 +1242,7 @@ async function load(){
 
     lastGoodText=text;
     render(data);
+    updateLastUpdated();
   }catch(e){
     console.warn("Temporary data load skipped:",e.message);
   }
