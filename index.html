@@ -221,4 +221,704 @@ html,body{
   line-height:1.02;
 }
 
-.biggreen,.bigyellow
+.biggreen,.bigyellow{
+  font-size:18px;
+  font-weight:900;
+  text-align:center;
+  line-height:1;
+}
+
+.biggreen{color:#28d428}
+.bigyellow{color:#ffe600}
+
+.date-row{
+  display:grid;
+  grid-template-columns:48px 1fr 38px;
+  border-bottom:1px solid var(--gridSoft);
+  font-size:8.6px;
+  font-weight:900;
+  padding:1px 0;
+  line-height:1.05;
+}
+
+.safety-card{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  height:41px;
+  padding:0 8px;
+}
+
+.safety-icon{font-size:22px;flex-shrink:0}
+.safety-text{font-size:9.2px;font-weight:900;line-height:1.1;text-align:left}
+
+.board{
+  display:grid;
+  grid-template-columns:
+    7fr 7fr 7fr 8fr
+    10fr 9fr
+    10fr 9fr
+    9fr 9fr
+    12fr 7fr 16fr;
+  grid-template-rows:var(--titleHeight) repeat(45,minmax(0,1fr));
+  border-top:1px solid var(--grid);
+  border-left:1px solid var(--grid);
+  background:#000;
+  overflow:hidden;
+  min-height:0;
+}
+
+.cell{
+  border-right:1px solid var(--grid);
+  border-bottom:1px solid var(--gridSoft);
+  background:var(--mainBlock);
+  color:var(--white);
+  font-weight:800;
+  font-size:clamp(7px,.62vw,9.2px);
+  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 2px;
+  white-space:nowrap;
+  overflow:hidden;
+  position:relative;
+}
+
+.header{
+  background:var(--silverHeader)!important;
+  color:var(--orange)!important;
+  font-weight:900!important;
+  font-size:clamp(7px,.58vw,9px);
+  text-transform:uppercase;
+  border-top:1px solid rgba(255,255,255,.16)!important;
+  border-bottom:1px solid rgba(0,0,0,.82)!important;
+  text-shadow:0 1px 1px rgba(0,0,0,.95);
+}
+
+.header.sales-order{
+  background:var(--silverHeader)!important;
+  color:var(--orange)!important;
+}
+
+.group-start{border-left:1px solid var(--gridStrong)}
+.notes-section{background:var(--notesBlock)}
+.ship-section{background:var(--shipBlock)}
+.job-section{background:var(--jobBlock)}
+.inspect-section{background:var(--inspectionBlock)}
+.sales-order{background:var(--salesBlock)!important;color:#e6e6e6!important}
+.left{justify-content:flex-start;padding-left:4px}
+.sales-entry{font-size:clamp(7px,.66vw,9.8px);font-weight:900}
+.inner{white-space:nowrap}
+
+.long .inner{
+  position:absolute;
+  animation:scrollCell 16s linear infinite;
+}
+
+@keyframes scrollCell{
+  0%{transform:translateX(100%)}
+  100%{transform:translateX(-100%)}
+}
+
+.struck{text-decoration:line-through;color:#777!important}
+.delay,.p1{background:#ff0000!important;color:#fff!important}
+.ontime,.ready{background:#00a83a!important;color:#fff!important}
+.p2{background:#ff7a00!important;color:#000!important}
+.pull{background:#ffff00!important;color:#000!important}
+.pulling{background:#00b0f0!important;color:#000!important}
+.waiting{color:#b8b8b8!important}
+.released{color:#00ff88!important}
+.partial{color:#ffff00!important}
+.hold,.notreleased{color:#ff3333!important}
+.review,.revision,.clarification{color:#00b0f0!important}
+
+.notes-panel,
+.shipping-panel,
+.inspection-panel,
+.job-panel,
+.live-panel{
+  padding:0!important;
+  white-space:normal!important;
+  display:block!important;
+  overflow:hidden!important;
+}
+
+.notes-panel{background:var(--notesBlock)!important}
+.shipping-panel{background:var(--shipBlock)!important}
+.inspection-panel{background:var(--inspectionBlock)!important}
+.job-panel{background:var(--jobBlock)!important}
+.live-panel{background:#000!important}
+
+.panel-title{
+  height:var(--titleHeight);
+  color:var(--orange);
+  font-weight:900;
+  font-size:clamp(7px,.6vw,9px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-bottom:1px solid rgba(0,0,0,.82);
+  background:var(--silverHeader);
+  text-transform:uppercase;
+  text-shadow:0 1px 1px rgba(0,0,0,.95);
+  border-top:1px solid rgba(255,255,255,.16);
+}
+
+.notes-table{
+  height:calc(100% - var(--titleHeight));
+  display:grid;
+  grid-template-rows:repeat(7,1fr);
+}
+
+.note-row{
+  border-bottom:1px solid var(--gridSoft);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  padding:0 5px;
+  font-weight:900;
+  font-size:clamp(7px,.62vw,9.2px);
+  overflow:hidden;
+  white-space:nowrap;
+}
+
+.video-crop{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#000;
+  position:relative;
+  border:1px solid var(--grid);
+}
+
+.video-crop iframe{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:160%;
+  height:100%;
+  border:0;
+  background:#000;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+
+.job-table{
+  height:calc(100% - var(--titleHeight));
+  display:grid;
+  grid-template-columns:1fr 1.35fr 1fr;
+  grid-template-rows:14px repeat(18,1fr);
+}
+
+.job-head,.job-cell{
+  border-right:1px solid var(--grid);
+  border-bottom:1px solid var(--gridSoft);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  padding:0 3px;
+  white-space:nowrap;
+  font-weight:900;
+}
+
+.job-head{
+  color:var(--orange);
+  background:#000;
+  font-size:clamp(6px,.56vw,8.5px);
+}
+
+.job-cell{
+  color:#fff;
+  background:rgba(6,16,24,.95);
+  font-size:clamp(7px,.62vw,9.5px);
+}
+
+.shipping-wrap{
+  width:100%;
+  height:100%;
+  display:grid;
+  grid-template-rows:var(--titleHeight) 1fr var(--titleHeight) 1fr;
+  overflow:hidden;
+}
+
+.shipping-title{
+  height:var(--titleHeight);
+  color:var(--orange);
+  font-weight:900;
+  font-size:clamp(7px,.6vw,9px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  border-bottom:1px solid rgba(0,0,0,.82);
+  background:var(--silverHeader);
+  text-transform:uppercase;
+  text-shadow:0 1px 1px rgba(0,0,0,.95);
+  border-top:1px solid rgba(255,255,255,.16);
+}
+
+.ship-table{
+  display:grid;
+  grid-template-columns:1.35fr .7fr 1.45fr;
+  grid-template-rows:14px repeat(6,1fr);
+  overflow:hidden;
+}
+
+.ship-head,.ship-cell{
+  border-right:1px solid var(--grid);
+  border-bottom:1px solid var(--gridSoft);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  padding:0 2px;
+  white-space:nowrap;
+  font-weight:900;
+}
+
+.ship-head{
+  color:var(--orange);
+  background:#000;
+  font-size:clamp(6px,.54vw,8px);
+}
+
+.ship-cell{
+  color:#fff;
+  background:rgba(7,19,27,.9);
+  font-size:clamp(7px,.62vw,9.2px);
+}
+
+.inspection-table{
+  height:calc(100% - var(--titleHeight));
+  display:grid;
+  grid-template-columns:1.55fr .55fr 1.05fr;
+  grid-template-rows:14px repeat(14,1fr);
+}
+
+.ins-head,.ins-cell{
+  border-right:1px solid var(--grid);
+  border-bottom:1px solid var(--gridSoft);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  padding:0 3px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.ins-head{
+  color:var(--orange);
+  background:#000;
+  font-size:clamp(6px,.54vw,8px);
+}
+
+.ins-cell{
+  color:#fff;
+  background:rgba(19,15,24,.95);
+  font-size:clamp(7px,.62vw,9.2px);
+}
+
+.ins-left{justify-content:flex-start}
+
+.bottom{
+  display:grid;
+  grid-template-columns:12fr 17fr 35fr 36fr;
+  gap:2px;
+  min-height:0;
+  overflow:hidden;
+}
+
+.bottom-card{
+  border:1px solid var(--grid);
+  background:#050505;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  overflow:hidden;
+  padding:2px 2px 4px 2px;
+  line-height:1;
+}
+
+.bottom-title{
+  color:var(--orange);
+  font-size:7.8px;
+  font-weight:900;
+  line-height:1;
+}
+
+.bottom-value{
+  color:#28d428;
+  font-size:12.5px;
+  font-weight:900;
+  line-height:1;
+}
+
+.bottom-small{
+  font-size:6.8px;
+  font-weight:900;
+  line-height:1;
+}
+
+.production-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  width:100%;
+  align-items:center;
+  min-height:0;
+}
+
+.legend{
+  background:#fff;
+  color:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  padding:0 2px;
+  font-weight:900;
+  font-size:8px;
+  overflow:hidden;
+  white-space:nowrap;
+  line-height:1;
+}
+
+.legend span{display:inline-flex;align-items:center;white-space:nowrap}
+.swatch{width:7px;height:7px;display:inline-block;margin-right:2px;flex-shrink:0}
+.sw-green{background:#00a83a}
+.sw-red{background:#ff0000}
+.sw-yellow{background:#ffff00}
+.sw-orange{background:#ff7a00}
+.sw-gray{background:#888}
+
+.wins{
+  background:#fff;
+  color:#000;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:0 5px;
+  font-size:9px;
+  font-weight:900;
+  overflow:hidden;
+  white-space:nowrap;
+  line-height:1;
+}
+
+.win-label{
+  color:var(--orange);
+  flex-shrink:0;
+}
+
+.win-window{
+  overflow:hidden;
+  white-space:nowrap;
+  min-width:0;
+  flex:1;
+  position:relative;
+}
+
+.win-scroll{
+  display:inline-block;
+  padding-left:100%;
+  white-space:nowrap;
+  animation:winsMove 58s linear infinite;
+  will-change:transform;
+}
+
+@keyframes winsMove{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-100%)}
+}
+
+.error{color:red;font-size:22px;font-weight:900;padding:20px}
+
+@media (max-width:1600px){
+  :root{
+    --topHeight:25px;
+    --opsHeight:70px;
+    --bottomHeight:36px;
+    --titleHeight:15px;
+  }
+
+  .announcement{grid-template-columns:105px minmax(0,1fr)}
+  .announcement-label{font-size:8px}
+
+  .right-panel{
+    grid-template-columns:74px 168px 80px;
+  }
+
+  #dateBox,#timeBox{font-size:10.5px}
+  .weather-top{font-size:8px}
+  .weather-mid,.weather-bottom{font-size:6.9px}
+  .updated-label{font-size:6px}
+  #updatedBox{font-size:7.3px}
+
+  .cell{font-size:clamp(6px,.58vw,8.4px)}
+  .header{font-size:clamp(6px,.54vw,8.2px)}
+  .metric{height:42px}
+  .metric-label{font-size:6.3px}
+  .biggreen,.bigyellow{font-size:16px}
+  .bottom-title{font-size:7px}
+  .bottom-value{font-size:11.5px}
+  .bottom-small{font-size:6.3px}
+  .legend{font-size:7px}
+  .wins{font-size:8px}
+}
+
+@media (min-width:1900px){
+  :root{
+    --topHeight:28px;
+    --opsHeight:76px;
+    --bottomHeight:40px;
+    --titleHeight:17px;
+  }
+
+  .right-panel{
+    grid-template-columns:84px 190px 96px;
+  }
+
+  #dateBox,#timeBox{font-size:12px}
+  .weather-top{font-size:9px}
+  .weather-mid,.weather-bottom{font-size:7.8px}
+  .updated-label{font-size:6.8px}
+  #updatedBox{font-size:8.6px}
+
+  .cell{font-size:10px}
+  .header{font-size:9.5px}
+  .metric{height:49px}
+  .metric-label{font-size:7.2px}
+  .biggreen,.bigyellow{font-size:20px}
+  .bottom-title{font-size:8px}
+  .bottom-value{font-size:13.5px}
+  .bottom-small{font-size:7px}
+  .legend{font-size:8.5px}
+  .wins{font-size:9.5px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="screen">
+  <div class="top">
+    <div class="logo"><img src="GITHUB LOGO 2.png"></div>
+
+    <div class="announcement">
+      <div class="announcement-label">ANNOUNCEMENTS</div>
+      <div class="marquee">
+        <div class="marquee-track" id="announceTrack">
+          <span></span><span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="clock-box">
+        <div id="dateBox"></div>
+        <div id="timeBox"></div>
+      </div>
+
+      <div class="weather-box">
+        <div class="weather-top" id="weatherTop">Weather loading</div>
+        <div class="weather-mid" id="weatherMid"></div>
+        <div class="weather-bottom" id="weatherBottom"></div>
+      </div>
+
+      <div class="updated-box">
+        <div class="updated-label">Last Updated</div>
+        <div id="updatedBox">--</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ops">
+    <div class="card">
+      <div class="card-title">UPCOMING CRITICAL DATES</div>
+      <div id="criticalDates"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">LIVE PRODUCTION COUNTERS</div>
+      <div class="metric-grid">
+        <div class="metric"><div class="metric-label">OPEN VALVE<br>SALES ORDERS</div><div class="biggreen" id="openValveOrders">-</div></div>
+        <div class="metric"><div class="metric-label">OPEN KIT<br>ORDERS</div><div class="biggreen" id="openKitOrders">-</div></div>
+        <div class="metric"><div class="metric-label">VALVES IN<br>ASSEMBLY</div><div class="biggreen" id="valvesAssembly">-</div></div>
+        <div class="metric"><div class="metric-label">WAITING ON<br>VENDOR</div><div class="bigyellow" id="waitingVendor">-</div></div>
+        <div class="metric"><div class="metric-label">READY TO<br>SHIP</div><div class="biggreen" id="readyShip">-</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">SAFETY MESSAGE</div>
+      <div class="safety-card">
+        <div class="safety-icon">⚠️</div>
+        <div class="safety-text" id="safetyMessage">What we build matters.<br>So does how we build it.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="board" id="board"></div>
+
+  <div class="bottom">
+    <div class="bottom-card">
+      <div class="bottom-title">SAFETY</div>
+      <div class="bottom-small">Days Since Recordable Incident</div>
+      <div class="bottom-value" id="safetyDays">-</div>
+    </div>
+
+    <div class="bottom-card">
+      <div class="bottom-title">PRODUCTION YTD</div>
+      <div class="production-grid">
+        <div>
+          <div class="bottom-small">Valves Completed</div>
+          <div class="bottom-value" id="valvesCompletedYTD">-</div>
+        </div>
+        <div>
+          <div class="bottom-small">Valves Shipped</div>
+          <div class="bottom-value" id="valvesShippedYTD">-</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span style="color:var(--orange)">STATUS LEGEND:</span>
+      <span><i class="swatch sw-green"></i>ON TIME</span>
+      <span><i class="swatch sw-red"></i>DELAY</span>
+      <span><i class="swatch sw-yellow"></i>PARTIAL</span>
+      <span><i class="swatch sw-orange"></i>HOLD</span>
+      <span><i class="swatch sw-gray"></i>WAITING</span>
+    </div>
+
+    <div class="wins">
+      <span class="win-label">LATEST WINS:</span>
+      <div class="win-window">
+        <span class="win-scroll" id="latestWins">-</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA_URL="https://script.google.com/macros/s/AKfycbzFxHCEVrtag58ofvfDZzJHrstGD_5fNRKQ2o8Lt3WSLmBt8zywimjjVRB36ju2pU-2uA/exec";
+const VIDEO_ID="pehIByVhAJY";
+const REFRESH_MS=5000;
+const VIDEO_RELOAD_MS=0;
+
+const LAT=29.6161;
+const LON=-95.5577;
+
+const MAIN_ROWS=18;
+const JOB_ROWS=18;
+const BOTTOM_START_ROW=20;
+const BOTTOM_ROWS=26;
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+let lastGoodText="";
+
+function liveSrc(){
+  return `https://www.youtube-nocookie.com/embed/${VIDEO_ID}?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=${VIDEO_ID}&enablejsapi=0&t=${Date.now()}`;
+}
+
+function clean(v){
+  if(v==null)return "";
+  const s=String(v).trim();
+  const m=s.match(/^Date\((\d+),(\d+),(\d+)/);
+  if(m)return `${m[3]}-${MONTHS[+m[2]]}`;
+  return s;
+}
+
+function displayText(v){return clean(v).replace(/^\*\*/,"").trim()}
+function isStruck(v){return clean(v).startsWith("**")}
+function norm(v){return displayText(v).toUpperCase().replace(/[\s\-\/]+/g,"")}
+
+function findRow(data,terms){
+  return data.findIndex(r=>r.some(c=>{
+    const v=norm(c);
+    return terms.some(t=>v.includes(norm(t)));
+  }));
+}
+
+function getControl(data,key,fallback="-"){
+  const wanted=norm(key);
+  for(const row of data){
+    for(let i=13;i<row.length-1;i++){
+      if(norm(row[i])===wanted){
+        const val=displayText(row[i+1]);
+        return val || fallback;
+      }
+    }
+  }
+  return fallback;
+}
+
+function statusClass(text){
+  if(isStruck(text))return"struck";
+  const s=norm(text);
+
+  if(s.includes("DELAY"))return"delay";
+  if(s==="P1")return"p1";
+  if(s==="P2")return"p2";
+  if(s==="PULL")return"pull";
+  if(s==="PULLING")return"pulling";
+  if(s==="READY")return"ready";
+  if(s.includes("ONTIME"))return"ontime";
+  if(s==="WAITING")return"waiting";
+
+  if(s==="RELEASED")return"released";
+  if(s==="PARTIAL")return"partial";
+  if(s==="HOLD")return"hold";
+  if(s==="NOTRELEASED")return"notreleased";
+  if(s==="INREVIEW")return"review";
+  if(s==="REVISION")return"revision";
+  if(s==="CLARIFICATION")return"clarification";
+
+  return"";
+}
+
+function updateClock(){
+  const now=new Date();
+  dateBox.textContent=now.toLocaleDateString("en-US",{month:"short",day:"numeric"});
+  timeBox.textContent=now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",second:"2-digit"});
+}
+setInterval(updateClock,1000);
+updateClock();
+
+function updateLastUpdated(){
+  const now=new Date();
+  updatedBox.textContent=now.toLocaleTimeString("en-US",{
+    hour:"numeric",
+    minute:"2-digit"
+  });
+}
+
+function weatherIcon(code){
+  if(code===0)return"☀️";
+  if(code<=2)return"🌤️";
+  if(code===3)return"☁️";
+  if(code<=67)return"🌧️";
+  if(code<=82)return"🌦️";
+  if(code<=99)return"⛈️";
+  return"🌫️";
+}
+
+function nextRainText(hourly){
+  if(!hourly || !hourly.time)return "Next rain unavailable";
+  const now=Date.now();
+
+  for(let i=0;i<hourly.time.length;i++){
+    const t=new Date(hourly.time[i]).getTime();
+    const precip=Number(hourly.precipitation_probability?.[i] || 0);
+    const rain=Number(hourly.precipitation?.[i] || 0);
+
+    if(t>now && (precip>=35 || rain>0)){
+      const dt=new Date(hourly.time[i]);
+      const day=dt.toLocaleDateString("en-US",{weekday:"short"});
+      const time=dt.toLocaleTimeString("en-US",{
