@@ -19,7 +19,6 @@
   --jobBlock:#061018;
   --inspectionBlock:#130f18;
   --salesBlock:#1e1e1e;
-
   --topHeight:25px;
   --opsHeight:72px;
   --bottomHeight:32px;
@@ -285,7 +284,8 @@ html,body{
 .notes-panel,
 .shipping-panel,
 .inspection-panel,
-.job-panel{
+.job-panel,
+.live-panel{
   padding:0!important;
   white-space:normal!important;
   display:block!important;
@@ -296,6 +296,7 @@ html,body{
 .shipping-panel{background:var(--shipBlock)!important}
 .inspection-panel{background:var(--inspectionBlock)!important}
 .job-panel{background:var(--jobBlock)!important}
+.live-panel{background:#000!important}
 
 .panel-title{
   height:16px;
@@ -313,7 +314,7 @@ html,body{
 .notes-table{
   height:calc(100% - 16px);
   display:grid;
-  grid-template-rows:repeat(14,1fr);
+  grid-template-rows:repeat(7,1fr);
 }
 
 .note-row{
@@ -329,11 +330,32 @@ html,body{
   white-space:nowrap;
 }
 
+.video-crop{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#000;
+  position:relative;
+  border:1px solid var(--grid);
+}
+
+.video-crop iframe{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:160%;
+  height:100%;
+  border:0;
+  background:#000;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+
 .job-table{
   height:calc(100% - 16px);
   display:grid;
   grid-template-columns:1fr 1.35fr 1fr;
-  grid-template-rows:16px repeat(8,1fr);
+  grid-template-rows:16px repeat(12,1fr);
 }
 
 .job-head,.job-cell{
@@ -357,7 +379,7 @@ html,body{
 .job-cell{
   color:#fff;
   background:rgba(6,16,24,.95);
-  font-size:clamp(8px,.7vw,11px);
+  font-size:clamp(7px,.62vw,9.5px);
 }
 
 .shipping-wrap{
@@ -649,7 +671,9 @@ html,body{
 
 <script>
 const DATA_URL="https://script.google.com/macros/s/AKfycbzFxHCEVrtag58ofvfDZzJHrstGD_5fNRKQ2o8Lt3WSLmBt8zywimjjVRB36ju2pU-2uA/exec";
+const VIDEO_ID="pehIByVhAJY";
 const REFRESH_MS=5000;
+const VIDEO_RELOAD_MS=0;
 
 const LAT=29.6161;
 const LON=-95.5577;
@@ -660,6 +684,10 @@ const BOTTOM_ROWS=26;
 const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 let lastGoodText="";
+
+function liveSrc(){
+  return `https://www.youtube-nocookie.com/embed/${VIDEO_ID}?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=${VIDEO_ID}&enablejsapi=0&t=${Date.now()}`;
+}
 
 function clean(v){
   if(v==null)return "";
@@ -828,7 +856,7 @@ function isOutgoingHeader(row){
 
 function buildNotesHtml(title,bottomRows){
   const notes=[];
-  for(let i=0;i<14;i++){
+  for(let i=0;i<7;i++){
     notes.push(displayText(bottomRows[i]?.[0] || ""));
   }
 
@@ -928,7 +956,7 @@ function buildJobStatusHtml(data){
     }
   }
 
-  while(rows.length<8) rows.push(["","",""]);
+  while(rows.length<12) rows.push(["","",""]);
 
   return `
     <div class="panel-title">JOB STATUS</div>
@@ -936,7 +964,7 @@ function buildJobStatusHtml(data){
       <div class="job-head">JOB NO.</div>
       <div class="job-head">ASSEMBLY TYPE</div>
       <div class="job-head">STATUS</div>
-      ${rows.slice(0,8).map(r=>`
+      ${rows.slice(0,12).map(r=>`
         <div class="job-cell">${r[0]}</div>
         <div class="job-cell">${r[1]}</div>
         <div class="job-cell ${statusClass(r[2])}">${r[2]}</div>
@@ -1040,11 +1068,30 @@ function render(data){
 
   board.appendChild(makeCell("",{
     rowStart:BOTTOM_START_ROW,
-    rowEnd:47,
+    rowEnd:34,
     colStart:1,
     colEnd:4,
     extraClass:"notes-panel",
     html:buildNotesHtml(notesTitle,bottomRows)
+  }));
+
+  board.appendChild(makeCell("",{
+    rowStart:34,
+    rowEnd:47,
+    colStart:1,
+    colEnd:4,
+    extraClass:"live-panel",
+    html:`
+      <div class="video-crop">
+        <iframe
+          id="liveFrame"
+          src="${liveSrc()}"
+          allow="autoplay; encrypted-media; fullscreen"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen>
+        </iframe>
+      </div>
+    `
   }));
 
   board.appendChild(makeCell("",{
@@ -1065,6 +1112,13 @@ function render(data){
     html:buildInspectionHtml(bottomRows)
   }));
 }
+
+function refreshLiveVideo(){
+  const frame=document.getElementById("liveFrame");
+  if(frame) frame.src=liveSrc();
+}
+
+if(VIDEO_RELOAD_MS>0) setInterval(refreshLiveVideo,VIDEO_RELOAD_MS);
 
 async function load(){
   try{
