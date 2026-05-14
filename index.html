@@ -16,7 +16,7 @@
   --mainBlock:#020202;
   --shipBlock:#07131b;
   --notesBlock:#050505;
-  --liveBlock:#020202;
+  --jobBlock:#061018;
   --inspectionBlock:#130f18;
   --salesBlock:#1e1e1e;
 
@@ -253,7 +253,7 @@ html,body{
 .group-start{border-left:1px solid var(--gridStrong)}
 .notes-section{background:var(--notesBlock)}
 .ship-section{background:var(--shipBlock)}
-.live-section{background:var(--liveBlock)}
+.job-section{background:var(--jobBlock)}
 .inspect-section{background:var(--inspectionBlock)}
 .sales-order{background:var(--salesBlock)!important;color:#e6e6e6!important}
 .left{justify-content:flex-start;padding-left:4px}
@@ -282,36 +282,10 @@ html,body{
 .hold,.notreleased{color:#ff3333!important}
 .review,.revision,.clarification{color:#00b0f0!important}
 
-.live-panel{
-  padding:0!important;
-  background:#000!important;
-  overflow:hidden!important;
-  z-index:5;
-}
-
-.video-crop{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  background:#000;
-  position:relative;
-}
-
-.video-crop iframe{
-  position:absolute;
-  top:50%;
-  left:50%;
-  width:160%;
-  height:100%;
-  border:0;
-  background:#000;
-  transform:translate(-50%,-50%);
-  pointer-events:none;
-}
-
 .notes-panel,
 .shipping-panel,
-.inspection-panel{
+.inspection-panel,
+.job-panel{
   padding:0!important;
   white-space:normal!important;
   display:block!important;
@@ -321,6 +295,7 @@ html,body{
 .notes-panel{background:var(--notesBlock)!important}
 .shipping-panel{background:var(--shipBlock)!important}
 .inspection-panel{background:var(--inspectionBlock)!important}
+.job-panel{background:var(--jobBlock)!important}
 
 .panel-title{
   height:16px;
@@ -352,6 +327,37 @@ html,body{
   font-size:clamp(7px,.62vw,9.2px);
   overflow:hidden;
   white-space:nowrap;
+}
+
+.job-table{
+  height:calc(100% - 16px);
+  display:grid;
+  grid-template-columns:1fr 1.35fr 1fr;
+  grid-template-rows:16px repeat(8,1fr);
+}
+
+.job-head,.job-cell{
+  border-right:1px solid var(--grid);
+  border-bottom:1px solid var(--grid);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  padding:0 3px;
+  white-space:nowrap;
+  font-weight:900;
+}
+
+.job-head{
+  color:var(--orange);
+  background:#000;
+  font-size:clamp(6px,.56vw,8.5px);
+}
+
+.job-cell{
+  color:#fff;
+  background:rgba(6,16,24,.95);
+  font-size:clamp(8px,.7vw,11px);
 }
 
 .shipping-wrap{
@@ -643,9 +649,7 @@ html,body{
 
 <script>
 const DATA_URL="https://script.google.com/macros/s/AKfycbzFxHCEVrtag58ofvfDZzJHrstGD_5fNRKQ2o8Lt3WSLmBt8zywimjjVRB36ju2pU-2uA/exec";
-const VIDEO_ID="pehIByVhAJY";
 const REFRESH_MS=5000;
-const VIDEO_RELOAD_MS=0;
 
 const LAT=29.6161;
 const LON=-95.5577;
@@ -656,10 +660,6 @@ const BOTTOM_ROWS=26;
 const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 let lastGoodText="";
-
-function liveSrc(){
-  return `https://www.youtube-nocookie.com/embed/${VIDEO_ID}?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=${VIDEO_ID}&enablejsapi=0&t=${Date.now()}`;
-}
 
 function clean(v){
   if(v==null)return "";
@@ -912,6 +912,39 @@ function buildInspectionHtml(bottomRows){
   `;
 }
 
+function buildJobStatusHtml(data){
+  let start=findRow(data,["JOB STATUS"]);
+  let rows=[];
+
+  if(start>=0){
+    for(let i=start+2;i<data.length;i++){
+      const job=displayText(data[i]?.[13] || "");
+      const type=displayText(data[i]?.[14] || "");
+      const status=displayText(data[i]?.[15] || "");
+
+      if(job || type || status){
+        rows.push([job,type,status]);
+      }
+    }
+  }
+
+  while(rows.length<8) rows.push(["","",""]);
+
+  return `
+    <div class="panel-title">JOB STATUS</div>
+    <div class="job-table">
+      <div class="job-head">JOB NO.</div>
+      <div class="job-head">ASSEMBLY TYPE</div>
+      <div class="job-head">STATUS</div>
+      ${rows.slice(0,8).map(r=>`
+        <div class="job-cell">${r[0]}</div>
+        <div class="job-cell">${r[1]}</div>
+        <div class="job-cell ${statusClass(r[2])}">${r[2]}</div>
+      `).join("")}
+    </div>
+  `;
+}
+
 function updateDashboardControls(data){
   openValveOrders.textContent=getControl(data,"OPEN VALVE SALES ORDERS","-");
   openKitOrders.textContent=getControl(data,"OPEN KIT ORDERS","-");
@@ -998,18 +1031,8 @@ function render(data){
     rowEnd:20,
     colStart:11,
     colEnd:14,
-    extraClass:"live-panel",
-    html:`
-      <div class="video-crop">
-        <iframe
-          id="liveFrame"
-          src="${liveSrc()}"
-          allow="autoplay; encrypted-media; fullscreen"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen>
-        </iframe>
-      </div>
-    `
+    extraClass:"job-panel",
+    html:buildJobStatusHtml(data)
   }));
 
   const bottomRows=notesRow>=0?data.slice(notesRow+1):[];
@@ -1042,13 +1065,6 @@ function render(data){
     html:buildInspectionHtml(bottomRows)
   }));
 }
-
-function refreshLiveVideo(){
-  const frame=document.getElementById("liveFrame");
-  if(frame) frame.src=liveSrc();
-}
-
-if(VIDEO_RELOAD_MS>0) setInterval(refreshLiveVideo,VIDEO_RELOAD_MS);
 
 async function load(){
   try{
