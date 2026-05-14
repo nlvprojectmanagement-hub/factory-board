@@ -22,7 +22,7 @@
 
   --topHeight:25px;
   --opsHeight:72px;
-  --bottomHeight:25px;
+  --bottomHeight:32px;
 }
 
 html,body{
@@ -74,17 +74,21 @@ html,body{
 
 .announcement{
   display:grid;
-  grid-template-columns:78px minmax(0,1fr);
+  grid-template-columns:110px minmax(0,1fr);
+  min-width:0;
 }
 
 .announcement-label{
   color:var(--orange);
   font-weight:900;
-  font-size:9px;
+  font-size:8.5px;
   display:flex;
   align-items:center;
   justify-content:center;
   border-right:1px solid rgba(0,0,0,.18);
+  white-space:nowrap;
+  overflow:hidden;
+  letter-spacing:.1px;
 }
 
 .marquee{
@@ -236,29 +240,33 @@ html,body{
 }
 
 .safety-card{
-  display:grid;
-  grid-template-columns:34px 1fr;
+  display:flex;
   align-items:center;
+  justify-content:center;
+  gap:8px;
   height:41px;
+  padding:0 8px;
 }
 
 .safety-icon{
   color:var(--orange);
-  font-size:24px;
+  font-size:22px;
   text-align:center;
+  flex-shrink:0;
 }
 
 .safety-text{
   font-size:9.2px;
   font-weight:900;
-  line-height:1.05;
+  line-height:1.1;
+  text-align:left;
 }
 
 /* BOARD */
 .board{
   display:grid;
   grid-template-columns:
-    7fr 7fr 7fr 7fr
+    7fr 7fr 7fr 8fr
     10fr 9fr
     10fr 9fr
     9fr 9fr
@@ -387,8 +395,8 @@ html,body{
   justify-content:center;
   text-align:center;
   overflow:hidden;
-  padding:0 2px;
-  line-height:.95;
+  padding:1px 2px 3px 2px;
+  line-height:.92;
 }
 
 .bottom-title{
@@ -400,7 +408,7 @@ html,body{
 
 .bottom-value{
   color:#28d428;
-  font-size:14px;
+  font-size:13px;
   font-weight:900;
   line-height:.9;
 }
@@ -498,7 +506,15 @@ html,body{
   :root{
     --topHeight:25px;
     --opsHeight:70px;
-    --bottomHeight:24px;
+    --bottomHeight:30px;
+  }
+
+  .announcement{
+    grid-template-columns:105px minmax(0,1fr);
+  }
+
+  .announcement-label{
+    font-size:8px;
   }
 
   .cell{
@@ -526,7 +542,7 @@ html,body{
   }
 
   .bottom-value{
-    font-size:13px;
+    font-size:12px;
   }
 
   .bottom-small{
@@ -547,7 +563,7 @@ html,body{
   :root{
     --topHeight:28px;
     --opsHeight:76px;
-    --bottomHeight:26px;
+    --bottomHeight:34px;
   }
 
   .cell{
