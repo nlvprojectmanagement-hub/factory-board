@@ -16,6 +16,7 @@
   --mainBlock:#020202;
   --shipBlock:#07131b;
   --notesBlock:#050505;
+  --focusBlock:#050505;
   --liveBlock:#020202;
   --inspectionBlock:#130f18;
   --salesBlock:#1e1e1e;
@@ -26,22 +27,30 @@
 }
 
 html,body{
-  margin:0;width:100%;height:100%;
-  background:#000;overflow:hidden;
+  margin:0;
+  width:100%;
+  height:100%;
+  background:#000;
+  overflow:hidden;
   font-family:Arial,Helvetica,sans-serif;
 }
 
 .screen{
-  width:100vw;height:100vh;
+  width:100vw;
+  height:100vh;
   display:grid;
   grid-template-rows:var(--topHeight) var(--opsHeight) minmax(0,1fr) var(--bottomHeight);
-  gap:2px;padding:2px;background:#000;
+  gap:2px;
+  padding:2px;
+  background:#000;
 }
 
+/* TOP */
 .top{
   display:grid;
   grid-template-columns:150px minmax(0,1fr) auto;
-  gap:2px;overflow:hidden;
+  gap:2px;
+  overflow:hidden;
 }
 
 .logo,.announcement,.right-panel{
@@ -51,8 +60,17 @@ html,body{
   min-width:0;
 }
 
-.logo{display:flex;align-items:center;justify-content:center}
-.logo img{max-height:24px;max-width:148px;object-fit:contain}
+.logo{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.logo img{
+  max-height:24px;
+  max-width:148px;
+  object-fit:contain;
+}
 
 .announcement{
   display:grid;
@@ -131,6 +149,7 @@ html,body{
 .weather-top{font-size:8.5px;white-space:nowrap}
 .weather-mid,.weather-bottom{font-size:7.3px;white-space:nowrap}
 
+/* OPS */
 .ops{
   display:grid;
   grid-template-columns:20fr 42fr 28fr 22fr;
@@ -217,9 +236,19 @@ html,body{
   padding:0 8px;
 }
 
-.safety-icon{font-size:22px;flex-shrink:0}
-.safety-text{font-size:9.2px;font-weight:900;line-height:1.1;text-align:left}
+.safety-icon{
+  font-size:22px;
+  flex-shrink:0;
+}
 
+.safety-text{
+  font-size:9.2px;
+  font-weight:900;
+  line-height:1.1;
+  text-align:left;
+}
+
+/* BOARD */
 .board{
   display:grid;
   grid-template-columns:
@@ -271,7 +300,7 @@ html,body{
 .group-start{border-left:1px solid var(--gridStrong)}
 .ship-section{background:var(--shipBlock)}
 .notes-section{background:var(--notesBlock)}
-.focus-section{background:#050505}
+.focus-section{background:var(--focusBlock)}
 .live-section{background:var(--liveBlock)}
 .inspect-section{background:var(--inspectionBlock)}
 .sales-order{background:var(--salesBlock)!important;color:#e6e6e6!important}
@@ -301,6 +330,7 @@ html,body{
 .hold,.notreleased{color:#ff3333!important}
 .review,.revision,.clarification{color:#00b0f0!important}
 
+/* LIVE VIDEO */
 .live-panel{
   padding:0!important;
   background:#000!important;
@@ -328,6 +358,7 @@ html,body{
   pointer-events:none;
 }
 
+/* FOCUS */
 .focus-panel{
   background:#050505!important;
   color:#fff;
@@ -360,6 +391,7 @@ html,body{
   margin-right:6px;
 }
 
+/* BOTTOM */
 .bottom{
   display:grid;
   grid-template-columns:12fr 17fr 35fr 36fr;
@@ -408,8 +440,20 @@ html,body{
   line-height:1;
 }
 
-.legend span{display:inline-flex;align-items:center;white-space:nowrap}
-.swatch{width:7px;height:7px;display:inline-block;margin-right:2px;flex-shrink:0}
+.legend span{
+  display:inline-flex;
+  align-items:center;
+  white-space:nowrap;
+}
+
+.swatch{
+  width:7px;
+  height:7px;
+  display:inline-block;
+  margin-right:2px;
+  flex-shrink:0;
+}
+
 .sw-green{background:#00a83a}
 .sw-red{background:#ff0000}
 .sw-yellow{background:#ffff00}
@@ -892,12 +936,17 @@ function render(data){
     `
   }));
 
+  /* Live stream moved to right shipping area BELOW incoming/outgoing zone */
   board.appendChild(makeCell("LIVE STREAM",{
-    header:true,rowStart:9,colStart:11,colEnd:14,extraClass:"live-section"
+    header:true,
+    rowStart:14,
+    colStart:11,
+    colEnd:14,
+    extraClass:"live-section"
   }));
 
   board.appendChild(makeCell("",{
-    rowStart:10,
+    rowStart:15,
     rowEnd:20,
     colStart:11,
     colEnd:14,
