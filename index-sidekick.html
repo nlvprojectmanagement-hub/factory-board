@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>N-Line Factory Board - Sidekick Feed</title>
+
+<style>
+  :root {
+    --bg: #050505;
+    --panel: #101010;
+    --panel2: #151515;
+    --orange: #ff7a00;
+    --border: rgba(255, 255, 255, 0.18);
+    --text: #f4f4f4;
+    --muted: #b8b8b8;
+    --green: #1fbd63;
+    --yellow: #e8c547;
+    --red: #ff3333;
+    --blue: #4aa3ff;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
+  }
+
+  .board {
+    width: 100vw;
+    height: 100vh;
+    padding: 18px;
+    display: grid;
+    grid-template-rows: 78px 1fr 54px;
+    gap: 14px;
+  }
+
+  .topbar {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    align-items: center;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 20px;
+  }
+
+  .title {
+    font-size: 34px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    color: var(--orange);
+  }
+
+  .subtitle {
+    font-size: 18px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  .topinfo {
+    text-align: right;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .topinfo span {
+    display: block;
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-top: 4px;
+  }
+
+  .main {
+    display: grid;
+    grid-template-columns: 1.45fr 0.95fr;
+    gap: 14px;
+    min-height: 0;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel-header {
+    background: var(--orange);
+    color: #111;
+    font-size: 23px;
+    font-weight: 900;
+    padding: 10px 14px;
+    letter-spacing: 0.4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .panel-header small {
+    font-size: 15px;
+    font-weight: 800;
+    color: #1c1c1c;
+  }
+
+  .table-wrap {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  th {
+    background: #1e1e1e;
+    color: var(--orange);
+    font-size: 16px;
+    text-align: left;
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  td {
+    font-size: 18px;
+    padding: 9px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    color: var(--text);
+    vertical-align: middle;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  tr:nth-child(even) td {
+    background: rgba(255,255,255,0.035);
+  }
+
+  .so {
+    font-weight: 900;
+    color: #ffffff;
+  }
+
+  .wo {
+    color: var(--muted);
+    font-size: 16px;
+  }
+
+  .status-pill {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 900;
+    color: #111;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .green { background: var(--green); }
+  .yellow { background: var(--yellow); }
+  .red { background: var(--red); color: #fff; }
+  .blue { background: var(--blue); }
+  .gray { background: #bdbdbd; }
+
+  .priority {
+    font-weight: 900;
+    color: var(--red);
+  }
+
+  .right-stack {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 14px;
+    min-height: 0;
+  }
+
+  .ticker {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .ticker-label {
+    height: 100%;
+    background: var(--orange);
+    color: #111;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    font-size: 22px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  .ticker-text {
+    white-space: nowrap;
+    font-size: 22px;
+    font-weight: 700;
+    padding-left: 100%;
+    animation: scroll-left 42s linear infinite;
+  }
+
+  @keyframes scroll-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+
+  .empty {
+    color: var(--muted);
+    font-size: 20px;
+    padding: 20px;
+  }
+
+  .flash-red {
+    animation: flashRed 2s infinite;
+  }
+
+  @keyframes flashRed {
+    0%, 45% { background: var(--red); color: #fff; }
+    46%, 100% { background: transparent; color: var(--text); }
+  }
+</style>
+</head>
+
+<body>
+  <div class="board">
+
+    <div class="topbar">
+      <div>
+        <div class="title">N-LINE FACTORY BOARD</div>
+        <div class="subtitle">Fed by Management Sidekick - Order Execution Dashboard</div>
+      </div>
+
+      <div class="topinfo" id="clockBox">
+        --
+        <span>Current Time</span>
+      </div>
+
+      <div class="topinfo" id="updateBox">
+        --
+        <span>Last Sidekick Update</span>
+      </div>
+    </div>
+
+    <div class="main">
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>SALES ORDERS / STATUS</div>
+          <small id="orderCount">0 Orders</small>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 13%;">SO</th>
+                <th style="width: 15%;">WO</th>
+                <th style="width: 16%;">CUSTOMER</th>
+                <th style="width: 18%;">STATUS</th>
+                <th style="width: 28%;">NEXT ACTION</th>
+                <th style="width: 10%;">DUE</th>
+              </tr>
+            </thead>
+            <tbody id="salesOrdersBody">
+              <tr>
+                <td colspan="6" class="empty">Waiting for Sidekick feed...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="right-stack">
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>INCOMING / VENDOR ACTION</div>
+            <small id="shipmentCount">0 Items</small>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 20%;">PO</th>
+                  <th style="width: 30%;">VENDOR</th>
+                  <th style="width: 30%;">ITEM</th>
+                  <th style="width: 20%;">DATE</th>
+                </tr>
+              </thead>
+              <tbody id="shipmentsBody">
+                <tr>
+                  <td colspan="4" class="empty">Waiting for Sidekick feed...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>INSPECTION / QC</div>
+            <small id="inspectionCount">0 Items</small>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 25%;">SO</th>
+                  <th style="width: 35%;">ITEM</th>
+                  <th style="width: 20%;">REQ DATE</th>
+                  <th style="width: 20%;">STATUS</th>
+                </tr>
+              </thead>
+              <tbody id="inspectionBody">
+                <tr>
+                  <td colspan="4" class="empty">Waiting for Sidekick feed...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+
+    <div class="ticker">
+      <div class="ticker-label">ANNOUNCEMENTS</div>
+      <div class="ticker-text" id="tickerText">Waiting for Sidekick feed...</div>
+    </div>
+
+  </div>
+
+<script>
+const FEED_URL = "factory_board_feed.json";
+
+function safe(value) {
+  return value === null || value === undefined || value === "" ? "-" : String(value);
+}
+
+function statusClass(value) {
+  const text = safe(value).toUpperCase();
+
+  if (text.includes("DELAY") || text.includes("LATE") || text.includes("HOLD")) return "red";
+  if (text.includes("P1") || text.includes("URGENT")) return "red";
+  if (text.includes("RISK") || text.includes("WAIT") || text.includes("PENDING")) return "yellow";
+  if (text.includes("ON-TIME") || text.includes("ONTIME") || text.includes("COMPLETE") || text.includes("READY")) return "green";
+  if (text.includes("MACHINING") || text.includes("ENGINEERING") || text.includes("INSPECTION")) return "blue";
+
+  return "gray";
+}
+
+function formatDate(value) {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (isNaN(date)) return value;
+
+  return date.toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit"
+  });
+}
+
+function updateClock() {
+  const now = new Date();
+
+  document.getElementById("clockBox").innerHTML =
+    now.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit"
+    }) + "<span>Current Time</span>";
+}
+
+function renderSalesOrders(rows) {
+  const body = document.getElementById("salesOrdersBody");
+  const count = document.getElementById("orderCount");
+
+  count.textContent = `${rows.length} Orders`;
+
+  if (!rows.length) {
+    body.innerHTML = `<tr><td colspan="6" class="empty">No active sales orders found.</td></tr>`;
+    return;
+  }
+
+  body.innerHTML = rows.map(row => {
+    const risk = safe(row.risk);
+    const status = safe(row.status);
+    const combinedStatus = risk !== "-" ? `${status} / ${risk}` : status;
+    const pillClass = statusClass(combinedStatus);
+    const flash = combinedStatus.toUpperCase().includes("DELAY") ? "flash-red" : "";
+
+    return `
+      <tr>
+        <td>
+          <div class="so">${safe(row.so)}</div>
+        </td>
+        <td>
+          <div class="wo">${safe(row.wo)}</div>
+        </td>
+        <td>${safe(row.customer)}</td>
+        <td>
+          <span class="status-pill ${pillClass}">${combinedStatus}</span>
+        </td>
+        <td class="${flash}">${safe(row.nextAction)}</td>
+        <td>${formatDate(row.neededDate)}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function renderShipments(rows) {
+  const body = document.getElementById("shipmentsBody");
+  const count = document.getElementById("shipmentCount");
+
+  count.textContent = `${rows.length} Items`;
+
+  if (!rows.length) {
+    body.innerHTML = `<tr><td colspan="4" class="empty">No incoming vendor actions found.</td></tr>`;
+    return;
+  }
+
+  body.innerHTML = rows.map(row => {
+    return `
+      <tr>
+        <td>${safe(row.po)}</td>
+        <td>${safe(row.vendor)}</td>
+        <td>${safe(row.item)}</td>
+        <td>${formatDate(row.expectedDate)}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function renderInspection(rows) {
+  const body = document.getElementById("inspectionBody");
+  const count = document.getElementById("inspectionCount");
+
+  count.textContent = `${rows.length} Items`;
+
+  if (!rows.length) {
+    body.innerHTML = `<tr><td colspan="4" class="empty">No inspection items found.</td></tr>`;
+    return;
+  }
+
+  body.innerHTML = rows.map(row => {
+    const pillClass = statusClass(row.status);
+
+    return `
+      <tr>
+        <td>${safe(row.so)}</td>
+        <td>${safe(row.item)}</td>
+        <td>${formatDate(row.requiredDate)}</td>
+        <td><span class="status-pill ${pillClass}">${safe(row.status)}</span></td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function renderTicker(items) {
+  const ticker = document.getElementById("tickerText");
+
+  if (!items || !items.length) {
+    ticker.textContent = "No announcements.";
+    return;
+  }
+
+  ticker.textContent = items.join("     •     ");
+}
+
+function renderUpdateTime(value) {
+  const box = document.getElementById("updateBox");
+
+  if (!value) {
+    box.innerHTML = `--<span>Last Sidekick Update</span>`;
+    return;
+  }
+
+  box.innerHTML = `${safe(value)}<span>Last Sidekick Update</span>`;
+}
+
+async function loadFeed() {
+  try {
+    const response = await fetch(FEED_URL + "?t=" + Date.now(), {
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error("Feed not found");
+    }
+
+    const data = await response.json();
+
+    renderSalesOrders(data.salesOrders || []);
+    renderShipments(data.incomingShipments || []);
+    renderInspection(data.inspection || []);
+    renderTicker(data.announcements || []);
+    renderUpdateTime(data.lastUpdated);
+
+  } catch (error) {
+    document.getElementById("salesOrdersBody").innerHTML =
+      `<tr><td colspan="6" class="empty">Factory board feed not found: factory_board_feed.json</td></tr>`;
+
+    document.getElementById("shipmentsBody").innerHTML =
+      `<tr><td colspan="4" class="empty">Waiting for Sidekick export.</td></tr>`;
+
+    document.getElementById("inspectionBody").innerHTML =
+      `<tr><td colspan="4" class="empty">Waiting for Sidekick export.</td></tr>`;
+
+    document.getElementById("tickerText").textContent =
+      "Waiting for Management Sidekick to export factory_board_feed.json";
+  }
+}
+
+setInterval(updateClock, 1000);
+setInterval(loadFeed, 30000);
+
+updateClock();
+loadFeed();
+</script>
+
+</body>
+</html>
