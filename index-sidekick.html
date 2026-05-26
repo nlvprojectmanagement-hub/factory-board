@@ -3,82 +3,900 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>N-Line Factory Board - Sidekick Feed</title>
+<title>N-Line Factory Board - Sidekick Structure</title>
+
 <style>
-:root{
-  --bg:#050505;
-  --panel:#101010;
-  --panel2:#151515;
-  --panel3:#1d1d1d;
+:root {
+  --bg:#000;
+  --grid:#26313a;
+  --grid-soft:#182029;
   --orange:#ff7a00;
-  --orange2:#ff8c1a;
-  --border:rgba(255,255,255,.20);
-  --border2:rgba(255,255,255,.12);
-  --text:#f5f5f5;
-  --muted:#b9b9b9;
-  --green:#23b75d;
-  --yellow:#e6c84f;
-  --red:#e53935;
-  --blue:#4794e8;
-  --gray:#b7b7b7;
+  --white:#fff;
+  --green:#00b840;
+  --red:#ff1717;
+  --yellow:#ffd400;
+  --blue-panel:#061520;
+  --purple-panel:#120d18;
+  --gray-head:#2c3740;
+  --gray-head-2:#59636b;
 }
-*{box-sizing:border-box}
-html,body{width:100%;height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;overflow:hidden}
-.board{width:100vw;height:100vh;padding:16px;display:grid;grid-template-rows:74px 1fr 52px;gap:12px;background:radial-gradient(circle at top left,rgba(255,122,0,.08),transparent 26%),#050505}
-.topbar{display:grid;grid-template-columns:1.55fr .8fr .8fr .75fr;gap:12px;align-items:stretch}
-.top-card{border:1px solid var(--border);background:var(--panel);border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;justify-content:center;min-width:0}
-.title{font-size:32px;line-height:1;font-weight:900;color:var(--orange);letter-spacing:.6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sub{font-size:15px;color:var(--muted);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.metric{font-size:26px;font-weight:900;line-height:1;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.metric-label{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;text-align:right;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.main{min-height:0;display:grid;grid-template-columns:1.55fr .9fr;gap:12px}
-.panel{min-height:0;background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
-.panel-head{height:42px;background:var(--orange);color:#111;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:21px;font-weight:900;letter-spacing:.35px;flex-shrink:0}
-.panel-head span:last-child{font-size:14px;color:#1a1a1a;font-weight:900}
-.table-wrap{min-height:0;flex:1;overflow:hidden}
-table{width:100%;border-collapse:collapse;table-layout:fixed}
-th{height:34px;background:var(--panel3);color:var(--orange2);font-size:15px;text-align:left;padding:7px 9px;border-bottom:1px solid var(--border);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-td{height:40px;font-size:17px;padding:7px 9px;border-bottom:1px solid var(--border2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
-tr:nth-child(even) td{background:rgba(255,255,255,.035)}
-.so{font-size:19px;font-weight:900;color:#fff}.wo{font-size:15px;color:var(--muted)}
-.pill{display:inline-block;max-width:100%;padding:4px 9px;border-radius:999px;font-size:14px;font-weight:900;color:#111;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.green{background:var(--green)}.yellow{background:var(--yellow)}.red{background:var(--red);color:#fff}.blue{background:var(--blue)}.gray{background:var(--gray)}
-.right{min-height:0;display:grid;grid-template-rows:1fr 1fr;gap:12px}.empty{font-size:18px;color:var(--muted);padding:18px}.delay-cell{animation:delayPulse 2.2s infinite}@keyframes delayPulse{0%,44%{background:rgba(229,57,53,.95);color:#fff}45%,100%{background:transparent;color:var(--text)}}
-.ticker{border:1px solid var(--border);background:var(--panel);border-radius:12px;overflow:hidden;display:flex;align-items:center}.ticker-label{align-self:stretch;background:var(--orange);color:#111;font-size:21px;font-weight:900;display:flex;align-items:center;padding:0 18px;flex-shrink:0}.ticker-track{min-width:0;flex:1;overflow:hidden}.ticker-text{font-size:21px;font-weight:800;white-space:nowrap;display:inline-block;padding-left:100%;animation:scrollLeft 48s linear infinite}@keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
-@media (min-width:2500px){.board{padding:22px;gap:16px;grid-template-rows:92px 1fr 66px}.title{font-size:42px}.sub{font-size:20px}.metric{font-size:34px}.metric-label{font-size:16px}.panel-head{height:54px;font-size:28px}.panel-head span:last-child{font-size:18px}th{height:42px;font-size:20px}td{height:52px;font-size:23px}.so{font-size:25px}.wo{font-size:20px}.pill{font-size:19px;padding:6px 12px}.ticker-label,.ticker-text{font-size:28px}}
+
+* { box-sizing:border-box; }
+
+html, body {
+  margin:0;
+  width:100%;
+  height:100%;
+  background:var(--bg);
+  color:var(--white);
+  font-family:Arial, Helvetica, sans-serif;
+  overflow:hidden;
+}
+
+body {
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.board {
+  width:100vw;
+  height:100vh;
+  display:grid;
+  grid-template-rows:34px 92px 1fr 455px 48px;
+  background:#000;
+}
+
+/* ================= TOP STRIP ================= */
+
+.top-strip {
+  display:grid;
+  grid-template-columns:180px 1fr 145px 170px 105px;
+  border:2px solid var(--grid);
+  background:#f7f7f7;
+  color:#000;
+  overflow:hidden;
+}
+
+.logo {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:Georgia, serif;
+  font-size:21px;
+  font-weight:900;
+  border-right:2px solid #000;
+  white-space:nowrap;
+}
+
+.ann-top {
+  display:grid;
+  grid-template-columns:130px 1fr;
+  align-items:center;
+  border-right:2px solid #000;
+  min-width:0;
+}
+
+.ann-label {
+  color:#f36c00;
+  font-size:12px;
+  padding-left:12px;
+}
+
+.ann-text {
+  font-size:14px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  padding-right:10px;
+  text-transform:none;
+}
+
+.date-box {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  border-right:2px solid #000;
+  line-height:14px;
+  font-size:14px;
+}
+
+.date-box .big {
+  font-size:18px;
+}
+
+.weather-box {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-right:2px solid #000;
+  font-size:12px;
+}
+
+.last-update-box {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  font-size:10px;
+  line-height:13px;
+}
+
+.last-update-box .time {
+  font-size:12px;
+}
+
+/* ================= HEADER ROW ================= */
+
+.header-row {
+  display:grid;
+  grid-template-columns:600px 1fr 520px;
+  border-left:2px solid var(--grid);
+  border-right:2px solid var(--grid);
+  border-bottom:2px solid var(--grid);
+}
+
+.critical {
+  display:grid;
+  grid-template-rows:18px 1fr;
+  border-right:2px solid var(--grid);
+}
+
+.section-title {
+  background:#020202;
+  color:var(--orange);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  letter-spacing:.3px;
+  border-bottom:1px solid var(--grid);
+}
+
+.critical-list {
+  padding:4px 8px;
+  font-size:13px;
+  line-height:17px;
+}
+
+.critical-row {
+  display:grid;
+  grid-template-columns:55px 1fr 55px;
+  gap:6px;
+  white-space:nowrap;
+}
+
+.counters {
+  display:grid;
+  grid-template-rows:18px 1fr;
+  border-right:2px solid var(--grid);
+}
+
+.counter-grid {
+  display:grid;
+  grid-template-columns:repeat(5, 1fr);
+  gap:4px;
+  padding:4px;
+}
+
+.counter {
+  border:1px solid var(--grid);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  line-height:14px;
+  background:#030303;
+}
+
+.counter-label {
+  font-size:10px;
+}
+
+.counter-value {
+  font-size:32px;
+  line-height:33px;
+  color:#00ff5a;
+}
+
+.safety {
+  display:grid;
+  grid-template-rows:18px 1fr;
+}
+
+.safety-content {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  font-size:15px;
+  line-height:18px;
+  text-align:left;
+}
+
+.warn {
+  font-size:26px;
+  color:#ffbf00;
+}
+
+/* ================= MAIN AREA ================= */
+
+.main-area {
+  display:grid;
+  grid-template-columns:71% 29%;
+  border-left:2px solid var(--grid);
+  border-right:2px solid var(--grid);
+  border-bottom:2px solid var(--grid);
+  min-height:0;
+}
+
+.sales-table-wrap, .job-status-wrap, .lower-panel {
+  min-height:0;
+  overflow:hidden;
+}
+
+table {
+  width:100%;
+  height:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+}
+
+th {
+  background:linear-gradient(#6d7881, #26313a 48%, #121920);
+  color:var(--orange);
+  border:1px solid var(--grid);
+  font-size:12px;
+  height:22px;
+  padding:2px 4px;
+  text-align:center;
+}
+
+td {
+  border:1px solid var(--grid);
+  color:#fff;
+  font-size:14px;
+  height:24px;
+  padding:2px 5px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  text-align:center;
+  background:#000;
+}
+
+.sales-table td:nth-child(1),
+.sales-table td:nth-child(2),
+.sales-table td:nth-child(3),
+.sales-table td:nth-child(4) {
+  font-size:14px;
+}
+
+.sales-table td:nth-child(1) {
+  background:#202020;
+}
+
+.sales-table td:nth-child(3) {
+  color:#00ff5a;
+}
+
+.sales-table td:nth-child(3).partial {
+  color:var(--yellow);
+}
+
+.status-green {
+  background:var(--green) !important;
+  color:#fff !important;
+}
+
+.status-red {
+  background:var(--red) !important;
+  color:#fff !important;
+}
+
+.status-yellow {
+  background:var(--yellow) !important;
+  color:#000 !important;
+}
+
+.status-blue {
+  background:#124a9c !important;
+  color:#fff !important;
+}
+
+.job-status-wrap {
+  background:var(--blue-panel);
+}
+
+.job-status-wrap td {
+  background:var(--blue-panel);
+}
+
+/* ================= LOWER AREA ================= */
+
+.lower-area {
+  display:grid;
+  grid-template-columns:35% 28% 37%;
+  border-left:2px solid var(--grid);
+  border-right:2px solid var(--grid);
+  border-bottom:2px solid var(--grid);
+  min-height:0;
+}
+
+.left-lower {
+  display:grid;
+  grid-template-rows:1fr 1fr;
+  border-right:2px solid var(--grid);
+  min-height:0;
+}
+
+.notes-wrap td {
+  text-align:left;
+  background:#040404;
+  font-size:13px;
+  height:30px;
+}
+
+.shipments-stack {
+  display:grid;
+  grid-template-rows:1fr 1fr;
+  border-right:2px solid var(--grid);
+  min-height:0;
+}
+
+.shipments-stack td {
+  background:var(--blue-panel);
+}
+
+.inspection-wrap {
+  background:var(--purple-panel);
+}
+
+.inspection-wrap td {
+  background:var(--purple-panel);
+  height:31px;
+}
+
+.panel-title-row {
+  background:linear-gradient(#6d7881, #26313a 48%, #121920);
+  color:var(--orange);
+  font-size:12px;
+  height:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--grid);
+}
+
+/* ================= FOOTER ================= */
+
+.footer {
+  display:grid;
+  grid-template-columns:240px 340px 1fr 715px;
+  border-left:2px solid var(--grid);
+  border-right:2px solid var(--grid);
+  border-bottom:2px solid var(--grid);
+  background:#f7f7f7;
+  color:#000;
+}
+
+.footer-box {
+  border-right:2px solid #000;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  line-height:13px;
+  font-size:11px;
+}
+
+.footer-box .orange {
+  color:#ff6200;
+}
+
+.footer-box .green-text {
+  color:green;
+  font-size:19px;
+}
+
+.legend {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  font-size:11px;
+}
+
+.legend span {
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+}
+
+.dot {
+  width:8px;
+  height:8px;
+  display:inline-block;
+}
+
+.latest {
+  display:flex;
+  align-items:center;
+  padding-left:8px;
+  font-size:13px;
+  color:#ff6200;
+}
+
+.latest strong {
+  color:#000;
+  margin-left:8px;
+  text-transform:none;
+}
+
+/* ================= FITTING ================= */
+
+.small-text { font-size:12px; }
+.left-text { text-align:left; }
+.orange-text { color:var(--orange); }
+.green-text { color:#00ff5a; }
+.yellow-text { color:var(--yellow); }
+.red-text { color:var(--red); }
+
+@media (max-width:1400px) {
+  .board { grid-template-rows:32px 82px 1fr 390px 44px; }
+  td { font-size:12px; height:21px; }
+  th { font-size:10px; height:19px; }
+  .counter-value { font-size:26px; }
+}
 </style>
 </head>
+
 <body>
 <div class="board">
-  <div class="topbar">
-    <div class="top-card"><div class="title">N-LINE FACTORY BOARD</div><div class="sub">Sales Orders / Status fed by Management Sidekick</div></div>
-    <div class="top-card"><div class="metric" id="clockBox">--</div><div class="metric-label">Current Time</div></div>
-    <div class="top-card"><div class="metric" id="updatedBox">--</div><div class="metric-label">Last Sidekick Update</div></div>
-    <div class="top-card"><div class="metric" id="healthBox">--</div><div class="metric-label">Feed Status</div></div>
-  </div>
-  <div class="main">
-    <section class="panel">
-      <div class="panel-head"><span>SALES ORDERS / STATUS</span><span id="orderCount">0 ORDERS</span></div>
-      <div class="table-wrap"><table><thead><tr><th style="width:13%">SO</th><th style="width:15%">WO</th><th style="width:17%">CUSTOMER</th><th style="width:19%">STATUS</th><th style="width:26%">NEXT ACTION</th><th style="width:10%">DUE</th></tr></thead><tbody id="salesOrdersBody"><tr><td colspan="6" class="empty">Waiting for Sidekick feed...</td></tr></tbody></table></div>
-    </section>
-    <div class="right">
-      <section class="panel"><div class="panel-head"><span>INCOMING / VENDOR ACTION</span><span id="shipmentCount">0 ITEMS</span></div><div class="table-wrap"><table><thead><tr><th style="width:21%">PO</th><th style="width:29%">VENDOR</th><th style="width:32%">ITEM</th><th style="width:18%">DATE</th></tr></thead><tbody id="shipmentsBody"><tr><td colspan="4" class="empty">Waiting for Sidekick feed...</td></tr></tbody></table></div></section>
-      <section class="panel"><div class="panel-head"><span>INSPECTION / QC</span><span id="inspectionCount">0 ITEMS</span></div><div class="table-wrap"><table><thead><tr><th style="width:22%">SO</th><th style="width:36%">ITEM</th><th style="width:20%">REQ DATE</th><th style="width:22%">STATUS</th></tr></thead><tbody id="inspectionBody"><tr><td colspan="4" class="empty">Waiting for Sidekick feed...</td></tr></tbody></table></div></section>
+
+  <div class="top-strip">
+    <div class="logo">N-LINE VALVES ®</div>
+    <div class="ann-top">
+      <div class="ann-label">ANNOUNCEMENTS</div>
+      <div class="ann-text" id="topAnnouncement">Loading Sidekick feed...</div>
+    </div>
+    <div class="date-box">
+      <div class="big" id="dateText">--</div>
+      <div id="timeText">--</div>
+    </div>
+    <div class="weather-box">Weather unavailable</div>
+    <div class="last-update-box">
+      <div>LAST UPDATED</div>
+      <div class="time" id="lastUpdatedText">--</div>
     </div>
   </div>
-  <div class="ticker"><div class="ticker-label">ANNOUNCEMENTS</div><div class="ticker-track"><div class="ticker-text" id="tickerText">Waiting for Sidekick feed...</div></div></div>
+
+  <div class="header-row">
+    <div class="critical">
+      <div class="section-title">UPCOMING CRITICAL DATES</div>
+      <div class="critical-list" id="criticalDates"></div>
+    </div>
+
+    <div class="counters">
+      <div class="section-title">LIVE PRODUCTION COUNTERS</div>
+      <div class="counter-grid">
+        <div class="counter"><div class="counter-label">OPEN VALVE<br>SALES ORDERS</div><div class="counter-value" id="counterValves">0</div></div>
+        <div class="counter"><div class="counter-label">OPEN KIT<br>ORDERS</div><div class="counter-value" id="counterKits">0</div></div>
+        <div class="counter"><div class="counter-label">ORDERS IN<br>ASSEMBLY</div><div class="counter-value" id="counterAssembly">0</div></div>
+        <div class="counter"><div class="counter-label">WAITING ON<br>VENDOR</div><div class="counter-value" id="counterVendor">0</div></div>
+        <div class="counter"><div class="counter-label">READY TO<br>SHIP</div><div class="counter-value" id="counterReady">0</div></div>
+      </div>
+    </div>
+
+    <div class="safety">
+      <div class="section-title">SAFETY MESSAGE</div>
+      <div class="safety-content">
+        <div class="warn">⚠</div>
+        <div>What we build matters.<br>So does how we build it.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-area">
+    <div class="sales-table-wrap">
+      <table class="sales-table">
+        <thead>
+          <tr>
+            <th style="width:8%;">SALES ORDER</th>
+            <th style="width:8%;">TYPE</th>
+            <th style="width:8%;">ENGINEERING</th>
+            <th style="width:11%;">STAGE</th>
+            <th style="width:14%;">ASSEMBLY READY</th>
+            <th style="width:14%;">FORECAST TESTING</th>
+            <th style="width:14%;">CRATE DEADLINE</th>
+          </tr>
+        </thead>
+        <tbody id="salesBody"></tbody>
+      </table>
+    </div>
+
+    <div class="job-status-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th colspan="3">JOB STATUS</th>
+          </tr>
+          <tr>
+            <th style="width:28%;">JOB NO.</th>
+            <th style="width:42%;">ASSEMBLY TYPE</th>
+            <th style="width:30%;">STATUS</th>
+          </tr>
+        </thead>
+        <tbody id="jobStatusBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="lower-area">
+    <div class="left-lower">
+      <div class="notes-wrap lower-panel">
+        <div class="panel-title-row">NOTES / IMPORTANT REMARKS</div>
+        <table><tbody id="notesBody"></tbody></table>
+      </div>
+
+      <div class="notes-wrap lower-panel">
+        <div class="panel-title-row">SIDEKICK ALERTS</div>
+        <table><tbody id="alertsBody"></tbody></table>
+      </div>
+    </div>
+
+    <div class="shipments-stack">
+      <div class="lower-panel">
+        <div class="panel-title-row">INCOMING SHIPMENTS</div>
+        <table>
+          <thead>
+            <tr><th>ITEM</th><th style="width:18%;">DATE</th><th style="width:32%;">ACTION</th></tr>
+          </thead>
+          <tbody id="incomingBody"></tbody>
+        </table>
+      </div>
+
+      <div class="lower-panel">
+        <div class="panel-title-row">OUTGOING SHIPMENTS</div>
+        <table>
+          <thead>
+            <tr><th>ITEM</th><th style="width:18%;">DATE</th><th style="width:32%;">ACTION</th></tr>
+          </thead>
+          <tbody id="outgoingBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="inspection-wrap lower-panel">
+      <div class="panel-title-row">INSPECTION</div>
+      <table>
+        <thead>
+          <tr><th>ITEM</th><th style="width:17%;">REQ DATE</th><th style="width:33%;">STATUS</th></tr>
+        </thead>
+        <tbody id="inspectionBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-box">
+      <div class="orange">SAFETY</div>
+      <div>Days Since Recordable Incident</div>
+      <div class="green-text">125</div>
+    </div>
+    <div class="footer-box">
+      <div class="orange">PRODUCTION YTD</div>
+      <div>Valves Completed&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Valves Shipped</div>
+      <div class="green-text">38&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;31</div>
+    </div>
+    <div class="legend">
+      <span>STATUS LEGEND:</span>
+      <span><i class="dot" style="background:#00b840"></i>ON TIME</span>
+      <span><i class="dot" style="background:#ff1717"></i>DELAY</span>
+      <span><i class="dot" style="background:#ffd400"></i>PARTIAL</span>
+      <span><i class="dot" style="background:#ff7a00"></i>HOLD</span>
+      <span><i class="dot" style="background:#bbb"></i>WAITING</span>
+    </div>
+    <div class="latest">LATEST WINS:<strong id="latestWins">Waiting for Sidekick feed...</strong></div>
+  </div>
+
 </div>
+
 <script>
-const urlParams = new URLSearchParams(window.location.search);
-const FEED_URL = urlParams.get("feed") || localStorage.getItem("sidekickFactoryFeedUrl") || "factory_board_feed.json";
-function safe(v){return v===null||v===undefined||v===""?"-":String(v)}
-function d(v){if(!v)return"-";const x=new Date(v);if(isNaN(x))return String(v).slice(5,10)||v;return x.toLocaleDateString("en-US",{month:"2-digit",day:"2-digit"})}
-function cls(v){const t=safe(v).toUpperCase();if(t.includes("DELAY")||t.includes("LATE")||t.includes("HOLD"))return"red";if(t.includes("RISK")||t.includes("ACTION")||t.includes("PENDING")||t.includes("WAIT"))return"yellow";if(t.includes("ON-TIME")||t.includes("ONTIME")||t.includes("CLEAR")||t.includes("COMPLETE")||t.includes("READY"))return"green";if(t.includes("MACHINING")||t.includes("ENGINEERING")||t.includes("INSPECTION")||t.includes("WO CREATED"))return"blue";return"gray"}
-function tick(){const n=new Date();document.getElementById("clockBox").textContent=n.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})}
-function renderOrders(rows){const b=document.getElementById("salesOrdersBody");document.getElementById("orderCount").textContent=`${rows.length} ORDERS`;if(!rows.length){b.innerHTML='<tr><td colspan="6" class="empty">No active sales orders found.</td></tr>';return}b.innerHTML=rows.map(r=>{const risk=safe(r.risk);const status=safe(r.status);const combo=risk!=="-"?`${status} / ${risk}`:status;const flash=combo.toUpperCase().includes("DELAY")?"delay-cell":"";return `<tr><td><div class="so">${safe(r.so)}</div></td><td><div class="wo">${safe(r.wo)}</div></td><td>${safe(r.customer)}</td><td><span class="pill ${cls(combo)}">${combo}</span></td><td class="${flash}">${safe(r.nextAction)}</td><td>${d(r.neededDate)}</td></tr>`}).join("")}
-function renderShipments(rows){const b=document.getElementById("shipmentsBody");document.getElementById("shipmentCount").textContent=`${rows.length} ITEMS`;if(!rows.length){b.innerHTML='<tr><td colspan="4" class="empty">No incoming vendor actions found.</td></tr>';return}b.innerHTML=rows.map(r=>`<tr><td>${safe(r.po)}</td><td>${safe(r.vendor)}</td><td>${safe(r.item)}</td><td>${d(r.expectedDate)}</td></tr>`).join("")}
-function renderInspection(rows){const b=document.getElementById("inspectionBody");document.getElementById("inspectionCount").textContent=`${rows.length} ITEMS`;if(!rows.length){b.innerHTML='<tr><td colspan="4" class="empty">No inspection items found.</td></tr>';return}b.innerHTML=rows.map(r=>`<tr><td>${safe(r.so)}</td><td>${safe(r.item)}</td><td>${d(r.requiredDate)}</td><td><span class="pill ${cls(r.status)}">${safe(r.status)}</span></td></tr>`).join("")}
-async function loadFeed(){try{const res=await fetch(FEED_URL+(FEED_URL.includes("?")?"&":"?")+"t="+Date.now(),{cache:"no-store"});if(!res.ok)throw new Error("feed not found");const data=await res.json();renderOrders(data.salesOrders||[]);renderShipments(data.incomingShipments||[]);renderInspection(data.inspection||[]);document.getElementById("tickerText").textContent=(data.announcements&&data.announcements.length?data.announcements:["Sidekick feed connected."]).join("     •     ");document.getElementById("updatedBox").textContent=safe(data.lastUpdated);document.getElementById("healthBox").textContent="LIVE"}catch(e){document.getElementById("healthBox").textContent="NO FEED";document.getElementById("salesOrdersBody").innerHTML='<tr><td colspan="6" class="empty">Factory board feed not found. Upload factory_board_feed.json or use ?feed=http://YOUR-PC-IP:5055/factory-board-feed</td></tr>';document.getElementById("tickerText").textContent="Waiting for Management Sidekick factory-board feed."}}
-setInterval(tick,1000);setInterval(loadFeed,30000);tick();loadFeed();
+const FEED_URLS = [
+  "factory_board_feed.json",
+  "/factory-board-feed"
+];
+
+function safe(v) {
+  return v === null || v === undefined || v === "" ? "" : String(v);
+}
+
+function upper(v) {
+  return safe(v).toUpperCase();
+}
+
+function dateShort(v) {
+  if (!v) return "";
+  const d = new Date(v);
+  if (isNaN(d)) return safe(v);
+  return d.toLocaleDateString("en-US", { month:"numeric", day:"numeric" }).replace("/", "-");
+}
+
+function daysAway(v) {
+  if (!v) return "";
+  const d = new Date(v);
+  if (isNaN(d)) return "";
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  d.setHours(0,0,0,0);
+  const diff = Math.ceil((d - today) / 86400000);
+  if (diff < 0) return "LATE";
+  if (diff === 0) return "TODAY";
+  return diff + " Days";
+}
+
+function statusClass(text) {
+  const t = upper(text);
+  if (t.includes("DELAY") || t.includes("LATE") || t.includes("PAST") || t.includes("CRITICAL")) return "status-red";
+  if (t.includes("PARTIAL") || t.includes("AT RISK") || t.includes("RISK") || t.includes("WATCH")) return "status-yellow";
+  if (t.includes("READY") || t.includes("COMPLETE") || t.includes("ON-TIME") || t.includes("ONTIME") || t.includes("OK")) return "status-green";
+  if (t.includes("ENGINEERING") || t.includes("MACHINING") || t.includes("INSPECTION") || t.includes("ASSEMBLY")) return "status-blue";
+  return "";
+}
+
+function orderType(row) {
+  const t = upper(row.type || row.orderType || row.orderCategory || row.category || "");
+  if (t.includes("KIT")) return "KIT";
+  if (t.includes("VALVE")) return "VALVE";
+  if (t.includes("REPAIR") || t.includes("REFURB")) return "REFURB";
+  if (t.includes("PART")) return "PARTS";
+  return safe(row.type || row.orderType || row.orderCategory || "VALVE");
+}
+
+function engineeringStatus(row) {
+  const v = safe(row.engineering || row.engineeringStatus || row.manualEngineering || "");
+  if (v) return v;
+  const st = upper(row.status || "");
+  if (st.includes("ENGINEERING")) return "PARTIAL";
+  return "RELEASED";
+}
+
+function stageText(row) {
+  const candidates = [
+    row.stage,
+    row.currentStage,
+    row.status,
+    row.manualStatus,
+    row.managementStatus
+  ];
+  for (const c of candidates) {
+    const v = safe(c);
+    if (v) return v.replace("In ", "");
+  }
+  return "";
+}
+
+function nextAction(row) {
+  return safe(row.nextAction || row.next_action || row.action || row.openActionStatus || "");
+}
+
+function dueDate(row) {
+  return safe(row.neededDate || row.needed_date || row.dueDate || row.due_date || row.orderDueDate || row.crateDeadline || "");
+}
+
+function forecastDate(row) {
+  return safe(row.forecastTesting || row.forecast_testing || row.testDate || row.testingDate || row.neededDate || row.dueDate || "");
+}
+
+function assemblyDate(row) {
+  return safe(row.assemblyReady || row.assembly_ready || row.readyDate || row.neededDate || row.dueDate || "");
+}
+
+function riskText(row) {
+  return safe(row.risk || row.scheduleRisk || row.riskLabel || row.status || "");
+}
+
+function makeEmptyRows(count, cols, panelClass="") {
+  return Array.from({length:count}).map(() => {
+    return `<tr>${Array.from({length:cols}).map(() => `<td class="${panelClass}">&nbsp;</td>`).join("")}</tr>`;
+  }).join("");
+}
+
+function renderSalesOrders(rows) {
+  const body = document.getElementById("salesBody");
+  const visible = rows.slice(0, 16);
+
+  body.innerHTML = visible.map(row => {
+    const risk = riskText(row);
+    const riskCls = statusClass(risk);
+    const eng = engineeringStatus(row);
+    const engCls = upper(eng).includes("PARTIAL") ? "partial" : "";
+    const stage = stageText(row);
+    const due = dueDate(row);
+
+    return `
+      <tr>
+        <td>${safe(row.so || row.salesOrder)}</td>
+        <td>${orderType(row)}</td>
+        <td class="${engCls}">${eng}</td>
+        <td>${stage}</td>
+        <td>${dateShort(assemblyDate(row))}</td>
+        <td class="${riskCls}">${risk || dateShort(forecastDate(row))}</td>
+        <td>${dateShort(due)}</td>
+      </tr>
+    `;
+  }).join("") + makeEmptyRows(Math.max(0, 20 - visible.length), 7);
+}
+
+function renderJobStatus(rows) {
+  const body = document.getElementById("jobStatusBody");
+  const jobs = [];
+
+  rows.forEach(row => {
+    const wo = safe(row.wo || row.workOrder || "");
+    if (!wo || wo === "No WO Found") return;
+    jobs.push({
+      job: wo,
+      type: orderType(row),
+      status: stageText(row) || riskText(row)
+    });
+  });
+
+  body.innerHTML = jobs.slice(0, 18).map(j => `
+    <tr>
+      <td>${j.job}</td>
+      <td>${j.type}</td>
+      <td class="${statusClass(j.status)}">${j.status}</td>
+    </tr>
+  `).join("") + makeEmptyRows(Math.max(0, 18 - jobs.length), 3);
+}
+
+function renderCriticalDates(rows) {
+  const box = document.getElementById("criticalDates");
+  const sorted = [...rows]
+    .filter(r => dueDate(r))
+    .sort((a,b) => new Date(dueDate(a)) - new Date(dueDate(b)))
+    .slice(0, 5);
+
+  if (!sorted.length) {
+    box.innerHTML = `<div class="critical-row"><div></div><div>No critical dates found</div><div></div></div>`;
+    return;
+  }
+
+  box.innerHTML = sorted.map(r => `
+    <div class="critical-row">
+      <div>${dateShort(dueDate(r))}</div>
+      <div>${safe(r.so || r.salesOrder)} - ${stageText(r) || orderType(r)}</div>
+      <div>${daysAway(dueDate(r))}</div>
+    </div>
+  `).join("");
+}
+
+function renderIncoming(rows) {
+  const body = document.getElementById("incomingBody");
+  const visible = rows.slice(0, 8);
+  body.innerHTML = visible.map(r => `
+    <tr>
+      <td>${safe(r.item || r.description || r.vendor || "")}</td>
+      <td>${dateShort(r.expectedDate || r.date)}</td>
+      <td>${safe(r.action || r.status || "FOLLOW UP")}</td>
+    </tr>
+  `).join("") + makeEmptyRows(Math.max(0, 8 - visible.length), 3);
+}
+
+function renderInspection(rows) {
+  const body = document.getElementById("inspectionBody");
+  const visible = rows.slice(0, 13);
+  body.innerHTML = visible.map(r => {
+    const st = safe(r.status || "");
+    return `
+      <tr>
+        <td class="left-text">${safe(r.item || r.description || r.so || "")}</td>
+        <td>${dateShort(r.requiredDate || r.reqDate || r.date)}</td>
+        <td class="${statusClass(st)}">${st}</td>
+      </tr>
+    `;
+  }).join("") + makeEmptyRows(Math.max(0, 13 - visible.length), 3);
+}
+
+function renderNotes(items) {
+  const body = document.getElementById("notesBody");
+  const visible = (items || []).slice(0, 6);
+  body.innerHTML = visible.map((item, i) => `
+    <tr><td>${i + 1}. ${safe(item)}</td></tr>
+  `).join("") + makeEmptyRows(Math.max(0, 6 - visible.length), 1);
+}
+
+function renderAlerts(rows) {
+  const body = document.getElementById("alertsBody");
+  const alerts = rows
+    .filter(r => {
+      const t = upper(riskText(r) + " " + nextAction(r));
+      return t.includes("DELAY") || t.includes("LATE") || t.includes("RISK") || t.includes("WAIT");
+    })
+    .slice(0, 6);
+
+  body.innerHTML = alerts.map((r, i) => `
+    <tr><td>${i + 1}. ${safe(r.so || r.salesOrder)} ${riskText(r)} ${nextAction(r)}</td></tr>
+  `).join("") + makeEmptyRows(Math.max(0, 6 - alerts.length), 1);
+}
+
+function renderCounters(rows, shipments) {
+  const valveCount = rows.filter(r => orderType(r) === "VALVE").length;
+  const kitCount = rows.filter(r => orderType(r) === "KIT").length;
+  const assemblyCount = rows.filter(r => upper(stageText(r)).includes("ASSEMB")).length;
+  const vendorCount = rows.filter(r => upper(stageText(r) + " " + nextAction(r)).includes("VENDOR") || upper(nextAction(r)).includes("PO")).length;
+  const readyCount = rows.filter(r => upper(stageText(r) + " " + riskText(r)).includes("READY")).length;
+
+  document.getElementById("counterValves").textContent = valveCount;
+  document.getElementById("counterKits").textContent = kitCount;
+  document.getElementById("counterAssembly").textContent = assemblyCount;
+  document.getElementById("counterVendor").textContent = vendorCount || (shipments || []).length;
+  document.getElementById("counterReady").textContent = readyCount;
+}
+
+function renderTop(data) {
+  const anns = data.announcements || [];
+  document.getElementById("topAnnouncement").textContent = anns[0] || "Sidekick feed connected.";
+  document.getElementById("lastUpdatedText").textContent = safe(data.lastUpdated || "--");
+  document.getElementById("latestWins").textContent = anns[0] || "Sidekick factory board feed active.";
+}
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById("dateText").textContent = now.toLocaleDateString("en-US", { month:"short", day:"numeric" });
+  document.getElementById("timeText").textContent = now.toLocaleTimeString("en-US", { hour:"numeric", minute:"2-digit", second:"2-digit" });
+}
+
+async function fetchFeed() {
+  let lastErr;
+  for (const url of FEED_URLS) {
+    try {
+      const res = await fetch(url + "?t=" + Date.now(), { cache:"no-store" });
+      if (!res.ok) throw new Error(url + " not available");
+      return await res.json();
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  throw lastErr;
+}
+
+async function loadFeed() {
+  try {
+    const data = await fetchFeed();
+    const orders = data.salesOrders || [];
+    const incoming = data.incomingShipments || [];
+    const inspection = data.inspection || [];
+
+    renderTop(data);
+    renderCriticalDates(orders);
+    renderCounters(orders, incoming);
+    renderSalesOrders(orders);
+    renderJobStatus(orders);
+    renderIncoming(incoming);
+    renderInspection(inspection);
+    renderNotes(data.announcements || []);
+    renderAlerts(orders);
+
+    document.getElementById("outgoingBody").innerHTML = makeEmptyRows(8, 3);
+  } catch (err) {
+    document.getElementById("topAnnouncement").textContent = "Factory board feed not found.";
+    document.getElementById("salesBody").innerHTML = `<tr><td colspan="7">FACTORY BOARD FEED NOT FOUND</td></tr>` + makeEmptyRows(19, 7);
+    document.getElementById("jobStatusBody").innerHTML = makeEmptyRows(18, 3);
+    document.getElementById("incomingBody").innerHTML = makeEmptyRows(8, 3);
+    document.getElementById("outgoingBody").innerHTML = makeEmptyRows(8, 3);
+    document.getElementById("inspectionBody").innerHTML = makeEmptyRows(13, 3);
+    document.getElementById("notesBody").innerHTML = `<tr><td>1. Waiting for factory_board_feed.json or /factory-board-feed</td></tr>` + makeEmptyRows(5, 1);
+    document.getElementById("alertsBody").innerHTML = makeEmptyRows(6, 1);
+  }
+}
+
+updateClock();
+loadFeed();
+setInterval(updateClock, 1000);
+setInterval(loadFeed, 30000);
 </script>
 </body>
 </html>
