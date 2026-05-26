@@ -1,0 +1,47 @@
+{
+  "salesOrders": [
+    {
+      "so": "25-1302",
+      "wo": "No WO Found",
+      "customer": "Test Customer",
+      "status": "In Engineering",
+      "priority": "P1",
+      "nextAction": "Waiting on engineering release",
+      "neededDate": "2026-06-05",
+      "risk": "AT RISK"
+    },
+    {
+      "so": "25-1312",
+      "wo": "WO-251312-01",
+      "customer": "Test Customer",
+      "status": "In Machining",
+      "priority": "",
+      "nextAction": "Waiting on vendor update",
+      "neededDate": "2026-06-10",
+      "risk": "ON-TIME"
+    }
+  ],
+  "incomingShipments": [
+    {
+      "po": "45678",
+      "vendor": "Best Grinding",
+      "item": "Cage",
+      "expectedDate": "2026-05-30",
+      "linkedSO": "25-1312",
+      "status": "Pending"
+    }
+  ],
+  "inspection": [
+    {
+      "so": "25-1312",
+      "item": "Plug Seat",
+      "requiredDate": "2026-06-01",
+      "status": "Pending"
+    }
+  ],
+  "announcements": [
+    "Factory board is now connected to the Sidekick-style feed.",
+    "Sales orders and status will be controlled from factory_board_feed.json."
+  ],
+  "lastUpdated": "Manual Test"
+}
